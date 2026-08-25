@@ -1,0 +1,69 @@
+
+========================================
+      LASERSTONE™ SCIENTIFIC REPORT
+========================================
+
+Plant Name            : Henna
+Scientific Name       : Lawsonia inermis
+Origin                : Sudan
+
+----------------------------------------
+LSI ANALYSIS
+----------------------------------------
+
+LSI Value             : 3.617
+Classification        : Strong Laser Candidate
+
+----------------------------------------
+SPECTRAL ANALYSIS
+----------------------------------------
+
+Absorption λ          : 510 nm
+Emission λ            : 595 nm
+
+Laser Color           : Orange
+Spectral Region       : Visible
+
+----------------------------------------
+LASER SYSTEM ANALYSIS
+----------------------------------------
+
+Pump Source           : {'laser_name': '520nm Green Laser', 'spectral_match': 1.0, 'photonic_score': 0.834, 'estimated_efficiency': 83.4}
+Operation Mode        : Pulsed Laser Compatible
+Recommended Resonator : Linear Optical Cavity
+
+----------------------------------------
+STABILITY ANALYSIS
+----------------------------------------
+
+Thermal Stability     : Good Thermal Stability
+Photostability        : Good Photostability
+
+----------------------------------------
+GAIN & RESONANCE
+----------------------------------------
+
+Gain Medium           : Strong Gain Medium
+Q-Factor              : High-Q Resonance
+
+----------------------------------------
+BEAM & EFFICIENCY
+----------------------------------------
+
+Beam Quality          : High Beam Quality
+Laser Efficiency      : Moderate Efficiency Laser System
+
+----------------------------------------
+SOLVENT ENVIRONMENT
+----------------------------------------
+
+Recommended Solvent   : Methanol
+Reason                : Balanced optical behavior
+
+----------------------------------------
+GLOBAL RANKING
+----------------------------------------
+
+Global Rank           : #2
+
+========================================

@@ -1,0 +1,69 @@
+
+========================================
+      LASERSTONE™ SCIENTIFIC REPORT
+========================================
+
+Plant Name            : Moringa
+Scientific Name       : Moringa oleifera
+Origin                : Sudan
+
+----------------------------------------
+LSI ANALYSIS
+----------------------------------------
+
+LSI Value             : 0.628
+Classification        : Moderate Laser Candidate
+
+----------------------------------------
+SPECTRAL ANALYSIS
+----------------------------------------
+
+Absorption λ          : 410 nm
+Emission λ            : 515 nm
+
+Laser Color           : Green
+Spectral Region       : Visible
+
+----------------------------------------
+LASER SYSTEM ANALYSIS
+----------------------------------------
+
+Pump Source           : {'laser_name': '405nm Violet Diode', 'spectral_match': 1.0, 'photonic_score': 0.694, 'estimated_efficiency': 69.4}
+Operation Mode        : Pulsed Laser Compatible
+Recommended Resonator : Low-Q Experimental Resonator
+
+----------------------------------------
+STABILITY ANALYSIS
+----------------------------------------
+
+Thermal Stability     : Moderate Thermal Stability
+Photostability        : Poor Photostability
+
+----------------------------------------
+GAIN & RESONANCE
+----------------------------------------
+
+Gain Medium           : Moderate Gain Medium
+Q-Factor              : Low-Q Resonance
+
+----------------------------------------
+BEAM & EFFICIENCY
+----------------------------------------
+
+Beam Quality          : Poor Beam Quality
+Laser Efficiency      : Low Efficiency Laser System
+
+----------------------------------------
+SOLVENT ENVIRONMENT
+----------------------------------------
+
+Recommended Solvent   : Water
+Reason                : Low-cost experimental medium
+
+----------------------------------------
+GLOBAL RANKING
+----------------------------------------
+
+Global Rank           : #6
+
+========================================

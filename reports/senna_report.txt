@@ -1,0 +1,69 @@
+
+========================================
+      LASERSTONE™ SCIENTIFIC REPORT
+========================================
+
+Plant Name            : Senna
+Scientific Name       : Senna alexandrina
+Origin                : Sudan
+
+----------------------------------------
+LSI ANALYSIS
+----------------------------------------
+
+LSI Value             : 1.513
+Classification        : Strong Laser Candidate
+
+----------------------------------------
+SPECTRAL ANALYSIS
+----------------------------------------
+
+Absorption λ          : 455 nm
+Emission λ            : 570 nm
+
+Laser Color           : Yellow
+Spectral Region       : Visible
+
+----------------------------------------
+LASER SYSTEM ANALYSIS
+----------------------------------------
+
+Pump Source           : {'laser_name': '450nm Blue Laser', 'spectral_match': 1.0, 'photonic_score': 0.767, 'estimated_efficiency': 76.7}
+Operation Mode        : Pulsed Laser Compatible
+Recommended Resonator : Low-Q Experimental Resonator
+
+----------------------------------------
+STABILITY ANALYSIS
+----------------------------------------
+
+Thermal Stability     : Good Thermal Stability
+Photostability        : Moderate Photostability
+
+----------------------------------------
+GAIN & RESONANCE
+----------------------------------------
+
+Gain Medium           : Moderate Gain Medium
+Q-Factor              : Moderate-Q Resonance
+
+----------------------------------------
+BEAM & EFFICIENCY
+----------------------------------------
+
+Beam Quality          : Poor Beam Quality
+Laser Efficiency      : Low Efficiency Laser System
+
+----------------------------------------
+SOLVENT ENVIRONMENT
+----------------------------------------
+
+Recommended Solvent   : Methanol
+Reason                : Balanced optical behavior
+
+----------------------------------------
+GLOBAL RANKING
+----------------------------------------
+
+Global Rank           : #4
+
+========================================
