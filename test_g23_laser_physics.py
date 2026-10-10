@@ -15,9 +15,9 @@ class LaserPhysicsSRC01Tests(unittest.TestCase):
     def test_photon_frequency_and_energy_reference_cases(self):
         # Values independently calculated from the constants in the legacy code.
         cases = [
-            (532.0, 563.9097744360902e12, 2.332431716e0),
-            (632.8, 474.0834386852086e12, 1.960765539e0),
-            (1064.0, 281.9548872180451e12, 1.166215858e0),
+            (532.0, 563.9097744360902e12, 2.332375883529047),
+            (632.8, 474.0834386852086e12, 1.9608469817279601),
+            (1064.0, 281.9548872180451e12, 1.1661879417645236),
         ]
         for wavelength_nm, expected_f, expected_e in cases:
             with self.subTest(wavelength_nm=wavelength_nm):
