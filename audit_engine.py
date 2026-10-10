@@ -1,5 +1,17 @@
+import math
+
 def audit_plant(plant):
 
+    fields = ("material_score", "scientific_confidence_score", "system_integrity_score", "experimental_success_score")
+    invalid = []
+    for field in fields:
+        value = plant.get(field)
+        if (isinstance(value, bool) or not isinstance(value, (int, float))
+                or not math.isfinite(value) or not 0 <= value <= 100):
+            invalid.append(field)
+    if plant.get("valid") is False or plant.get("analysis_status") == "BLOCKED" or invalid:
+        return {"status": "BLOCKED", "issues": ["Incomplete or blocked analysis: " + ", ".join(invalid)],
+                "basis": "HEURISTIC_SCREEN_ONLY"}
     issues = []
 
     material = plant.get(
@@ -53,7 +65,7 @@ def audit_plant(plant):
         status = "PASS"
 
         issues.append(
-            "Scientific audit completed "
+            "Heuristic score screening completed "
             "successfully."
         )
 
@@ -67,6 +79,7 @@ def audit_plant(plant):
 
     return {
 
+        "basis": "HEURISTIC_SCREEN_ONLY",
         "status": status,
 
         "issues": issues

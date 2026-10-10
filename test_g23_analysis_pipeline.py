@@ -132,5 +132,85 @@ class AnalysisPipelineTests(unittest.TestCase):
             self.assertFalse(self.run_analysis(copy.deepcopy(self.sample))['valid'])
 
 
+
+    def test_downstream_audit_ranking_and_rendering(self):
+        from audit_engine import audit_plant
+        from global_ranking_engine import rank_plants
+        from report_generator import generate_scientific_report
+        records = [self.run_analysis(p) for p in self.records]
+        before = copy.deepcopy(records)
+        ranked = rank_plants(records)
+        self.assertEqual(records, before)
+        self.assertEqual([p['global_rank'] for p in ranked], list(range(1, len(ranked)+1)))
+        self.assertEqual([p['material_score'] for p in ranked], sorted([p['material_score'] for p in records], reverse=True))
+        for record in ranked:
+            audit = audit_plant(record)
+            self.assertEqual(audit['basis'], 'HEURISTIC_SCREEN_ONLY')
+            text = generate_scientific_report(record)
+            self.assertIn('HEURISTIC_RESEARCH_TRIAGE_ONLY', text)
+            self.assertIn('NOT_ESTABLISHED_BY_THIS_PIPELINE', text)
+
+    def test_report_preserves_existing_files_and_handles_name_collision(self):
+        import tempfile
+        from report_generator import save_single_report
+        from global_ranking_engine import rank_plants
+        record = rank_plants([self.run_analysis(copy.deepcopy(self.sample))])[0]
+        with tempfile.TemporaryDirectory() as folder:
+            first = Path(save_single_report(record, folder))
+            content = first.read_bytes()
+            second = Path(save_single_report(record, folder))
+            self.assertNotEqual(first, second)
+            self.assertEqual(first.read_bytes(), content)
+            hostile = dict(record, name='../../outside')
+            third = Path(save_single_report(hostile, folder))
+            self.assertEqual(third.parent.resolve(), Path(folder).resolve())
+
+    def test_report_destination_file_is_not_deleted(self):
+        import tempfile
+        from report_generator import ensure_reports_folder
+        with tempfile.TemporaryDirectory() as folder:
+            destination = Path(folder) / 'reports'
+            destination.write_text('KEEP')
+            with self.assertRaises(FileExistsError):
+                ensure_reports_folder(destination)
+            self.assertEqual(destination.read_text(), 'KEEP')
+
+    def test_blocked_records_cannot_be_ranked_or_exported(self):
+        import tempfile
+        from audit_engine import audit_plant
+        from global_ranking_engine import rank_plants
+        from report_generator import save_all_reports
+        blocked = self.run_analysis(dict(self.sample, phi=1.5))
+        self.assertEqual(audit_plant(blocked)['status'], 'BLOCKED')
+        with self.assertRaises(ValueError):
+            rank_plants([blocked])
+        with tempfile.TemporaryDirectory() as folder:
+            with self.assertRaises(ValueError):
+                save_all_reports([blocked], folder)
+            self.assertEqual(list(Path(folder).iterdir()), [])
+
+    def test_display_exposes_basis_and_handles_blocked_record(self):
+        import io
+        from contextlib import redirect_stdout
+        from display import display_plant_result
+        result = self.run_analysis(copy.deepcopy(self.sample))
+        stream = io.StringIO()
+        with redirect_stdout(stream):
+            display_plant_result(result)
+        self.assertIn('Physical Validation: NOT_ESTABLISHED_BY_THIS_PIPELINE', stream.getvalue())
+        stream = io.StringIO()
+        with redirect_stdout(stream):
+            display_plant_result(self.run_analysis({}))
+        self.assertIn('Analysis blocked:', stream.getvalue())
+
+    def test_empty_ranking_and_export_are_safe(self):
+        import tempfile
+        from global_ranking_engine import rank_plants
+        from report_generator import save_all_reports
+        self.assertEqual(rank_plants([]), [])
+        with tempfile.TemporaryDirectory() as folder:
+            self.assertEqual(save_all_reports([], folder), [])
+            self.assertEqual(list(Path(folder).iterdir()), [])
+
 if __name__ == '__main__':
     unittest.main()

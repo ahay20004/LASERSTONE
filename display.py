@@ -2,6 +2,12 @@ def display_plant_result(plant):
 
     print("\n" + "=" * 50)
 
+    print(f"Analysis Basis: {plant.get('score_basis', 'UNSPECIFIED')}")
+    print(f"Physical Validation: {plant.get('physical_validation_status', 'NOT ESTABLISHED')}")
+    print(f"Decision Basis: {plant.get('decision_basis', 'UNSPECIFIED')}")
+    if plant.get('valid') is False or plant.get('analysis_status') == 'BLOCKED':
+        print("Analysis blocked:", plant.get('validation_errors', {}))
+        return
     print(f"Plant: {plant.get('name', 'Unknown')}")
     print(f"Scientific Name: {plant.get('scientific_name', 'N/A')}")
     print(f"Origin: {plant.get('origin', 'N/A')}")
