@@ -115,168 +115,161 @@ if not run_startup_diagnostic():
     exit(1)
 
 def analyze_plant(plant):
-    plant["name"] = resolve_plant_name(plant["name"])
-    validation = validate_plant_data(plant)
+    """Analyze a detached record; numeric gates do not certify physical validity."""
+    import copy
+    import math
+    from g23_scientific_input_gate import validate_scientific_inputs
+    from g23_checked_physics_consistency import assess_physics_consistency
 
-    if not validation["valid"]:
-        plant["valid"] = False
-        plant["missing_fields"] = validation["missing"]
+    check = validate_scientific_inputs(plant)
+    if not isinstance(plant, dict):
+        return {"name": "Unknown", "valid": False, "missing_fields": [],
+                "validation_status": "INVALID_INPUT", "validation_errors": check["errors"],
+                "analysis_status": "BLOCKED", "analysis_stage": "INPUT"}
+    plant = copy.deepcopy(plant)
+    for field in ('analysis_stage', 'analysis_status', 'applications', 'audit_issues', 'audit_status', 'beam_quality_class', 'beam_quality_score', 'best_pump_laser', 'cavity_geometry', 'classification', 'cooling_system', 'cw_score', 'decision_basis', 'evolution_class', 'evolution_recommendations', 'evolution_score', 'experimental_success_class', 'experimental_success_score', 'feasibility_class', 'feasibility_score', 'final_decision', 'gain_class', 'gain_classification', 'gain_condition', 'gain_score', 'governor_decision', 'intelligence_summary', 'knowledge_info', 'laser_efficiency_class', 'laser_efficiency_score', 'laser_output', 'lri_class', 'lri_score', 'lsi', 'material_class', 'material_score', 'mirror_reflectivity', 'missing_fields', 'normalized_lsi', 'operation_mode', 'output_coupler', 'patent_potential_class', 'patent_potential_score', 'photobleaching_class', 'photobleaching_score', 'physical_validation_status', 'physics_consistency_class', 'physics_consistency_score', 'physics_consistency_status', 'predicted_color', 'predicted_region', 'pulsed_score', 'pump_efficiency', 'pump_source', 'q_factor_class', 'q_factor_score', 'recommended_length', 'recommended_resonator', 'recommended_solvent', 'reference_info', 'research_novelty_class', 'research_novelty_score', 'scientific_confidence_class', 'scientific_confidence_score', 'scientific_interpretation', 'scientific_recommendations', 'score_basis', 'solvent_reason', 'spectral_quality', 'spectral_quality_class', 'spectral_quality_score', 'stokes_shift', 'system_integrity_class', 'system_integrity_score', 'system_integrity_warnings', 'thermal_class', 'thermal_score', 'threshold_indicator', 'valid', 'validation_errors', 'validation_status'):
+        plant.pop(field, None)
+    raw = copy.deepcopy(plant)
+    stage = "INPUT"
+
+    def blocked(status, errors, missing=()):
+        result = copy.deepcopy(raw)
+        result.update(valid=False, missing_fields=list(missing),
+                      validation_status=status, validation_errors=errors,
+                      analysis_status="BLOCKED", analysis_stage=stage)
+        return result
+
+    def require_score(field, container=None):
+        value = (plant if container is None else container).get(field)
+        if (isinstance(value, bool) or not isinstance(value, (int, float))
+                or not math.isfinite(value) or not 0 <= value <= 100):
+            raise ValueError(f"{field}: required finite numeric score in [0, 100]")
+
+    if not check["valid"]:
+        return blocked("INVALID_INPUT", check["errors"])
+    try:
+        plant["name"] = resolve_plant_name(plant["name"])
+        validation = validate_plant_data(plant)
+        if not validation["valid"]:
+            return blocked("INVALID_INPUT", {k: "Required field" for k in validation["missing"]}, validation["missing"])
+        stage = "BASE_CALCULATIONS"
+        lsi_result = calculate_lsi(plant['phi'], plant['tau'], plant['sigma_a'], plant['eta'], plant['knr'], plant['refractive_index'])
+        pump_result = predict_best_pump(plant, laser_sources)
+        spectral_result = analyze_spectrum(plant)
+        gain_result = analyze_gain_medium(plant)
+        plant['lsi'] = lsi_result
+        plant['classification'] = classify_lsi(lsi_result)
+        plant['normalized_lsi'] = calculate_normalized_lsi(plant)
+        plant['gain_condition'] = evaluate_gain_condition(plant)
+        plant['threshold_indicator'] = estimate_laser_threshold(plant)
+        plant['applications'] = predict_application(lsi_result)
+        plant['predicted_color'] = predict_laser_color(plant['lambda_em'])
+        plant['predicted_region'] = predict_spectral_region(plant['lambda_em'])
+        plant['pump_source'] = pump_result
+        plant['best_pump_laser'] = pump_result['laser_name']
+        plant['pump_efficiency'] = pump_result['estimated_efficiency']
+        plant['spectral_quality'] = calculate_spectral_quality(plant)
+        plant['stokes_shift'] = spectral_result['stokes_shift']
+        plant['spectral_quality_score'] = standardize_quality_value(plant['spectral_quality'])
+        require_score('spectral_quality_score')
+        plant['spectral_quality_class'] = classify_numeric_score(plant['spectral_quality_score'])
+        plant['gain_score'] = gain_result['gain_score']
+        require_score('gain_score')
+        plant['gain_classification'] = gain_result['gain_classification']
+        plant['feasibility_score'] = calculate_feasibility_score(plant, lsi_result, pump_result)
+        require_score('feasibility_score')
+        plant['feasibility_class'] = classify_feasibility(plant['feasibility_score'])
+        plant['thermal_score'] = evaluate_thermal_stability(plant)
+        require_score('thermal_score')
+        plant['thermal_class'] = classify_thermal_stability(plant['thermal_score'])
+        operation_mode = evaluate_operation_mode(plant, plant['thermal_score'], plant['feasibility_score'])
+        plant['operation_mode'] = operation_mode['mode']
+        plant['cw_score'] = operation_mode['cw_score']
+        require_score('cw_score')
+        plant['pulsed_score'] = operation_mode['pulsed_score']
+        require_score('pulsed_score')
+        plant['photobleaching_score'] = evaluate_photobleaching_stability(plant, plant['thermal_score'], plant['feasibility_score'])
+        require_score('photobleaching_score')
+        plant['photobleaching_class'] = classify_photobleaching(plant['photobleaching_score'])
+        plant['gain_class'] = classify_gain_medium(plant['gain_score'])
+        plant['recommended_resonator'] = recommend_resonator(plant['gain_score'], plant['thermal_score'], plant['operation_mode'], plant['photobleaching_score'])
+        solvent_data = recommend_solvent_environment(plant)
+        plant['recommended_solvent'] = solvent_data['solvent']
+        plant['solvent_reason'] = solvent_data['reason']
+        plant['q_factor_score'] = evaluate_q_factor(plant, plant['gain_score'], plant['thermal_score'], plant['photobleaching_score'])
+        require_score('q_factor_score')
+        cavity_data = optimize_laser_cavity(plant['gain_score'], plant['q_factor_score'], plant['operation_mode'], plant['thermal_score'])
+        plant['q_factor_class'] = classify_q_factor(plant['q_factor_score'])
+        plant['mirror_reflectivity'] = cavity_data['mirror_reflectivity']
+        plant['output_coupler'] = cavity_data['output_coupler']
+        plant['cavity_geometry'] = cavity_data['geometry']
+        plant['recommended_length'] = cavity_data['recommended_length']
+        plant['cooling_system'] = cavity_data['cooling']
+        plant['beam_quality_score'] = evaluate_beam_quality(plant['gain_score'], plant['q_factor_score'], plant['thermal_score'], cavity_data['geometry'], plant['operation_mode'])
+        require_score('beam_quality_score')
+        plant['beam_quality_class'] = classify_beam_quality(plant['beam_quality_score'])
+        plant['laser_efficiency_score'] = evaluate_laser_efficiency(plant, plant['gain_score'], plant['q_factor_score'], plant['beam_quality_score'], plant['thermal_score'])
+        require_score('laser_efficiency_score')
+        plant['laser_efficiency_class'] = classify_laser_efficiency(plant['laser_efficiency_score'])
+        plant['material_score'] = calculate_material_score(plant)
+        require_score('material_score')
+        plant['material_class'] = classify_material_score(plant['material_score'])
+        stage = "LRI_AND_CONSISTENCY"
+        plant["lri_score"] = calculate_lri(plant)
+        require_score("lri_score")
+        plant["lri_class"] = classify_lri(plant["lri_score"])
+        consistency = assess_physics_consistency(plant)
+        if consistency["status"] != "HEURISTIC_SCORE_ONLY":
+            return blocked("INVALID_DERIVED_SCORES", consistency["errors"])
+        plant["physics_consistency_score"] = consistency["score"]
+        plant["physics_consistency_class"] = "Heuristic score only"
+        plant["physics_consistency_status"] = consistency["status"]
+        stage = "SECONDARY_SCORES"
+        plant['experimental_success_score'] = predict_experimental_success(plant)
+        require_score('experimental_success_score')
+        plant['experimental_success_class'] = classify_experimental_probability(plant['experimental_success_score'])
+        plant['research_novelty_score'] = evaluate_research_novelty(plant)
+        require_score('research_novelty_score')
+        plant['research_novelty_class'] = classify_research_novelty(plant['research_novelty_score'])
+        plant['patent_potential_score'] = evaluate_patent_potential(plant)
+        require_score('patent_potential_score')
+        plant['patent_potential_class'] = classify_patent_potential(plant['patent_potential_score'])
+        evolution_data = predict_material_evolution(plant)
+        plant['evolution_score'] = evolution_data['score']
+        require_score('evolution_score')
+        plant['evolution_recommendations'] = evolution_data['recommendations']
+        plant['evolution_class'] = classify_evolution_potential(plant['evolution_score'])
+        plant['scientific_confidence_score'] = calculate_scientific_confidence(plant)
+        require_score('scientific_confidence_score')
+        plant['scientific_confidence_class'] = classify_confidence(plant['scientific_confidence_score'])
+        integrity_data = evaluate_system_integrity(plant)
+        plant['system_integrity_score'] = integrity_data['score']
+        require_score('system_integrity_score')
+        plant['system_integrity_warnings'] = integrity_data['warnings']
+        plant['system_integrity_class'] = classify_integrity(plant['system_integrity_score'])
+        intelligence_data = generate_intelligence_summary(plant)
+        plant['intelligence_summary'] = intelligence_data
+        require_score("intelligence_score", plant["intelligence_summary"])
+        stage = "DECISION_SUPPORT"
+        plant["score_basis"] = "HEURISTIC_MODEL_SCORES"
+        plant["physical_validation_status"] = "NOT_ESTABLISHED_BY_THIS_PIPELINE"
+        plant["decision_basis"] = "HEURISTIC_RESEARCH_TRIAGE_ONLY"
+        plant["lri_class"] = "Heuristic tier: " + plant["lri_class"]
+        plant["scientific_confidence_class"] = "Heuristic tier: " + plant["scientific_confidence_class"]
+        plant["scientific_interpretation"] = ["Heuristic model interpretation: " + text for text in generate_scientific_interpretation(plant)]
+        plant["scientific_recommendations"] = ["Heuristic research suggestion: " + text for text in generate_scientific_recommendations(plant)]
+        plant["final_decision"] = "Heuristic research triage: " + generate_final_decision(plant)
+        plant["governor_decision"] = "Heuristic research triage: " + laserstone_governor_decision(plant)
+        plant["valid"] = True
+        plant["missing_fields"] = []
+        plant["validation_errors"] = {}
+        plant["validation_status"] = "DOMAIN_SCREEN_PASSED"
+        plant["analysis_status"] = "COMPLETE_HEURISTIC_ANALYSIS"
+        plant["analysis_stage"] = "COMPLETE"
         return plant
+    except Exception as exc:
+        return blocked("ENGINE_ERROR", {stage: f"{type(exc).__name__}: {exc}"})
 
-    plant["valid"] = True
-
-    lsi_result = calculate_lsi(
-        plant["phi"],
-        plant["tau"],
-        plant["sigma_a"],
-        plant["eta"],
-        plant["knr"],
-        plant["refractive_index"] )
-   
-
-    pump_result = predict_best_pump(plant, laser_sources)
-    spectral_result = analyze_spectrum(plant)
-    gain_result = analyze_gain_medium(plant)
-
-    plant["lsi"] = lsi_result
-    plant["classification"] = classify_lsi(lsi_result)
-
-    plant["normalized_lsi"] = calculate_normalized_lsi(plant)
-    plant["gain_condition"] = evaluate_gain_condition(plant)
-    plant["threshold_indicator"] = estimate_laser_threshold(plant)
-
-    plant["applications"] = predict_application(lsi_result)
-
-    plant["predicted_color"] = predict_laser_color(plant["lambda_em"])
-    plant["predicted_region"] = predict_spectral_region(plant["lambda_em"])
-
-    plant["pump_source"] = pump_result
-    plant["best_pump_laser"] = pump_result["laser_name"]
-    plant["pump_efficiency"] = pump_result["estimated_efficiency"]
-
-    plant["spectral_quality"] = calculate_spectral_quality(plant)
-    plant["stokes_shift"] = spectral_result["stokes_shift"]
-    plant["spectral_quality_score"] = standardize_quality_value(
-    plant["spectral_quality"])
-    plant["spectral_quality_class"] = classify_numeric_score(
-    plant["spectral_quality_score"])
-
-    plant["spectral_quality_class"] = classify_numeric_score(
-    plant["spectral_quality_score"])
-
-    plant["gain_score"] = gain_result["gain_score"]
-    plant["gain_classification"] = gain_result["gain_classification"]
-
-    plant["feasibility_score"] = calculate_feasibility_score(
-        plant, lsi_result, pump_result  )
-    plant["feasibility_class"] = classify_feasibility(
-        plant["feasibility_score"]   )
-
-    plant["thermal_score"] = evaluate_thermal_stability(
-        plant)
-    plant["thermal_class"] = classify_thermal_stability(
-        plant["thermal_score"]   )
-
-    operation_mode = evaluate_operation_mode(
-        plant, 
-        plant["thermal_score"],  
-        plant["feasibility_score"]    )
-
-    plant["operation_mode"] = operation_mode["mode"]
-    plant["cw_score"] = operation_mode["cw_score"]
-    plant["pulsed_score"] = operation_mode["pulsed_score"]
-
-    plant["photobleaching_score"] = evaluate_photobleaching_stability(
-        plant,  
-        plant["thermal_score"], 
-        plant["feasibility_score"]   )
-    plant["photobleaching_class"] = classify_photobleaching(
-        plant["photobleaching_score"]  )
-
-    plant["gain_class"] = classify_gain_medium(
-        plant["gain_score"])
-
-    plant["recommended_resonator"] = recommend_resonator(
-        plant["gain_score"],
-        plant["thermal_score"],
-        plant["operation_mode"],
-        plant["photobleaching_score"]     )
-
-    solvent_data = recommend_solvent_environment(plant)
-    plant["recommended_solvent"] = solvent_data["solvent"]
-    plant["solvent_reason"] = solvent_data["reason"]
-
-    plant["q_factor_score"] = evaluate_q_factor(
-    plant,
-    plant["gain_score"],
-    plant["thermal_score"],
-    plant["photobleaching_score"] )
-
-    cavity_data = optimize_laser_cavity(
-        plant["gain_score"],
-        plant["q_factor_score"],
-        plant["operation_mode"],
-        plant["thermal_score"]  )
-    plant["q_factor_class"] = classify_q_factor(
-    plant["q_factor_score"] )
-
-    plant["mirror_reflectivity"] = cavity_data["mirror_reflectivity"]
-    plant["output_coupler"] = cavity_data["output_coupler"]
-    plant["cavity_geometry"] = cavity_data["geometry"]
-    plant["recommended_length"] = cavity_data["recommended_length"]
-    plant["cooling_system"] = cavity_data["cooling"]
-
-    plant["beam_quality_score"] = evaluate_beam_quality(
-        plant["gain_score"],
-        plant["q_factor_score"],
-        plant["thermal_score"],
-        cavity_data["geometry"],
-        plant["operation_mode"] )
-    plant["beam_quality_class"] = classify_beam_quality(
-        plant["beam_quality_score"] )
-
-    plant["laser_efficiency_score"] = evaluate_laser_efficiency(plant, plant["gain_score"], plant["q_factor_score"], 
-    plant["beam_quality_score"],  plant["thermal_score"]    )
-    plant["laser_efficiency_class"] = classify_laser_efficiency(plant["laser_efficiency_score"] )
-    plant["material_score"] = calculate_material_score(plant)
-
-    plant["material_class"] = classify_material_score(plant["material_score"])
-
-    plant["scientific_interpretation"] = generate_scientific_interpretation( plant  )
-    plant["physics_consistency_score"] = (evaluate_physics_consistency(plant) )
-    plant["physics_consistency_class"] = (classify_consistency(
-    plant["physics_consistency_score"]  )  ) 
-    plant["final_decision"] = generate_final_decision(plant)
-    plant["scientific_recommendations"] = (generate_scientific_recommendations(plant))
-    plant["experimental_success_score"] = (predict_experimental_success(plant) )
-    plant["experimental_success_class"] = (classify_experimental_probability(
-    plant["experimental_success_score"]   ) )
-    plant["research_novelty_score"] = ( evaluate_research_novelty(plant) )
-
-    plant["research_novelty_class"] = (classify_research_novelty(plant["research_novelty_score"] ))
-    plant["patent_potential_score"] = (evaluate_patent_potential(plant) )
-
-    plant["patent_potential_class"] = (classify_patent_potential(plant["patent_potential_score"] ))
-    evolution_data = predict_material_evolution(plant)
-    plant["evolution_score"] = (evolution_data["score"])
-    plant["evolution_recommendations"] = (evolution_data["recommendations"])
-    plant["evolution_class"] = (classify_evolution_potential(plant["evolution_score"]))
-    plant["scientific_confidence_score"] = (calculate_scientific_confidence(plant))
-    plant["scientific_confidence_class"] = (classify_confidence(plant["scientific_confidence_score"]))
-    integrity_data = (evaluate_system_integrity(plant))
-    plant["system_integrity_score"] = (integrity_data["score"])
-    plant["system_integrity_warnings"] = (integrity_data["warnings"])
-    plant["system_integrity_class"] = (classify_integrity(plant["system_integrity_score"]))
-    intelligence_data = (generate_intelligence_summary(plant))
-    plant["intelligence_summary"] = (intelligence_data)
-    plant["governor_decision"] = (laserstone_governor_decision(plant))
-   
-
-
-
-
-
-    return plant
 
 def main():
 
@@ -325,6 +318,7 @@ def main():
         if not analyzed_plant["valid"]:
             print("\nDATA VALIDATION ERROR")
             print(f"Plant: {analyzed_plant.get('name', 'Unknown')}")
+            print("Validation errors:", analyzed_plant.get("validation_errors", {}))
             print("Missing Fields:")
             
             for field in analyzed_plant["missing_fields"]:
@@ -332,12 +326,16 @@ def main():
 
             continue
         
-        audit_data = audit_plant(plant)
-        plant["audit_status"] = (audit_data["status"] )
-        plant["audit_issues"] = (audit_data["issues"] )
+        audit_data = audit_plant(analyzed_plant)
+        analyzed_plant["audit_status"] = (audit_data["status"] )
+        analyzed_plant["audit_issues"] = (audit_data["issues"] )
 
         analyzed_plants.append(analyzed_plant)
     
+    if not analyzed_plants:
+        print("No valid records; downstream analysis stopped.")
+        return
+
     ranked_plants = rank_plants(analyzed_plants)
 
     autonomous_discoveries = (discover_high_potential_patterns(ranked_plants ))
