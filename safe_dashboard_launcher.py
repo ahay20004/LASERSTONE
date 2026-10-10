@@ -16,7 +16,7 @@ from executive_summary_engine import generate_executive_summary
 def load_plants():
     try:
         from plants_data import plants
-        return plants
+        return []
 
     except Exception as error:
         print("PLANTS LOAD ERROR:")
@@ -42,7 +42,7 @@ def prepare_dashboard_plants(plants):
     except Exception as error:
         print("DASHBOARD PREPARATION IMPORT ERROR:")
         print(error)
-        return plants
+        return []
 
     analyzed_plants = []
 
@@ -51,7 +51,8 @@ def prepare_dashboard_plants(plants):
         try:
             analyzed_plant = analyze_plant(plant)
 
-            if analyzed_plant.get("valid", True):
+            if (analyzed_plant.get("valid") is True
+                    and analyzed_plant.get("analysis_status") == "COMPLETE_HEURISTIC_ANALYSIS"):
                 analyzed_plants.append(analyzed_plant)
 
         except Exception as error:
@@ -60,7 +61,7 @@ def prepare_dashboard_plants(plants):
             print(error)
 
     if not analyzed_plants:
-        return plants
+        return []
 
     try:
         return rank_plants(analyzed_plants)
@@ -68,7 +69,7 @@ def prepare_dashboard_plants(plants):
     except Exception as error:
         print("RANKING ERROR:")
         print(error)
-        return analyzed_plants
+        return []
 def open_dashboard_after_approval():
 
     plants = load_plants()
@@ -85,6 +86,9 @@ def open_dashboard_after_approval():
 
     try:
         dashboard_plants = prepare_dashboard_plants(plants)
+        if not dashboard_plants:
+            print("Dashboard stopped: no validated, ranked records.")
+            return
         launch_dashboard(dashboard_plants)
 
     except Exception:
@@ -104,6 +108,9 @@ def open_city_after_approval():
 
         city_plants = prepare_dashboard_plants(plants)
 
+        if not city_plants:
+            print("Scientific City stopped: no validated, ranked records.")
+            return
         launch_dashboard(city_plants)
 
     except Exception:

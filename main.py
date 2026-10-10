@@ -109,10 +109,6 @@ from code_quality_guard import run_code_quality_guard
 
 
 
-# Run startup diagnostic
-if not run_startup_diagnostic():
-    print("Startup diagnostic failed. Exiting.")
-    exit(1)
 
 def analyze_plant(plant):
     """Analyze a detached record; numeric gates do not certify physical validity."""
@@ -271,7 +267,9 @@ def analyze_plant(plant):
         return blocked("ENGINE_ERROR", {stage: f"{type(exc).__name__}: {exc}"})
 
 
-def main():
+def main(open_dashboard=True):
+    if not run_startup_diagnostic():
+        raise RuntimeError("Startup diagnostic failed")
 
     if not run_startup_diagnostic():
         return
@@ -334,7 +332,7 @@ def main():
     
     if not analyzed_plants:
         print("No valid records; downstream analysis stopped.")
-        return
+        raise RuntimeError("No valid records for downstream analysis")
 
     ranked_plants = rank_plants(analyzed_plants)
 
@@ -546,17 +544,16 @@ def main():
 
 
 
-    print("\n===================================")
-    print("OPENING DASHBOARD NOW...")
-    print("===================================")
-
-    try:
-        launch_dashboard(ranked_plants)
-        print("DASHBOARD CLOSED SUCCESSFULLY")
-
-    except Exception as error:
-        print("\nDASHBOARD LAUNCH ERROR:")
-        print(error)
+    if open_dashboard:
+        print("\nOPENING DASHBOARD NOW...")
+        try:
+            launch_dashboard(ranked_plants)
+            print("DASHBOARD CLOSED SUCCESSFULLY")
+        except Exception as error:
+            print("\nDASHBOARD LAUNCH ERROR:", error)
+            raise
+    else:
+        print("\nDASHBOARD SKIPPED: --no-gui; GUI execution not verified.")
 
     print("\n===================================")
     print("END LASERSTONE MAIN SYSTEM")
@@ -564,13 +561,19 @@ def main():
 
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description="Run LASERSTONE analysis and reports")
+    parser.add_argument("--no-gui", action="store_true",
+                        help="Run analysis and reports without launching the dashboard")
+    args = parser.parse_args()
 
     try:
-        main()
+        main(open_dashboard=not args.no_gui)
 
     except Exception as error:
         print("\nSYSTEM ERROR:")
         print(error)
+        sys.exit(1)
 
     finally:
         print("\nRUNNING POST-SYSTEM DIAGNOSTICS...")
@@ -593,3 +596,4 @@ if __name__ == "__main__":
         generate_system_health_report()
         show_next_priority()
     
+

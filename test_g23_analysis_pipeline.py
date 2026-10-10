@@ -212,5 +212,94 @@ class AnalysisPipelineTests(unittest.TestCase):
             self.assertEqual(save_all_reports([], folder), [])
             self.assertEqual(list(Path(folder).iterdir()), [])
 
+class RuntimeIntegrationTests(unittest.TestCase):
+    def test_real_launcher_preparation_preserves_source(self):
+        import safe_dashboard_launcher as launcher
+        from plants_data import plants
+        snapshot = copy.deepcopy(plants)
+        ranked = launcher.prepare_dashboard_plants(plants)
+        self.assertEqual(len(ranked), len(plants))
+        self.assertEqual(plants, snapshot)
+        self.assertTrue(all(p['analysis_status'] == 'COMPLETE_HEURISTIC_ANALYSIS'
+                            and p['valid'] for p in ranked))
+
+    def test_launcher_does_not_fall_back_to_raw_records(self):
+        import safe_dashboard_launcher as launcher
+        import main
+        raw = [{'name': 'invalid'}]
+        with patch.object(main, 'analyze_plant', return_value={'valid': False}):
+            self.assertEqual(launcher.prepare_dashboard_plants(raw), [])
+        with patch.dict('sys.modules', {'main': None}):
+            self.assertEqual(launcher.prepare_dashboard_plants(raw), [])
+
+    def test_launcher_ranking_failure_blocks_results(self):
+        import safe_dashboard_launcher as launcher
+        import main
+        with patch.object(main, 'analyze_plant', return_value={
+                'valid': True, 'analysis_status': 'COMPLETE_HEURISTIC_ANALYSIS'}), \
+                patch('global_ranking_engine.rank_plants', side_effect=ValueError('bad score')):
+            self.assertEqual(launcher.prepare_dashboard_plants([{'name': 'raw'}]), [])
+
+    def test_launcher_rejects_unqualified_analysis(self):
+        import safe_dashboard_launcher as launcher
+        import main
+        for record in ({'valid': True}, {'valid': True, 'analysis_status': 'BLOCKED'}):
+            with self.subTest(record=record), patch.object(main, 'analyze_plant', return_value=record):
+                self.assertEqual(launcher.prepare_dashboard_plants([{}]), [])
+
+    def test_no_dashboard_launch_when_preparation_is_empty(self):
+        import safe_dashboard_launcher as launcher
+        import dashboard_city
+        with patch.object(launcher, 'load_plants', return_value=[{'name': 'raw'}]), \
+                patch.object(launcher, 'prepare_dashboard_plants', return_value=[]), \
+                patch.object(launcher, 'load_dashboard') as load_dashboard, \
+                patch.object(dashboard_city, 'launch_dashboard') as city:
+            launcher.open_dashboard_after_approval()
+            launcher.open_city_after_approval()
+            load_dashboard.return_value.assert_not_called()
+            city.assert_not_called()
+
+    def test_full_no_gui_runtime_preserves_previous_report(self):
+        import shutil
+        import sys
+        import tempfile
+        source = Path(__file__).resolve().parent
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder) / 'project'
+            shutil.copytree(source, root, ignore=shutil.ignore_patterns('__pycache__', 'reports'))
+            reports = root / 'reports'
+            reports.mkdir()
+            previous = reports / 'hibiscus_report.txt'
+            previous.write_text('preserved historical report', encoding='utf-8')
+            raw_data = (root / 'plants_data.py').read_bytes()
+            result = subprocess.run([sys.executable, str(root / 'main.py'), '--no-gui'],
+                                    cwd=root, capture_output=True, text=True, encoding='utf-8',
+                                    env={**__import__('os').environ, 'PYTHONIOENCODING': 'utf-8'},
+                                    timeout=30)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn('NUMBER OF RANKED PLANTS: 7', result.stdout)
+            self.assertIn('END LASERSTONE MAIN SYSTEM', result.stdout)
+            self.assertIn('DASHBOARD SKIPPED', result.stdout)
+            self.assertNotIn('SYSTEM ERROR:', result.stdout)
+            self.assertEqual(previous.read_text(encoding='utf-8'), 'preserved historical report')
+            self.assertEqual(len(list(reports.glob('*_report*.txt'))), 8)
+            self.assertEqual((root / 'plants_data.py').read_bytes(), raw_data)
+            new_report = (reports / 'hibiscus_report_001.txt').read_text(encoding='utf-8')
+            self.assertIn('NOT_ESTABLISHED_BY_THIS_PIPELINE', new_report)
+
+    def test_startup_failure_returns_nonzero_exit_status(self):
+        import sys
+        import tempfile
+        with tempfile.TemporaryDirectory() as folder:
+            result = subprocess.run([sys.executable, str(Path(__file__).with_name('main.py')),
+                                     '--no-gui'], cwd=folder, capture_output=True, text=True,
+                                    encoding='utf-8', timeout=30,
+                                    env={**__import__('os').environ, 'PYTHONIOENCODING': 'utf-8'})
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('Startup diagnostic failed', result.stdout)
+            self.assertFalse((Path(folder) / 'reports').exists())
+
+
 if __name__ == '__main__':
     unittest.main()
+
