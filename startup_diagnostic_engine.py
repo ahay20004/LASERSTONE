@@ -1,12 +1,16 @@
 
 import os
-import py_compile
+from pathlib import Path
 
 def run_startup_diagnostic():
 
     print("\n=== LASERSTONE STARTUP DIAGNOSTIC ===\n")
 
     current_folder = os.getcwd()
+    active_root = Path(__file__).resolve().parent
+    if Path(current_folder).resolve() != active_root:
+        print(f"Startup Status: PATH ERROR; run from active root: {active_root}")
+        return False
 
     print(f"Current Folder:")
     print(current_folder)
@@ -22,7 +26,7 @@ def run_startup_diagnostic():
     missing_files = []
 
     for file_path in required_files:
-        if not os.path.exists(file_path):
+        if not os.path.isfile(file_path):
             missing_files.append(file_path)
 
     if missing_files:
@@ -50,13 +54,10 @@ def run_startup_diagnostic():
 
     for file_path in files_to_check:
         try:
-            py_compile.compile(
-                file_path,
-                doraise=True
-            )
+            compile(Path(file_path).read_text(encoding="utf-8-sig"), file_path, "exec")
             print(f"Syntax OK: {file_path}")
 
-        except py_compile.PyCompileError as error:
+        except (SyntaxError, OSError, UnicodeError) as error:
             print(f"\nProblem: Syntax error in {file_path}")
             print(error)
             print("\nStartup Status: CODE ERROR")

@@ -1,212 +1,87 @@
-import os
-import sys
+"""Display the prepared session; imports alone never establish readiness."""
 import tkinter as tk
-from tkinter import messagebox
 
 
-ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
-CORE_DIR = os.path.join(ROOT_DIR, "core")
-DATABASE_DIR = os.path.join(ROOT_DIR, "database")
-
-
-for path in [ROOT_DIR, CORE_DIR, DATABASE_DIR]:
-    if path not in sys.path:
-        sys.path.insert(0, path)
-
-
-def check_system_status():
+def check_system_status(runtime_state=None):
     issues = []
-
-    required_files = {
-        "dashboard.py": os.path.join(ROOT_DIR, "dashboard.py"),
-        "plants_data.py": os.path.join(ROOT_DIR, "plants_data.py"),
-        "code_repair_advisor.py": os.path.join(ROOT_DIR, "code_repair_advisor.py"),
-        "startup_diagnostic_engine.py": os.path.join(
-            ROOT_DIR,
-            "startup_diagnostic_engine.py"
-        ),
-        "system_integrity_engine.py": os.path.join(
-            ROOT_DIR,
-            "system_integrity_engine.py"
-        ),
-    }
-
-    for file_name, file_path in required_files.items():
-        if not os.path.exists(file_path):
-            issues.append(f"Missing file: {file_name}")
-
-    try:
-        from plants_data import plants
-        plants_count = len(plants)
-
-    except Exception as error:
-        plants_count = 0
-        issues.append(f"Plants data error: {error}")
-
+    if runtime_state is None:
+        try:
+            from main import prepare_runtime
+            runtime_state = prepare_runtime()
+        except Exception as error:
+            issues.append(f"Runtime preparation failed: {error}")
+            runtime_state = {}
+    from system_health_engine import describe_runtime_state
+    evidence = describe_runtime_state(runtime_state.get("ranked_plants", []), runtime_state)
+    if evidence["status"] != "ANALYSIS_READY":
+        issues.append("No complete checked analysis session")
     try:
         from dashboard import launch_dashboard
-        dashboard_ready = True
-
+        dashboard_imported = callable(launch_dashboard)
+        if not dashboard_imported:
+            issues.append("Dashboard entry point is not callable")
     except Exception as error:
-        dashboard_ready = False
+        dashboard_imported = False
         issues.append(f"Dashboard import error: {error}")
-
-    status = "READY" if not issues else "WARNING"
-
+    try:
+        from dashboard_city import launch_dashboard as launch_city
+        city_imported = callable(launch_city)
+    except Exception:
+        city_imported = False
     return {
-        "status": status,
+        "status": "ANALYSIS_READY" if not issues else "BLOCKED",
         "issues": issues,
-        "plants_count": plants_count,
-        "dashboard_ready": dashboard_ready,
+        "plants_count": len(runtime_state.get("ranked_plants", [])),
+        "dashboard_ready": dashboard_imported and not issues,
+        "city_ready": city_imported and not issues,
+        "runtime_state": runtime_state,
     }
 
 
-def open_entry_gateway(on_approve, on_city=None):
-    result = check_system_status()
-
+def open_entry_gateway(on_approve, on_city=None, runtime_state=None):
+    result = check_system_status(runtime_state)
     root = tk.Tk()
     root.title("LASERSTONE ENTRY GATEWAY")
-    root.geometry("680x540")
-
-    title = tk.Label(
-        root,
-        text="LASERSTONE™ ENTRY GATEWAY",
-        font=("Arial", 16, "bold")
-    )
-    title.pack(pady=10)
-
-    status_color = "lightgreen"
-
-    if result["status"] != "READY":
-        status_color = "khaki"
-
-    status_label = tk.Label(
-        root,
-        text=f"SYSTEM STATUS: {result['status']}",
-        font=("Arial", 13, "bold"),
-        bg=status_color,
-        width=42,
-        height=2,
-        relief="groove"
-    )
-    status_label.pack(pady=8)
-
-    info_text = (
-        f"Plants Loaded: {result['plants_count']}\n"
-        f"Dashboard Ready: {result['dashboard_ready']}\n"
-        f"Issues Found: {len(result['issues'])}"
-    )
-
-    info_label = tk.Label(
-        root,
-        text=info_text,
-        font=("Arial", 11),
-        justify="left"
-    )
-    info_label.pack(pady=8)
-
-    text_box = tk.Text(
-        root,
-        height=14,
-        wrap="word"
-    )
-    text_box.pack(
-        fill="both",
-        expand=True,
-        padx=15,
-        pady=10
-    )
-
+    root.geometry("740x460")
+    tk.Label(root, text="LASERSTONE ENTRY GATEWAY", font=("Arial", 16, "bold")).pack(pady=12)
+    tk.Label(root, text=f"SYSTEM STATUS: {result['status']}",
+             bg="lightgreen" if result["dashboard_ready"] else "khaki",
+             font=("Arial", 13, "bold")).pack(pady=8)
+    tk.Label(root, text=f"Checked materials: {result['plants_count']}").pack(pady=8)
+    text = tk.Text(root, height=12, wrap="word")
+    text.pack(fill="both", expand=True, padx=15, pady=10)
     if result["issues"]:
-        text_box.insert(
-            "1.0",
-            "ISSUES DETECTED:\n\n"
-        )
-
-        for issue in result["issues"]:
-            text_box.insert(
-                "end",
-                f"- {issue}\n"
-            )
-
-        text_box.insert(
-            "end",
-            "\nDECISION OPTIONS:\n"
-            "1) APPROVE & OPEN DASHBOARD:\n"
-            "   Continue opening the dashboard despite warnings.\n\n"
-            "2) STOP / REVIEW:\n"
-            "   Stop here and review the listed issues manually.\n\n"
-            "Safety Rule:\n"
-            "No automatic repair is applied from this gateway."
-        )
-
+        text.insert("1.0", "Opening blocked:\n" + "\n".join(result["issues"]))
     else:
-        text_box.insert(
-            "1.0",
-            "SYSTEM CHECK PASSED SUCCESSFULLY.\n\n"
-            "The LASERSTONE dashboard is ready to open.\n\n"
-            "Decision:\n"
-            "Press APPROVE & OPEN DASHBOARD to continue."
-        )
+        text.insert("1.0", "Analysis and ranking completed. Choose a view.\n\n"
+                    "Results are heuristic research triage. Physical validation is not established.\n"
+                    "Simulator availability does not establish execution or integration.\n"
+                    "This preparation has not exported reports or launched a simulator.")
+    text.config(state="disabled")
+    view_errors = []
 
-    text_box.config(state="disabled")
-
-    def approve():
+    def open_view(callback, ready):
+        if not ready:
+            return
+        # Close this Tk root before creating the selected view's root.
         root.destroy()
-        on_approve()
+        try:
+            callback()
+        except Exception as error:
+            print("VIEW LAUNCH ERROR:", error)
+            # Tk catches callback exceptions; propagate after its loop ends so
+            # the command-line launcher returns a failure exit status.
+            view_errors.append(error)
 
-    def open_city():
-        root.withdraw()
-
-        if on_city is not None:
-            on_city()
-
-    def stop():
-        messagebox.showinfo(
-            "LASERSTONE ENTRY GATEWAY",
-            "Entry cancelled. No files were changed."
-       )
-        root.destroy()
-
-    button_frame = tk.Frame(root)
-    button_frame.pack(pady=12)
-
-    approve_button = tk.Button(
-        button_frame,
-        text="APPROVE & OPEN DASHBOARD",
-        font=("Arial", 11, "bold"),
-        width=28,
-        command=approve
-    )
-    approve_button.pack(
-        side=tk.LEFT,
-        padx=8
-    )
-
-    stop_button = tk.Button(
-        button_frame,
-        text="STOP / REVIEW",
-        font=("Arial", 11, "bold"),
-        width=18,
-        command=stop
-    )
-
-    
-
-    stop_button.pack(
-        side=tk.LEFT,
-        padx=8
-    )
-
-    city_button = tk.Button(
-        button_frame,
-        text="OPEN SCIENTIFIC CITY",
-        font=("Arial", 11, "bold"),
-        width=28,
-        command=open_city)
-
-    city_button.pack(
-        side=tk.LEFT,
-        padx=8 )
-
+    buttons = tk.Frame(root)
+    buttons.pack(pady=12)
+    tk.Button(buttons, text="OPEN DASHBOARD", state="normal" if result["dashboard_ready"] else "disabled",
+              command=lambda: open_view(on_approve, result["dashboard_ready"])).pack(side=tk.LEFT, padx=8)
+    tk.Button(buttons, text="OPEN SCIENTIFIC CITY",
+              state="normal" if result["city_ready"] and on_city else "disabled",
+              command=lambda: open_view(on_city, result["city_ready"] and on_city is not None)).pack(side=tk.LEFT, padx=8)
+    tk.Button(buttons, text="CLOSE", command=root.destroy).pack(side=tk.LEFT, padx=8)
     root.mainloop()
+    if view_errors:
+        raise view_errors[0]
+    return result

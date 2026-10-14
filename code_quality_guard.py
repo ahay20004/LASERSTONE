@@ -1,4 +1,4 @@
-import py_compile
+from pathlib import Path
 
 
 def run_code_quality_guard():
@@ -17,14 +17,11 @@ def run_code_quality_guard():
     for file_path in files_to_check:
 
         try:
-            py_compile.compile(
-                file_path,
-                doraise=True
-            )
+            compile((Path(__file__).resolve().parent / file_path).read_text(encoding="utf-8-sig"), file_path, "exec")
 
             print(f"Syntax OK: {file_path}")
 
-        except py_compile.PyCompileError as error:
+        except (SyntaxError, OSError, UnicodeError) as error:
 
             print(f"\nSyntax Error Found: {file_path}")
             print(error)

@@ -6,34 +6,12 @@ from recommendation_engine import generate_recommendations
 from project_registry import PROJECT_REGISTRY
 
 def show_system_integrity():
-
-    info = """
-SYSTEM INTEGRITY CENTER
-
-Startup Diagnostic : PASS
-
-Code Quality Guard : PASS
-
-Repair Advisor     : READY
-
-Runtime Monitor    : ACTIVE
-
-Registry Status    : CLEAN
-
-Connected Engines  : 32
-
-Isolated Engines   : 0
-
-Overall Status     : HEALTHY
-"""
-
-    messagebox.showinfo(
-        "SYSTEM INTEGRITY CENTER",
-        info
-    )
+    from system_health_engine import describe_runtime_state, format_runtime_evidence
+    messagebox.showinfo("SYSTEM INTEGRITY CENTER",
+                        format_runtime_evidence(describe_runtime_state([])))
 
 
-def launch_dashboard(ranked_plants):
+def launch_dashboard(ranked_plants, runtime_state=None):
 
     window = tk.Tk()
     window.title("LASERSTONE™ V1 Control Center")
@@ -60,12 +38,14 @@ def launch_dashboard(ranked_plants):
         pady=10)
 
     total_materials = len(ranked_plants)
-    total_engines = 32
-    connected_engines = 32
-    isolated_engines = 0
-    platform_maturity = 100.0
-    system_status = "EXCELLENT"
-    platform_class = "INTELLIGENT SCIENTIFIC PLATFORM"
+    from system_health_engine import describe_runtime_state, format_runtime_evidence
+    evidence = describe_runtime_state(ranked_plants, runtime_state, PROJECT_REGISTRY)
+    total_engines = evidence["registered_engines"]
+    connected_engines = evidence["declared_connected"]
+    isolated_engines = evidence["declared_isolated"]
+    platform_maturity = evidence["declared_connectivity_percent"]
+    system_status = evidence["status"]
+    platform_class = "HEURISTIC RESEARCH TRIAGE"
 
     top_material = ranked_plants[0] if ranked_plants else {}
 
@@ -111,11 +91,11 @@ def launch_dashboard(ranked_plants):
     control_cards = [
         ("SYSTEM STATUS", system_status),
         ("PLATFORM CLASS", platform_class),
-        ("MATURITY", f"{platform_maturity}%"),
+        ("DECLARED LINKS", f"{platform_maturity}%"),
         ("TOTAL ENGINES", str(total_engines)),
-        ("CONNECTED", str(connected_engines)),
+        ("DECLARED CONNECTED", str(connected_engines)),
         ("ISOLATED", str(isolated_engines)),
-        ("REGISTRY", "CLEAN"),
+        ("REGISTRY", "DECLARATIONS ONLY"),
     ]
 
     for title_text, value_text in control_cards:
@@ -152,19 +132,7 @@ def launch_dashboard(ranked_plants):
         integrity_window.title("LASERSTONE SYSTEM INTEGRITY")
         integrity_window.geometry("520x420")
 
-        report = (
-            "LASERSTONE SYSTEM INTEGRITY REPORT\n\n"
-            f"System Status: {system_status}\n"
-            f"Platform Class: {platform_class}\n"
-            f"Platform Maturity: {platform_maturity}%\n"
-            f"Total Engines: {total_engines}\n"
-            f"Connected Engines: {connected_engines}\n"
-            f"Isolated Engines: {isolated_engines}\n"
-            "Registry: CLEAN\n\n"
-            "Gateway Modules:\n"
-            "✓ Knowledge Center: ACTIVE\n"
-            "✓ Material Analysis: ACTIVE\n"
-            "✓ Repair Advisor: STANDBY\n" )
+        report = format_runtime_evidence(evidence)
 
         text_box = tk.Text(integrity_window, wrap="word")
         text_box.pack(fill="both", expand=True, padx=10, pady=10)
@@ -172,10 +140,7 @@ def launch_dashboard(ranked_plants):
         text_box.config(state="disabled")
 
 
-        text_box = tk.Text(integrity_window, wrap="word")
-        text_box.pack(fill="both", expand=True, padx=10, pady=10)
-        text_box.insert("1.0", report)
-        text_box.config(state="disabled")
+
      
     def show_knowledge_center():
         knowledge_window = tk.Toplevel(window)

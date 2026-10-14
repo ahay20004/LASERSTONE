@@ -28,8 +28,10 @@ def generate_runtime_report(
         "plants_processed":
         total_plants,
 
-        "engines_active":
-        total_engines,
+        # This argument is a system-map layer count, not observed execution.
+        "declared_layers": total_engines,
+        "engines_active": None,
+        "execution_status": "NOT_INSTRUMENTED",
 
         "system_status":
         classify_runtime(runtime)

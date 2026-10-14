@@ -300,6 +300,223 @@ class RuntimeIntegrationTests(unittest.TestCase):
             self.assertFalse((Path(folder) / 'reports').exists())
 
 
+class UnifiedRuntimeTests(unittest.TestCase):
+    def test_loader_returns_detached_nonempty_database(self):
+        import safe_dashboard_launcher as launcher
+        from plants_data import plants
+        loaded = launcher.load_plants()
+        self.assertEqual(loaded, plants)
+        self.assertIsNot(loaded, plants)
+        loaded[0]['name'] = 'changed test copy'
+        self.assertNotEqual(loaded[0]['name'], plants[0]['name'])
+
+    def test_preparation_runs_once_and_populates_every_material(self):
+        import main
+        from plants_data import plants
+        original = copy.deepcopy(plants)
+        with patch.object(main, 'run_startup_diagnostic', return_value=True) as startup, \
+                patch.object(main, 'run_code_quality_guard', return_value=True) as quality, \
+                patch.object(main, 'analyze_plant', wraps=main.analyze_plant) as analysis, \
+                patch.object(main, 'generate_hybrid_candidates', wraps=main.generate_hybrid_candidates) as hybrids, \
+                patch.object(main, 'save_all_reports') as export, \
+                patch('subprocess.Popen') as process:
+            state = main.prepare_runtime()
+        startup.assert_called_once()
+        quality.assert_called_once()
+        hybrids.assert_called_once()
+        self.assertEqual(analysis.call_count, len(plants))
+        export.assert_not_called()
+        process.assert_not_called()
+        self.assertEqual(plants, original)
+        for plant in state['ranked_plants']:
+            self.assertEqual(plant['mission_control']['name'], plant['name'])
+            self.assertIn('laser_architecture', plant)
+            self.assertIn('laser_output', plant)
+            self.assertIn('audit_status', plant)
+        self.assertEqual(state['simulators']['simulators']['scaps-1d']['simulation_execution'], 'NOT_TESTED')
+
+    def test_gates_fail_closed_before_analysis(self):
+        import main
+        with patch.object(main, 'run_startup_diagnostic', return_value=False), \
+                patch.object(main, 'analyze_plant') as analysis:
+            with self.assertRaisesRegex(RuntimeError, 'Startup diagnostic failed'):
+                main.prepare_runtime()
+            analysis.assert_not_called()
+        with patch.object(main, 'run_startup_diagnostic', return_value=True), \
+                patch.object(main, 'run_code_quality_guard', return_value=False), \
+                patch.object(main, 'analyze_plant') as analysis:
+            with self.assertRaisesRegex(RuntimeError, 'Code quality guard failed'):
+                main.prepare_runtime()
+            analysis.assert_not_called()
+        with patch.object(main, 'run_startup_diagnostic', return_value=True), \
+                patch.object(main, 'run_code_quality_guard', return_value=True), \
+                patch.object(main, 'run_configuration_validation', return_value={'system_valid': False}), \
+                patch.object(main, 'analyze_plant') as analysis:
+            with self.assertRaisesRegex(RuntimeError, 'Configuration validation failed'):
+                main.prepare_runtime()
+            analysis.assert_not_called()
+
+    def test_partial_batch_never_silently_becomes_ready(self):
+        import main
+        from plants_data import plants
+        with self.assertRaisesRegex(RuntimeError, 'Analysis blocked'):
+            main.prepare_analysis([plants[0], {'name': 'incomplete'}])
+
+    def test_ranking_failure_is_not_hidden(self):
+        import main
+        from plants_data import plants
+        with patch('global_ranking_engine.rank_plants', side_effect=ValueError('controlled rank failure')):
+            with self.assertRaisesRegex(ValueError, 'controlled rank failure'):
+                main.prepare_analysis(plants)
+
+    def test_gateway_requires_checked_session_not_import_success(self):
+        from entry_gateway import check_system_status
+        self.assertEqual(check_system_status({})['status'], 'BLOCKED')
+        import main
+        state = main.prepare_runtime()
+        self.assertEqual(check_system_status(state)['status'], 'ANALYSIS_READY')
+        state['checks']['ranking'] = 'FAIL'
+        self.assertEqual(check_system_status(state)['status'], 'BLOCKED')
+
+    def test_registered_connections_do_not_prove_execution(self):
+        from system_health_engine import describe_runtime_state
+        registry = {'a': {'inputs': ['x']}, 'b': {'outputs': []}}
+        evidence = describe_runtime_state([], registry=registry)
+        self.assertEqual(evidence['registered_engines'], 2)
+        self.assertEqual(evidence['declared_connected'], 1)
+        self.assertEqual(evidence['declared_isolated'], 1)
+        self.assertEqual(evidence['status'], 'NOT_VERIFIED')
+        self.assertEqual(evidence['engine_execution'], 'NOT_INSTRUMENTED')
+        self.assertEqual(evidence['simulator_execution'], 'NOT_VERIFIED')
+
+    def test_gateway_handoff_reuses_prepared_session(self):
+        import safe_dashboard_launcher as launcher
+        import main
+        state = main.prepare_runtime()
+        def gateway(dashboard, city, runtime_state):
+            self.assertIs(runtime_state, state)
+            dashboard()
+            city()
+        with patch.object(main, 'prepare_runtime', return_value=state) as prepare, \
+                patch.object(launcher, 'open_entry_gateway', side_effect=gateway), \
+                patch.object(launcher, 'load_dashboard') as dashboard, \
+                patch('dashboard_city.launch_dashboard') as city:
+            launcher.main()
+        prepare.assert_called_once()
+        dashboard.return_value.assert_called_once_with(state['ranked_plants'], runtime_state=state)
+        city.assert_called_once_with(state['ranked_plants'], runtime_state=state)
+
+    def test_single_material_and_empty_network_finish_without_stale_loop_variables(self):
+        import main
+        from plants_data import plants
+        import io
+        from contextlib import redirect_stdout
+        with patch.object(main, 'plants', [plants[0]]), \
+                patch.object(main, 'build_material_network', return_value=[]), \
+                patch.object(main, 'save_all_reports', return_value=[]), \
+                redirect_stdout(io.StringIO()):
+            state = main.main(open_dashboard=False)
+        self.assertEqual(len(state['ranked_plants']), 1)
+        self.assertEqual(state['ranked_plants'][0]['mission_control']['name'], state['ranked_plants'][0]['name'])
+
+    def test_console_uses_same_prepared_records(self):
+        import main
+        import io
+        from contextlib import redirect_stdout
+        state = main.prepare_runtime()
+        with patch.object(main, 'prepare_runtime', return_value=state) as prepare, \
+                patch.object(main, 'save_all_reports', return_value=[]) as export, \
+                patch.object(main, 'analyze_plant') as analysis, \
+                patch.object(main, 'generate_hybrid_candidates') as hybrids, \
+                redirect_stdout(io.StringIO()):
+            result = main.main(open_dashboard=False)
+        self.assertIs(result, state)
+        prepare.assert_called_once()
+        export.assert_called_once_with(state['ranked_plants'])
+        analysis.assert_not_called()
+        hybrids.assert_not_called()
+
+    def test_launcher_check_is_read_only_and_does_not_open_gui(self):
+        import main
+        import safe_dashboard_launcher as launcher
+        import io
+        from contextlib import redirect_stdout
+        with patch.object(main, 'save_all_reports') as export, \
+                patch.object(launcher, 'open_entry_gateway') as gateway, \
+                redirect_stdout(io.StringIO()):
+            state = launcher.main(check_only=True)
+        self.assertEqual(state['status'], 'ANALYSIS_READY')
+        export.assert_not_called()
+        gateway.assert_not_called()
+
+    def test_declared_layers_are_not_active_engine_count(self):
+        from runtime_monitor_engine import generate_runtime_report
+        report = generate_runtime_report(1, 7, 8)
+        self.assertEqual(report['declared_layers'], 8)
+        self.assertIsNone(report['engines_active'])
+
+    def test_gateway_city_closes_root_before_callback_and_propagates_failure(self):
+        import entry_gateway as gateway
+        from unittest.mock import MagicMock
+        root = MagicMock()
+        buttons = {}
+        def button(parent, **options):
+            buttons[options['text']] = options
+            return MagicMock()
+        def city():
+            root.destroy.assert_called_once()
+            raise RuntimeError('controlled view failure')
+        root.mainloop.side_effect = lambda: buttons['OPEN SCIENTIFIC CITY']['command']()
+        ready = {'status': 'ANALYSIS_READY', 'issues': [], 'plants_count': 7,
+                 'dashboard_ready': True, 'city_ready': True}
+        with patch.object(gateway, 'check_system_status', return_value=ready), \
+                patch.object(gateway.tk, 'Tk', return_value=root), \
+                patch.object(gateway.tk, 'Label'), patch.object(gateway.tk, 'Text'), \
+                patch.object(gateway.tk, 'Frame'), patch.object(gateway.tk, 'Button', side_effect=button):
+            with self.assertRaisesRegex(RuntimeError, 'controlled view failure'):
+                gateway.open_entry_gateway(lambda: None, city)
+        root.withdraw.assert_not_called()
+
+    def test_gateway_blocks_callbacks_even_if_disabled_button_command_is_invoked(self):
+        import entry_gateway as gateway
+        from unittest.mock import MagicMock
+        root = MagicMock()
+        buttons = {}
+        def button(parent, **options):
+            buttons[options['text']] = options
+            return MagicMock()
+        def attempt():
+            buttons['OPEN DASHBOARD']['command']()
+            buttons['OPEN SCIENTIFIC CITY']['command']()
+        root.mainloop.side_effect = attempt
+        blocked = {'status': 'BLOCKED', 'issues': ['incomplete'], 'plants_count': 0,
+                   'dashboard_ready': False, 'city_ready': False}
+        callback = MagicMock()
+        with patch.object(gateway, 'check_system_status', return_value=blocked), \
+                patch.object(gateway.tk, 'Tk', return_value=root), \
+                patch.object(gateway.tk, 'Label'), patch.object(gateway.tk, 'Text'), \
+                patch.object(gateway.tk, 'Frame'), patch.object(gateway.tk, 'Button', side_effect=button):
+            gateway.open_entry_gateway(callback, callback)
+        callback.assert_not_called()
+        self.assertEqual(buttons['OPEN DASHBOARD']['state'], 'disabled')
+
+    def test_post_diagnostics_are_not_duplicated(self):
+        import sys
+        import tempfile
+        import shutil
+        source = Path(__file__).resolve().parent
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder) / 'project'
+            shutil.copytree(source, root, ignore=shutil.ignore_patterns('.git', '__pycache__', 'reports'))
+            result = subprocess.run([sys.executable, str(root / 'main.py'), '--no-gui'], cwd=root,
+                                    capture_output=True, encoding='utf-8', timeout=30,
+                                    env={**__import__('os').environ, 'PYTHONIOENCODING': 'utf-8'})
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(result.stdout.count('=== LASERSTONE STARTUP DIAGNOSTIC ==='), 1)
+        self.assertEqual(result.stdout.count('=== SYSTEM HEALTH REPORT ==='), 1)
+
+
+
 if __name__ == '__main__':
     unittest.main()
 

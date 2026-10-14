@@ -1,3 +1,4 @@
+"""Use the same checked runtime preparation as the console and scientific city."""
 import os
 import sys
 import traceback
@@ -5,128 +6,90 @@ import traceback
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 CORE_DIR = os.path.join(ROOT_DIR, "core")
 DATABASE_DIR = os.path.join(ROOT_DIR, "database")
-
-for path in [ROOT_DIR, CORE_DIR, DATABASE_DIR]:
-    if path not in sys.path:
-        sys.path.insert(0, path)
+for path in (ROOT_DIR, CORE_DIR, DATABASE_DIR):
+    if path in sys.path:
+        sys.path.remove(path)
+    sys.path.insert(0, path)
 
 from entry_gateway import open_entry_gateway
-from executive_summary_engine import generate_executive_summary
+
 
 def load_plants():
-    try:
-        from plants_data import plants
-        return []
-
-    except Exception as error:
-        print("PLANTS LOAD ERROR:")
-        print(error)
-        return []
+    import copy
+    from plants_data import plants
+    if not isinstance(plants, (list, tuple)) or not plants:
+        raise RuntimeError("Plant database is empty or malformed")
+    return copy.deepcopy(plants)
 
 
 def load_dashboard():
-    try:
-        from dashboard import launch_dashboard
-        return launch_dashboard
+    from dashboard import launch_dashboard
+    return launch_dashboard
 
-    except Exception as error:
-        print("DASHBOARD LOAD ERROR:")
-        print(error)
-        return None
+
 def prepare_dashboard_plants(plants):
-
+    """Compatibility entry point; all scientific preparation lives in main."""
     try:
-        from main import analyze_plant
-        from global_ranking_engine import rank_plants
-
+        from main import prepare_runtime
+        return prepare_runtime(plants)["ranked_plants"]
     except Exception as error:
-        print("DASHBOARD PREPARATION IMPORT ERROR:")
-        print(error)
+        print("DASHBOARD PREPARATION ERROR:", error)
         return []
 
-    analyzed_plants = []
 
-    for plant in plants:
-
-        try:
-            analyzed_plant = analyze_plant(plant)
-
-            if (analyzed_plant.get("valid") is True
-                    and analyzed_plant.get("analysis_status") == "COMPLETE_HEURISTIC_ANALYSIS"):
-                analyzed_plants.append(analyzed_plant)
-
-        except Exception as error:
-            print("PLANT ANALYSIS ERROR:")
-            print(plant.get("name", "Unknown"))
-            print(error)
-
-    if not analyzed_plants:
-        return []
-
-    try:
-        return rank_plants(analyzed_plants)
-
-    except Exception as error:
-        print("RANKING ERROR:")
-        print(error)
-        return []
-def open_dashboard_after_approval():
-
-    plants = load_plants()
-
-    if not plants:
-        print("No plants loaded.")
-        return
-
-    launch_dashboard = load_dashboard()
-
-    if launch_dashboard is None:
-        print("Dashboard could not be loaded.")
-        return
-
-    try:
-        dashboard_plants = prepare_dashboard_plants(plants)
-        if not dashboard_plants:
-            print("Dashboard stopped: no validated, ranked records.")
-            return
-        launch_dashboard(dashboard_plants)
-
-    except Exception:
-        print("DASHBOARD RUNTIME ERROR:")
-        traceback.print_exc()
-
-def open_city_after_approval():
-
-    try:
-        plants = load_plants()
-
-        if not plants:
-            print("No plants loaded for Scientific City.")
-            return
-
+def _open_view(city=False, runtime_state=None):
+    if runtime_state is None:
+        # Standalone callbacks also use the shared scientific pipeline.
+        ranked = prepare_dashboard_plants(load_plants())
+    else:
+        if runtime_state.get("status") != "ANALYSIS_READY":
+            raise RuntimeError("Runtime is not ready")
+        ranked = runtime_state["ranked_plants"]
+    if not ranked:
+        print("View stopped: no validated, ranked records.")
+        return False
+    if city:
         from dashboard_city import launch_dashboard
+    else:
+        launch_dashboard = load_dashboard()
+    launch_dashboard(ranked, runtime_state=runtime_state)
+    return True
 
-        city_plants = prepare_dashboard_plants(plants)
 
-        if not city_plants:
-            print("Scientific City stopped: no validated, ranked records.")
-            return
-        launch_dashboard(city_plants)
+def open_dashboard_after_approval(runtime_state=None):
+    return _open_view(runtime_state=runtime_state)
 
-    except Exception:
-        print("SCIENTIFIC CITY RUNTIME ERROR:")
-        traceback.print_exc()
-def main():
 
-    print("\n===================================")
-    print("LASERSTONE SAFE DASHBOARD LAUNCHER")
-    print("===================================")
+def open_city_after_approval(runtime_state=None):
+    return _open_view(city=True, runtime_state=runtime_state)
 
+
+def main(check_only=False):
+    from main import prepare_runtime
+    # Prepare once; the gateway and selected view consume this same session.
+    state = prepare_runtime(load_plants())
+    if check_only:
+        print("Runtime status:", state["status"])
+        print("Ranked materials:", len(state["ranked_plants"]))
+        print("Physical validation:", state["physical_validation"])
+        print("SCAPS execution:", state["simulators"]["simulators"]["scaps-1d"]["simulation_execution"])
+        return state
     open_entry_gateway(
-        open_dashboard_after_approval,
-        open_city_after_approval
-   )
+        lambda: open_dashboard_after_approval(state),
+        lambda: open_city_after_approval(state),
+        runtime_state=state,
+    )
+    return state
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    parser = argparse.ArgumentParser(description="Checked LASERSTONE launcher")
+    parser.add_argument("--check", action="store_true",
+                        help="Prepare and verify without GUI, report export or simulator launch")
+    args = parser.parse_args()
+    try:
+        main(check_only=args.check)
+    except Exception:
+        traceback.print_exc()
+        sys.exit(1)

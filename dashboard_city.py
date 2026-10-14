@@ -1,36 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-try:
-    from recommendation_engine import generate_recommendations
-except Exception:
-    def generate_recommendations(ranked_plants):
-        top = ranked_plants[0] if ranked_plants else {}
-        return {
-            "recommended_material": top.get("name", "N/A"),
-            "best_overall_material": top.get("name", "N/A"),
-            "best_patent_candidate": top.get("name", "N/A"),
-            "system_assessment": "READY FOR EXPANSION",
-        }
-
-try:
-    from executive_summary_engine import generate_executive_summary
-except Exception:
-    def generate_executive_summary(plant):
-        return {
-            "plant": plant.get("name", "N/A"),
-            "rank": plant.get("global_rank", "N/A"),
-            "laser_color": plant.get("laser_color", "N/A"),
-            "wavelength": plant.get("lambda_em", "N/A"),
-            "lri": plant.get("lri_score", "N/A"),
-            "status": plant.get("final_decision", "UNDER REVIEW"),
-            "confidence": plant.get("scientific_confidence_score", "N/A"),
-        }
-
-try:
-    from project_registry import PROJECT_REGISTRY
-except Exception:
-    PROJECT_REGISTRY = {}
+from recommendation_engine import generate_recommendations
+from executive_summary_engine import generate_executive_summary
+from project_registry import PROJECT_REGISTRY
 
 
 def safe_score(value, default=0):
@@ -90,19 +63,21 @@ def open_text_window(parent, title, report, geometry="760x560"):
     text_box.config(state="disabled")
 
 
-def launch_dashboard(ranked_plants):
+def launch_dashboard(ranked_plants, runtime_state=None):
     print("CITY DASHBOARD STARTED")
     window = tk.Tk()
     window.title("LASERSTONE™ Scientific City")
     window.geometry("1350x1000")
 
     total_materials = len(ranked_plants)
-    total_engines = 32
-    connected_engines = 32
-    isolated_engines = 0
-    platform_maturity = 100.0
-    system_status = "EXCELLENT"
-    platform_class = "INTELLIGENT SCIENTIFIC PLATFORM"
+    from system_health_engine import describe_runtime_state, format_runtime_evidence
+    evidence = describe_runtime_state(ranked_plants, runtime_state, PROJECT_REGISTRY)
+    total_engines = evidence["registered_engines"]
+    connected_engines = evidence["declared_connected"]
+    isolated_engines = evidence["declared_isolated"]
+    platform_maturity = evidence["declared_connectivity_percent"]
+    system_status = evidence["status"]
+    platform_class = "HEURISTIC RESEARCH TRIAGE"
 
     top_material = ranked_plants[0] if ranked_plants else {}
 
@@ -125,22 +100,7 @@ def launch_dashboard(ranked_plants):
         return top_material.get(key, default)
 
     def show_system_integrity():
-        report = (
-            "LASERSTONE SYSTEM INTEGRITY REPORT\n\n"
-            f"System Status: {system_status}\n"
-            f"Platform Class: {platform_class}\n"
-            f"Platform Maturity: {platform_maturity}%\n"
-            f"Total Engines: {total_engines}\n"
-            f"Connected Engines: {connected_engines}\n"
-            f"Isolated Engines: {isolated_engines}\n"
-            "Registry: CLEAN\n\n"
-            "Gateway Modules:\n"
-            "✓ Knowledge Center: ACTIVE\n"
-            "✓ Material Analysis: ACTIVE\n"
-            "✓ Physics Core: ACTIVE\n"
-            "✓ Executive Wing: ACTIVE\n"
-            "✓ Repair Advisor: STANDBY\n"
-        )
+        report = format_runtime_evidence(evidence)
         open_text_window(window, "LASERSTONE SYSTEM INTEGRITY", report, "620x460")
 
     def show_knowledge_center():
@@ -558,11 +518,11 @@ def launch_dashboard(ranked_plants):
         control_cards = [
             ("SYSTEM STATUS", system_status),
             ("PLATFORM CLASS", platform_class),
-            ("MATURITY", f"{platform_maturity}%"),
+            ("DECLARED LINKS", f"{platform_maturity}%"),
             ("TOTAL ENGINES", str(total_engines)),
-            ("CONNECTED", str(connected_engines)),
+            ("DECLARED CONNECTED", str(connected_engines)),
             ("ISOLATED", str(isolated_engines)),
-            ("REGISTRY", "CLEAN"),
+            ("REGISTRY", "DECLARATIONS ONLY"),
         ]
 
         for title_text, value_text in control_cards:

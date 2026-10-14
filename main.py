@@ -7,23 +7,14 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 
-from plants_data import plants
-from lsi_engine import calculate_lsi
-from classifier import classify_lsi
-from applications import predict_application
-from display import display_plant_result
-from code_repair_advisor import explain_runtime_error
-ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+# Resolve project modules consistently before importing any data or engine.
+ROOT_DIR = PROJECT_ROOT
 CORE_DIR = os.path.join(ROOT_DIR, "core")
 DATABASE_DIR = os.path.join(ROOT_DIR, "database")
-
-
-if CORE_DIR not in sys.path:
-    sys.path.insert(0, CORE_DIR)
-
-if DATABASE_DIR not in sys.path:
-    sys.path.insert(0, DATABASE_DIR)
-
+for path in (ROOT_DIR, CORE_DIR, DATABASE_DIR):
+    if path in sys.path:
+        sys.path.remove(path)
+    sys.path.insert(0, path)
 
 from plants_data import plants
 from laser_sources import laser_sources
@@ -50,7 +41,7 @@ from qfactor_engine import evaluate_q_factor, classify_q_factor
 from cavity_optimizer import optimize_laser_cavity
 from beam_quality_engine import evaluate_beam_quality, classify_beam_quality
 from efficiency_engine import evaluate_laser_efficiency, classify_laser_efficiency
-from display import display_plant_result,display_plant_result,display_global_ranking
+from display import display_plant_result, display_global_ranking
 from interpretation_engine import generate_scientific_interpretation
 from physics_model import (calculate_normalized_lsi, evaluate_gain_condition, estimate_laser_threshold)
 from report_generator import save_all_reports
@@ -81,7 +72,6 @@ from system_health_engine import (generate_system_health_report, generate_system
 from system_memory_engine import (generate_system_memory)
 from strategic_advisor_engine import (generate_strategic_advice)
 from platform_evolution_engine import (evaluate_platform_evolution)
-from platform_evolution_engine import (evaluate_platform_evolution )
 from final_snapshot_engine import (generate_final_snapshot)
 from scientific_visualization_preparer import (prepare_visualization_data)
 from chart_recommendation_engine import (recommend_scientific_charts)
@@ -90,14 +80,13 @@ from gui_readiness_engine import (evaluate_gui_readiness)
 from dashboard import launch_dashboard
 from data_standardization_engine import (standardize_quality_value, classify_numeric_score )
 from project_registry import (show_registered_engines,  registry_statistics, show_dependency_map, show_dependency_statistics, detect_unused_outputs )
-from intelligence_hub import (generate_intelligence_summary, generate_system_health_report)
+from intelligence_hub import generate_intelligence_summary
 from laser_output_engine import predict_laser_output
 from laserstone_master_roadmap import show_next_priority
 from physics_evidence_engine import generate_physics_evidence
 from project_diagnostic_engine import run_project_diagnostic
 from plant_references import PLANT_REFERENCES
 from plant_knowledge import PLANT_KNOWLEDGE
-from plants_data import plants
 from startup_diagnostic_engine import run_startup_diagnostic
 from database.plant_identity import resolve_plant_name
 from code_quality_guard import run_code_quality_guard
@@ -267,30 +256,97 @@ def analyze_plant(plant):
         return blocked("ENGINE_ERROR", {stage: f"{type(exc).__name__}: {exc}"})
 
 
-def main(open_dashboard=True):
+def prepare_analysis(records):
+    """One detached, fail-closed analysis path for console, dashboard and city.
+
+    No report files or simulator processes are created here. A failed record
+    blocks the batch instead of silently presenting a partial batch as ready.
+    """
+    import copy
+    from global_ranking_engine import rank_plants as rank_records
+
+    records = list(records)
+    if not records:
+        raise RuntimeError("No valid records for downstream analysis")
+    analyzed = []
+    for record in records:
+        result = analyze_plant(record)
+        if (result.get("valid") is not True
+                or result.get("analysis_status") != "COMPLETE_HEURISTIC_ANALYSIS"):
+            raise RuntimeError(f"Analysis blocked for {result.get('name', 'Unknown')}: "
+                               f"{result.get('validation_errors', {})}")
+        audit = audit_plant(result)
+        if audit["status"] == "BLOCKED":
+            raise RuntimeError(f"Audit blocked for {result.get('name', 'Unknown')}")
+        result["audit_status"] = audit["status"]
+        result["audit_issues"] = audit["issues"]
+        result["laser_output"] = predict_laser_output(result)
+        key = resolve_plant_name(result.get("name"))
+        result["reference_info"] = copy.deepcopy(PLANT_REFERENCES.get(key, {}))
+        result["knowledge_info"] = copy.deepcopy(PLANT_KNOWLEDGE.get(key, {}))
+        result["laser_architecture"] = recommend_laser_architecture(result)
+        result["mission_control"] = generate_mission_control_summary(result)
+        analyzed.append(result)
+    return rank_records(analyzed)
+
+
+def prepare_runtime(records=None):
+    """Check and prepare once, without report export, GUI or simulator launch."""
+    from g23_simulation_exchange_contract import inspect_simulator_runtimes
+
+    runtime_start = start_runtime_monitor()
     if not run_startup_diagnostic():
         raise RuntimeError("Startup diagnostic failed")
-
-    if not run_startup_diagnostic():
-        return
     if not run_code_quality_guard():
-        return
+        raise RuntimeError("Code quality guard failed")
+    configuration = run_configuration_validation()
+    if configuration.get("system_valid") is not True:
+        raise RuntimeError("Configuration validation failed")
+    ranked = prepare_analysis(plants if records is None else records)
+    optimization = generate_self_optimization_report()
+    discoveries = discover_high_potential_patterns(ranked)
+    hybrids = generate_hybrid_candidates(ranked)
+    network = build_material_network(ranked)
+    memory = generate_system_memory(ranked)
+    advice = generate_strategic_advice(ranked)
+    evolution = evaluate_platform_evolution(ranked)
+    visualization = prepare_visualization_data(ranked)
+    charts = recommend_scientific_charts(visualization)
+    layout = generate_dashboard_layout()
+    runtime = generate_runtime_report(stop_runtime_monitor(runtime_start),
+                                      len(ranked), len(LASERSTONE_SYSTEM_MAP))
+    health = generate_system_health_summary(ranked, configuration, optimization, runtime)
+    snapshot = generate_final_snapshot(ranked, runtime, health, evolution)
+    gui = evaluate_gui_readiness(visualization, charts, layout, runtime, health)
+    return {
+        "status": "ANALYSIS_READY",
+        "active_root": ROOT_DIR,
+        "ranked_plants": ranked,
+        "configuration": configuration,
+        "optimization": optimization, "discoveries": discoveries,
+        "hybrids": hybrids, "network": network, "memory": memory,
+        "strategic_advice": advice, "evolution": evolution,
+        "visualization": visualization, "charts": charts, "layout": layout,
+        "runtime_report": runtime, "health": health, "snapshot": snapshot,
+        "gui_readiness": gui,
+        "checks": {"startup": "PASS", "code_quality": "PASS",
+                   "configuration": "PASS", "analysis": "PASS", "ranking": "PASS"},
+        "physical_validation": "NOT_ESTABLISHED_BY_THIS_PIPELINE",
+        "simulators": inspect_simulator_runtimes(),
+    }
 
-        # بقية المشروع
 
-  
-
-       
-
+def main(open_dashboard=True):
+    session = prepare_runtime()
+    ranked_plants = session["ranked_plants"]
+    validation_report = session["configuration"]
     run_project_diagnostic()
     print("===================================")
     print("      LASERSTONE™ V1 SYSTEM")
     print("===================================")
     
-    runtime_start = start_runtime_monitor()
-    validation_report = (run_configuration_validation())
     print("\nCONFIGURATION VALIDATION")
-    optimization_report = (generate_self_optimization_report() )
+    optimization_report = session["optimization"]
     print("\nSELF OPTIMIZATION REPORT")
     print(f"Optimization Status : " f"{optimization_report['optimization_status']}" )
     print("\nSuggestions:")
@@ -308,37 +364,9 @@ def main(open_dashboard=True):
 
 
 
-    analyzed_plants = []
-
-    for plant in plants:
-        analyzed_plant = analyze_plant(plant)
-
-        if not analyzed_plant["valid"]:
-            print("\nDATA VALIDATION ERROR")
-            print(f"Plant: {analyzed_plant.get('name', 'Unknown')}")
-            print("Validation errors:", analyzed_plant.get("validation_errors", {}))
-            print("Missing Fields:")
-            
-            for field in analyzed_plant["missing_fields"]:
-                print(f"- {field}")
-
-            continue
-        
-        audit_data = audit_plant(analyzed_plant)
-        analyzed_plant["audit_status"] = (audit_data["status"] )
-        analyzed_plant["audit_issues"] = (audit_data["issues"] )
-
-        analyzed_plants.append(analyzed_plant)
-    
-    if not analyzed_plants:
-        print("No valid records; downstream analysis stopped.")
-        raise RuntimeError("No valid records for downstream analysis")
-
-    ranked_plants = rank_plants(analyzed_plants)
-
-    autonomous_discoveries = (discover_high_potential_patterns(ranked_plants ))
-    hybrid_candidates = (generate_hybrid_candidates(ranked_plants ))
-    material_network = build_material_network(ranked_plants)
+    autonomous_discoveries = session["discoveries"]
+    hybrid_candidates = session["hybrids"]
+    material_network = session["network"]
 
 
 
@@ -347,29 +375,10 @@ def main(open_dashboard=True):
     display_global_ranking(ranked_plants)
 
     for plant in ranked_plants:
-        plant["laser_output"] = predict_laser_output(plant)
-        plant_key = resolve_plant_name(
-        plant.get("name")  )
-        plant["reference_info"] = PLANT_REFERENCES.get( plant_key,  {}  )
-        plant["knowledge_info"] = PLANT_KNOWLEDGE.get(
-        plant_key,
-        {}    )
         display_plant_result(plant)
 
-    
     saved_reports = save_all_reports(ranked_plants)
-
     print("\nALL REPORTS GENERATED SUCCESSFULLY")
-    print("\n--- GLOBAL MATERIAL ANALYSIS ---")
-    print(f"Material Score      : {plant['material_score']} / 100")
-    plant["laser_architecture"] = (recommend_laser_architecture(plant))
-    
-    print(f"Material Class      : {plant['material_class']}")
-    print(f"LRI Score        : {plant.get('lri_score', 'NOT CALCULATED')} / 100")
-    print(f"LRI Class        : {plant.get('lri_class', 'NOT CALCULATED')}")
-    plant["mission_control"] = (generate_mission_control_summary(plant))
-   
-    
     for report_path in saved_reports:
         print(report_path)
     
@@ -378,12 +387,10 @@ def main(open_dashboard=True):
     print("===================================")
 
     for discovery in autonomous_discoveries:
-      print(f"- {discovery}")
-      hybrid_candidates = (generate_hybrid_candidates(ranked_plants ))
-
-      print("\n===================================")
-      print("HYBRID LASER MATERIAL ANALYSIS")
-      print("===================================")
+        print(f"- {discovery}")
+    print("\n===================================")
+    print("HYBRID LASER MATERIAL ANALYSIS")
+    print("===================================")
 
     for hybrid in hybrid_candidates:
 
@@ -396,9 +403,9 @@ def main(open_dashboard=True):
     for relation in material_network:
         print(f"{relation.get('source','UNKNOWN')} <-> " f"{relation.get('target','UNKNOWN')}" )
 
-    print(f"Similarity : " f"{relation.get('similarity','UNKNOWN')}"     )
+        print(f"Similarity : {relation.get('similarity', 'UNKNOWN')}")
 
-    print(f"Relationship : " f"{relation.get('relationship','UNKNOWN')}" )
+        print(f"Relationship : {relation.get('relationship', 'UNKNOWN')}")
 
     print("-----------------------------------")
 
@@ -407,12 +414,11 @@ def main(open_dashboard=True):
     print("===================================")
     
     for plant in ranked_plants:
-       
-       summary = plant.get("mission_control", {})
-       print(f"Summary Name      : {summary.get('material_score', 'NOT CALCULATED')}")
-       print(f"Risk              : {summary.get('risk', 'NOT CALCULATED')}")
-       print(f"Final Pattern     : {summary.get('pattern', 'NOT CALCULATED')}")
-       print(f"Decision          : {summary.get('decision', 'NOT CALCULATED')}")
+        summary = plant["mission_control"]
+        print(f"Summary Name      : {summary['name']}")
+        print(f"Material Score    : {summary['material_score']}")
+        print(f"LRI               : {summary['lri']}")
+        print(f"Decision          : {summary['decision']}")
 
     print("-----------------------------------")
 
@@ -423,38 +429,28 @@ def main(open_dashboard=True):
     LASERSTONE_SYSTEM_MAP.items()):
        print(f"\n{layer}")
 
-    for engine in engines:
-
-        print(f" - {engine}")
+       for engine in engines:
+           print(f" - {engine}")
         
-    runtime = stop_runtime_monitor(runtime_start)
-    runtime_report = (generate_runtime_report(runtime, len(ranked_plants), len(LASERSTONE_SYSTEM_MAP) ))
+    runtime_report = session["runtime_report"]
     print("\n===================================")
     print("RUNTIME MONITOR")
     print("===================================")
     print(f"Runtime (s)      : " f"{runtime_report['runtime_seconds']}")
     print(f"Plants Processed : " f"{runtime_report['plants_processed']}")
-    print(f"Active Layers    : " f"{runtime_report['engines_active']}" )
+    print(f"Declared Layers  : {runtime_report['declared_layers']}")
+    print("Engine execution count: NOT_INSTRUMENTED")
     print(f"System Status    : " f"{runtime_report['system_status']}")
 
-    health_summary = generate_system_health_summary(ranked_plants, validation_report,
-    optimization_report, runtime_report )
-    system_memory = generate_system_memory(
-    ranked_plants )
-    strategic_advice = (generate_strategic_advice(ranked_plants) )
-    platform_evolution = (evaluate_platform_evolution(ranked_plants) )
-    final_snapshot = (generate_final_snapshot(ranked_plants, runtime_report, health_summary, platform_evolution    ) )
-    visualization_data = (prepare_visualization_data(ranked_plants) )
-    chart_recommendations = (recommend_scientific_charts(visualization_data ))
-    dashboard_layout = (generate_dashboard_layout() )
-    gui_readiness = evaluate_gui_readiness(visualization_data, chart_recommendations,
-    dashboard_layout,  runtime_report,  health_summary )
-
-
-
-
-
-
+    health_summary = session["health"]
+    system_memory = session["memory"]
+    strategic_advice = session["strategic_advice"]
+    platform_evolution = session["evolution"]
+    final_snapshot = session["snapshot"]
+    visualization_data = session["visualization"]
+    chart_recommendations = session["charts"]
+    dashboard_layout = session["layout"]
+    gui_readiness = session["gui_readiness"]
 
     print("\n===================================")
     print("LASERSTONE SYSTEM HEALTH")
@@ -523,9 +519,8 @@ def main(open_dashboard=True):
     for section, items in (dashboard_layout.items()  ):
         print(f"\n{section}")
 
-    for item in items:
-
-        print(f"- {item}")
+        for item in items:
+            print(f"- {item}")
 
     print("\n===================================")
     print("GUI READINESS ENGINE")
@@ -547,7 +542,7 @@ def main(open_dashboard=True):
     if open_dashboard:
         print("\nOPENING DASHBOARD NOW...")
         try:
-            launch_dashboard(ranked_plants)
+            launch_dashboard(ranked_plants, runtime_state=session)
             print("DASHBOARD CLOSED SUCCESSFULLY")
         except Exception as error:
             print("\nDASHBOARD LAUNCH ERROR:", error)
@@ -558,6 +553,7 @@ def main(open_dashboard=True):
     print("\n===================================")
     print("END LASERSTONE MAIN SYSTEM")
     print("===================================")
+    return session
 
 
 if __name__ == "__main__":
@@ -587,13 +583,3 @@ if __name__ == "__main__":
             show_next_priority()
         except Exception as error:
             print("Next priority error:", error)
-
-        #show_registered_engines()
-        #registry_statistics()
-        #show_dependency_map()
-        #show_dependency_statistics()
-        #detect_unused_outputs()
-        generate_system_health_report()
-        show_next_priority()
-    
-
