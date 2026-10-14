@@ -1,29 +1,17 @@
-import tkinter as tk
-
-from city.university_plaza import open_university_plaza
-
-
-def not_ready():
-    print("Building under construction...")
+"""University entry point using the same checked project runtime."""
+import sys
+from pathlib import Path
 
 
-callbacks = {
-    "college_of_materials": not_ready,
-    "college_of_physics": not_ready,
-    "college_of_engineering": not_ready,
-    "college_of_intelligence": not_ready,
-    "house_of_scientific_expertise": not_ready,
-    "grand_scientific_library": not_ready,
-    "research_laboratories": not_ready,
-}
+def main():
+    root = Path(__file__).resolve().parents[1]
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+    from main import prepare_runtime
+    from dashboard_city import launch_dashboard
+    state = prepare_runtime()
+    launch_dashboard(state["ranked_plants"], runtime_state=state, open_university=True)
 
-root = tk.Tk()
-root.withdraw()
 
-open_university_plaza(
-    root,
-    [],
-    callbacks
-)
-
-root.mainloop()
+if __name__ == "__main__":
+    main()

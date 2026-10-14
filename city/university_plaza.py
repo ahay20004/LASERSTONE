@@ -55,6 +55,12 @@ def open_university_plaza(
     )
     tree_label.pack(pady=12)
 
+    tk.Label(plaza, text=f"Materials in this session: {len(ranked_plants)} | Heuristic research triage",
+             bg=BACKGROUND_COLOR, fg=TEXT_COLOR).pack(pady=4)
+    if callable(callbacks.get("project_dashboard")):
+        tk.Button(plaza, text="OPEN PROJECT DASHBOARD",
+                  command=callbacks["project_dashboard"]).pack(pady=4)
+
     guide = tk.Label(
         plaza,
         text="Welcome Researcher — choose your scientific destination",
@@ -125,6 +131,7 @@ def open_university_plaza(
             bg=bg_color,
             fg=TEXT_COLOR,
             relief="raised",
+            state="normal" if callable(command) else "disabled",
             command=command
         )
 
@@ -143,3 +150,4 @@ def open_university_plaza(
         fg="#555555"
     )
     footer.pack(pady=10)
+    return plaza

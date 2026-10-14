@@ -517,6 +517,101 @@ class UnifiedRuntimeTests(unittest.TestCase):
 
 
 
+class ViewConstructionTests(unittest.TestCase):
+    def widgets(self, stack):
+        import tkinter as tk
+        from tkinter import ttk
+        from unittest.mock import MagicMock
+        buttons = []
+        root = MagicMock()
+        frame = MagicMock()
+        tree = MagicMock()
+        def button(parent, **options):
+            buttons.append(options)
+            return MagicMock()
+        stack.enter_context(patch.object(tk, 'Tk', return_value=root))
+        stack.enter_context(patch.object(tk, 'Toplevel', return_value=MagicMock()))
+        stack.enter_context(patch.object(tk, 'Frame', return_value=frame))
+        for name in ('Label', 'LabelFrame', 'Text', 'Canvas'):
+            stack.enter_context(patch.object(tk, name, return_value=MagicMock()))
+        stack.enter_context(patch.object(tk, 'Button', side_effect=button))
+        stack.enter_context(patch.object(ttk, 'Scrollbar', return_value=MagicMock()))
+        stack.enter_context(patch.object(ttk, 'Treeview', return_value=tree))
+        return root, frame, tree, buttons
+
+    def test_project_builds_buttons_table_and_loop_without_button_click(self):
+        import dashboard
+        import main
+        from contextlib import ExitStack
+        state = main.prepare_runtime()
+        with ExitStack() as stack:
+            root, frame, tree, buttons = self.widgets(stack)
+            result = dashboard.launch_dashboard(state['ranked_plants'], runtime_state=state)
+            root.mainloop.assert_called_once()
+            tree.pack.assert_called_once()
+            self.assertEqual(tree.insert.call_count, len(state['ranked_plants']))
+            tree.bind.assert_called_once()
+            self.assertGreaterEqual(len(buttons), 16)
+            for options in list(buttons):
+                self.assertTrue(callable(options['command']), options['text'])
+                options['command']()
+            self.assertIs(result, root)
+
+    def test_embedded_project_uses_toplevel_and_no_second_loop(self):
+        import dashboard
+        import main
+        import tkinter as tk
+        from contextlib import ExitStack
+        state = main.prepare_runtime()
+        with ExitStack() as stack:
+            root, frame, tree, buttons = self.widgets(stack)
+            parent = object()
+            result = dashboard.launch_dashboard(state['ranked_plants'], runtime_state=state, parent=parent)
+            tk.Tk.assert_not_called()
+            tk.Toplevel.assert_called_once_with(parent)
+            result.mainloop.assert_not_called()
+            self.assertEqual(tree.insert.call_count, 7)
+
+    def test_university_buildings_are_live_and_share_project_session(self):
+        import dashboard_city
+        import main
+        import dashboard
+        from contextlib import ExitStack
+        state = main.prepare_runtime()
+        with ExitStack() as stack:
+            root, frame, tree, buttons = self.widgets(stack)
+            frame.after.side_effect = lambda delay, callback: callback() if delay == 1900 else None
+            dashboard_city.launch_dashboard(state['ranked_plants'], runtime_state=state, open_university=True)
+            root.mainloop.assert_called_once()
+            campus = [b for b in buttons if b.get('state') == 'normal']
+            self.assertEqual(len(campus), 7)
+            for options in campus:
+                self.assertTrue(callable(options['command']))
+                options['command']()
+            project = next(b for b in buttons if b['text'] == 'OPEN PROJECT DASHBOARD')
+            with patch.object(dashboard, 'launch_dashboard') as launch:
+                project['command']()
+            launch.assert_called_once_with(state['ranked_plants'], runtime_state=state, parent=frame)
+
+    def test_university_missing_callback_is_disabled(self):
+        from city.university_plaza import open_university_plaza
+        from contextlib import ExitStack
+        with ExitStack() as stack:
+            root, frame, tree, buttons = self.widgets(stack)
+            open_university_plaza(frame, [], {})
+            self.assertEqual(len(buttons), 7)
+            self.assertTrue(all(b['state'] == 'disabled' for b in buttons))
+
+    def test_university_launcher_import_has_no_gui_side_effect(self):
+        import importlib
+        import tkinter as tk
+        with patch.object(tk, 'Tk') as root:
+            module = importlib.import_module('city.plaza_launcher')
+            importlib.reload(module)
+        root.assert_not_called()
+
+
+
 if __name__ == '__main__':
     unittest.main()
 

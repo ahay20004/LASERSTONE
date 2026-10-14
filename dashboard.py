@@ -11,11 +11,29 @@ def show_system_integrity():
                         format_runtime_evidence(describe_runtime_state([])))
 
 
-def launch_dashboard(ranked_plants, runtime_state=None):
+def create_scrollable_content(host):
+    """Keep controls, records and charts reachable on smaller screens."""
+    viewport = tk.Canvas(host, highlightthickness=0)
+    vertical = ttk.Scrollbar(host, orient="vertical", command=viewport.yview)
+    horizontal = ttk.Scrollbar(host, orient="horizontal", command=viewport.xview)
+    vertical.pack(side="right", fill="y")
+    horizontal.pack(side="bottom", fill="x")
+    viewport.pack(side="left", fill="both", expand=True)
+    viewport.configure(yscrollcommand=vertical.set, xscrollcommand=horizontal.set)
+    content = tk.Frame(viewport)
+    viewport.create_window((0, 0), window=content, anchor="nw")
+    content.bind("<Configure>", lambda event: viewport.configure(scrollregion=viewport.bbox("all")))
+    host.bind("<MouseWheel>", lambda event: viewport.yview_scroll(int(-event.delta / 120), "units"))
+    return content
 
-    window = tk.Tk()
+
+def launch_dashboard(ranked_plants, runtime_state=None, parent=None):
+
+    window = tk.Tk() if parent is None else tk.Toplevel(parent)
     window.title("LASERSTONE™ V1 Control Center")
     window.geometry("1350x1000")
+    root_window = window
+    window = create_scrollable_content(root_window)
 
     title = tk.Label(
         window,
@@ -85,6 +103,7 @@ def launch_dashboard(ranked_plants, runtime_state=None):
         ("INTELLIGENCE ECOSYSTEM", "ACTIVE", "lightgreen"),
         ("EXPERT HOUSE", "ACTIVE", "lightgreen"),
         ("STRATEGIC ROADMAP", "ACTIVE", "lightgreen"),
+        ("PROTOTYPE PLANNER", "ACTIVE", "lightgreen"),
     ]
        
 
@@ -100,7 +119,7 @@ def launch_dashboard(ranked_plants, runtime_state=None):
 
     for title_text, value_text in control_cards:
 
-        card = tk.Button(
+        card = tk.Label(
             control_frame,
             text=f"{title_text}\n{value_text}",
             font=("Arial", 10, "bold"),
@@ -883,136 +902,136 @@ def launch_dashboard(ranked_plants, runtime_state=None):
             state="disabled"
        )
 
-def show_strategic_roadmap():
+    def show_strategic_roadmap():
 
-    roadmap_window = tk.Toplevel(window)
-    roadmap_window.title("LASERSTONE STRATEGIC ROADMAP")
-    roadmap_window.geometry("700x550")
+        roadmap_window = tk.Toplevel(window)
+        roadmap_window.title("LASERSTONE STRATEGIC ROADMAP")
+        roadmap_window.geometry("700x550")
 
-    leader = top_material.get("name", "N/A")
+        leader = top_material.get("name", "N/A")
 
-    score = top_material.get(
-        "material_score",
-        0
-    )
+        score = top_material.get(
+            "material_score",
+            0
+        )
 
-    if score >= 85:
-        current_stage = "PROTOTYPE READY"
-        next_step = "Prototype Construction"
-        future_step = "Laser Cavity Optimization"
+        if score >= 85:
+            current_stage = "PROTOTYPE READY"
+            next_step = "Prototype Construction"
+            future_step = "Laser Cavity Optimization"
 
-    elif score >= 70:
-        current_stage = "ADVANCED VALIDATION"
-        next_step = "Spectroscopic Verification"
-        future_step = "Prototype Preparation"
+        elif score >= 70:
+            current_stage = "ADVANCED VALIDATION"
+            next_step = "Spectroscopic Verification"
+            future_step = "Prototype Preparation"
 
-    else:
-        current_stage = "RESEARCH STAGE"
-        next_step = "Additional Characterization"
-        future_step = "Material Improvement"
+        else:
+            current_stage = "RESEARCH STAGE"
+            next_step = "Additional Characterization"
+            future_step = "Material Improvement"
 
-    report = (
-        "LASERSTONE STRATEGIC ROADMAP\n\n"
+        report = (
+            "LASERSTONE STRATEGIC ROADMAP\n\n"
 
-        f"Current Leader: {leader}\n"
-        f"Material Score: {score:.2f}\n\n"
+            f"Current Leader: {leader}\n"
+            f"Material Score: {score:.2f}\n\n"
 
-        f"Current Stage: {current_stage}\n\n"
+            f"Current Stage: {current_stage}\n\n"
 
-        f"Next Step:\n{next_step}\n\n"
+            f"Next Step:\n{next_step}\n\n"
 
-        f"Future Step:\n{future_step}\n\n"
+            f"Future Step:\n{future_step}\n\n"
 
-        "Long-Term Objective:\n"
-        "Patent Preparation and Scientific Publication\n\n"
+            "Long-Term Objective:\n"
+            "Patent Preparation and Scientific Publication\n\n"
 
-        "Strategic Recommendation:\n"
-        "Focus resources on the leading candidate "
-        "while maintaining comparative monitoring "
-        "of alternative materials.\n"
-    )
+            "Strategic Recommendation:\n"
+            "Focus resources on the leading candidate "
+            "while maintaining comparative monitoring "
+            "of alternative materials.\n"
+        )
 
-    text_box = tk.Text(
-        roadmap_window,
-        wrap="word"
-    )
+        text_box = tk.Text(
+            roadmap_window,
+            wrap="word"
+        )
 
-    text_box.pack(
-        fill="both",
-        expand=True,
-        padx=10,
-        pady=10
-    )
+        text_box.pack(
+            fill="both",
+            expand=True,
+            padx=10,
+            pady=10
+        )
 
-    text_box.insert(
-        "1.0",
-        report
-    )
+        text_box.insert(
+            "1.0",
+            report
+        )
 
-    text_box.config(
-        state="disabled"
-    )
+        text_box.config(
+            state="disabled"
+        )
 
-def show_prototype_planner():
+    def show_prototype_planner():
 
-    planner_window = tk.Toplevel(window)
-    planner_window.title("LASERSTONE PROTOTYPE PLANNER")
-    planner_window.geometry("750x600")
+        planner_window = tk.Toplevel(window)
+        planner_window.title("LASERSTONE PROTOTYPE PLANNER")
+        planner_window.geometry("750x600")
 
-    candidate = top_material.get("name", "N/A")
+        candidate = top_material.get("name", "N/A")
 
-    score = top_material.get(
-        "material_score",
-        0
-    )
+        score = top_material.get(
+            "material_score",
+            0
+        )
 
-    report = (
-        "LASERSTONE PROTOTYPE PLANNER\n\n"
+        report = (
+            "LASERSTONE PROTOTYPE PLANNER\n\n"
 
-        f"Selected Material: {candidate}\n"
-        f"Material Score: {score:.2f}\n\n"
+            f"Selected Material: {candidate}\n"
+            f"Material Score: {score:.2f}\n\n"
 
-        "PROTOTYPE DEVELOPMENT PLAN\n\n"
+            "PROTOTYPE DEVELOPMENT PLAN\n\n"
 
-        "STEP 1:\n"
-        "Material purification and preparation.\n\n"
+            "STEP 1:\n"
+            "Material purification and preparation.\n\n"
 
-        "STEP 2:\n"
-        "Optical absorption characterization.\n\n"
+            "STEP 2:\n"
+            "Optical absorption characterization.\n\n"
 
-        "STEP 3:\n"
-        "Emission spectrum verification.\n\n"
+            "STEP 3:\n"
+            "Emission spectrum verification.\n\n"
 
-        "STEP 4:\n"
-        "Laser cavity compatibility assessment.\n\n"
+            "STEP 4:\n"
+            "Laser cavity compatibility assessment.\n\n"
 
-        "STEP 5:\n"
-        "Prototype laser assembly.\n\n"
+            "STEP 5:\n"
+            "Prototype laser assembly.\n\n"
 
-        "STEP 6:\n"
-        "Output power and stability testing.\n\n"
+            "STEP 6:\n"
+            "Output power and stability testing.\n\n"
 
-        "FINAL TARGET:\n"
-        "Experimental laser prototype.\n"
-    )
+            "FINAL TARGET:\n"
+            "Experimental laser prototype.\n"
+        )
 
-    text_box = tk.Text(
-        planner_window,
-        wrap="word"
-    )
+        text_box = tk.Text(
+            planner_window,
+            wrap="word"
+        )
 
-    text_box.pack(
-        fill="both",
-        expand=True,
-        padx=10,
-        pady=10
-    )
+        text_box.pack(
+            fill="both",
+            expand=True,
+            padx=10,
+            pady=10
+        )
 
-    text_box.insert("1.0", report)
+        text_box.insert("1.0", report)
 
-    text_box.config(
-        state="disabled"
-    )
+        text_box.config(
+            state="disabled"
+        )
 
     for index, (title_text, value_text, color_text) in enumerate(gateway_cards):
         command = None
@@ -1069,22 +1088,6 @@ def show_prototype_planner():
             pady=6
     )
         
-    for title_text, value_text in control_cards:
-
-        card = tk.Label(
-            control_frame,
-            text=f"{title_text}\n{value_text}",
-            font=("Arial", 10, "bold"),
-            relief="groove",
-            width=28,
-            height=3
-        )
-
-        card.pack(
-            side=tk.LEFT,
-            padx=8,
-            pady=8
-        )
     recommendations = generate_recommendations(
         ranked_plants
     )
@@ -1140,23 +1143,20 @@ Platform Class             : {platform_class}
     )
 
     for column in columns:
+        tree.heading(column, text=column)
+        tree.column(column, width=190)
+    tree.pack(fill="x", padx=20, pady=8)
+    for plant in ranked_plants:
+        tree.insert("", "end", values=(
+            plant.get("global_rank", "-"), plant.get("name", "Unknown"),
+            plant.get("material_score", "N/A"),
+            plant.get("intelligence_summary", {}).get("intelligence_score", "N/A"),
+            plant.get("patent_potential_score", "N/A"),
+            plant.get("final_decision", "N/A"),
+        ))
+    tree.bind("<Double-1>", lambda event: show_plant_details(event, tree, ranked_plants))
 
-        tree.heading(
-            column,
-            text=column
-    )
-
-        tree.column(
-            column,
-        width=190
-    )
-
-        chart_title = tk.Label(
-        window,
-        text="Material Score Visualization",
-        font=("Arial", 14, "bold")
-    )
-
+    chart_title = tk.Label(window, text="Material Score Visualization", font=("Arial", 14, "bold"))
     chart_title.pack(
         pady=8
     )
@@ -1205,7 +1205,9 @@ Platform Class             : {platform_class}
         ranked_plants
     )
 
-    window.mainloop()
+    if parent is None:
+        root_window.mainloop()
+    return root_window
 
 
 def draw_material_score_chart(canvas, ranked_plants):

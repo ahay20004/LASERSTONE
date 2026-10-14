@@ -63,11 +63,14 @@ def open_text_window(parent, title, report, geometry="760x560"):
     text_box.config(state="disabled")
 
 
-def launch_dashboard(ranked_plants, runtime_state=None):
+def launch_dashboard(ranked_plants, runtime_state=None, open_university=False):
     print("CITY DASHBOARD STARTED")
     window = tk.Tk()
     window.title("LASERSTONE™ Scientific City")
     window.geometry("1350x1000")
+    root_window = window
+    from dashboard import create_scrollable_content
+    window = create_scrollable_content(root_window)
 
     total_materials = len(ranked_plants)
     from system_health_engine import describe_runtime_state, format_runtime_evidence
@@ -472,6 +475,37 @@ def launch_dashboard(ranked_plants, runtime_state=None):
             "lightgreen"
         )
 
+    def open_project_dashboard():
+        from dashboard import launch_dashboard as open_project
+        return open_project(ranked_plants, runtime_state=runtime_state, parent=window)
+
+    def show_research_laboratories():
+        inventory = (runtime_state or {}).get("simulators", {})
+        report = "RESEARCH LABORATORIES\n\n"
+        for name, entry in inventory.get("simulators", {}).items():
+            report += (f"{name}: {entry['availability']}\n"
+                       f"Execution: {entry['simulation_execution']}\n"
+                       f"Integration: {entry['integration_status']}\n\n")
+        if not inventory:
+            report += "No simulator inventory for this session.\n"
+        report += "Availability does not establish simulation execution or physical validation."
+        open_text_window(window, "RESEARCH LABORATORIES", report)
+
+    university_callbacks = {
+        "college_of_materials": show_material_analysis,
+        "college_of_physics": show_physics_wing,
+        "college_of_engineering": show_laser_engineering_center,
+        "college_of_intelligence": show_intelligence_wing,
+        "house_of_scientific_expertise": show_expert_house,
+        "grand_scientific_library": show_scientific_repository,
+        "research_laboratories": show_research_laboratories,
+        "project_dashboard": open_project_dashboard,
+    }
+
+    def show_university():
+        from city.university_plaza import open_university_plaza
+        return open_university_plaza(window, ranked_plants, university_callbacks)
+
     def show_startup_then_city():
         startup = tk.Toplevel(window)
         startup.title("LASERSTONE STARTUP")
@@ -507,6 +541,9 @@ def launch_dashboard(ranked_plants, runtime_state=None):
             font=("Arial", 20, "bold")
         )
         header.pack(pady=10)
+
+        tk.Button(window, text="OPEN UNIVERSITY PLAZA", command=show_university,
+                  font=("Arial", 12, "bold")).pack(pady=5)
 
         control_frame = tk.LabelFrame(
             window,
@@ -636,6 +673,13 @@ def launch_dashboard(ranked_plants, runtime_state=None):
         draw_bar_chart(chart_canvas, ranked_plants, "material_score", "Material Score Visualization")
 
     show_startup_then_city()
-    window.after(1900, build_main_city)
+    def finish_startup():
+        build_main_city()
+        if open_university:
+            show_university()
+
+    window.after(1900, finish_startup)
     print("CITY WINDOW READY")
-    window.mainloop()
+    root_window.mainloop()
+
+    return root_window

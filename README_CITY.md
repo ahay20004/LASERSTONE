@@ -46,3 +46,28 @@ inventory/contract identifier: its direct invocation and scientific result
 import are not implemented by this runtime repair. MATLAB file exchange remains
 a synthetic benchmark. Windows GUI rendering and external simulator execution
 require a separate local test; repository tests do not prove them.
+
+
+## Project and university views
+
+`OPEN DASHBOARD` opens the project control center, including all 16 gateway
+buttons, the ranked-material table, material profiles and charts. The content
+scrolls vertically and horizontally on smaller screens.
+
+`OPEN SCIENTIFIC CITY` opens the city view; its `OPEN UNIVERSITY PLAZA` button
+opens the seven-building campus. Building callbacks open the existing material,
+physics, engineering, intelligence, expertise, repository and simulator-inventory
+views. Missing callbacks are disabled. The laboratories show simulator inventory;
+they do not claim unimplemented simulator execution.
+
+The university plaza can open `OPEN PROJECT DASHBOARD` as a child window using
+the same prepared session and Tk event loop. This does not re-run analysis or
+create a second database. For direct university entry, run from the active root:
+
+```powershell
+python -m city.plaza_launcher
+```
+
+Importing the campus launcher no longer opens a GUI. Tests construct both views
+with mocked Tk widgets and exercise gateway/building callbacks; visual rendering
+on Windows remains a local verification step.
