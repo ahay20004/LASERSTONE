@@ -41,8 +41,8 @@ exports reports, preserving existing reports rather than overwriting them.
 
 UI engine counts and connections come from registry declarations. They are not
 execution counts or maturity certificates. `ANALYSIS_READY` means the checked
-heuristic pipeline completed, not physical validation. SCAPS inventory and explicit GUI invocation are available; automatic calculation
-and scientific result import remain unimplemented. MATLAB file exchange remains
+heuristic pipeline completed, not physical validation. SCAPS inventory and explicit GUI invocation are available; read-only saved I-V import is available; automatic calculation and physical
+validation remain unimplemented. MATLAB file exchange remains
 a synthetic benchmark. Windows GUI rendering and external simulator execution
 require a separate local test; repository tests do not prove them.
 
@@ -87,3 +87,30 @@ alone does not verify that process's executable path. Missing files, wrong roots
 failed process listing and immediate process exit do not count as readiness.
 A process ID is not proof of a visible GUI, valid physics or result integration.
 No calculation is selected and no scientific result is imported by this command.
+
+
+## Saved SCAPS I-V import for review
+
+In the university, open `Research Laboratories` and choose `READ SAVED SCAPS I-V`.
+Select one explicit `.iv` file inside the active project root. The selected file
+is read, never overwritten; results stay in the session for review and are not
+mixed into the plant database or certified as physically valid. No model or run
+is selected based on its filename. All concatenated runs are retained separately.
+
+The CLI alternative is:
+
+```powershell
+python g23_simulation_exchange_contract.py --inspect-scaps-iv --result "reports\G23_SCAPS_mesh130_run4.iv"
+```
+
+This example path must exist; the importer does not guess its location. It records
+an exact-byte source SHA-256, original units and parameter strings, simulated curve
+points, SCAPS-derived solar parameters and reported conditions. The conversion
+from mW/cm2 to W/m2 is labeled as derived. Definition/spectrum paths in export
+headers are reported metadata only; no external files are followed or verified.
+IV exports alone do not establish solver convergence, numerical settings or
+physical validity. Incomplete runs, malformed rows, unknown units, nonfinite
+values and duplicate run blocks block parsing rather than silently dropping data.
+Warnings about scan direction or reported convergence failure require review.
+The CLI omits the complete point matrix from console output; the in-memory API
+retains it. Backup/historical sources and paths outside the active root are blocked.

@@ -61,6 +61,7 @@ def open_text_window(parent, title, report, geometry="760x560"):
     text_box.pack(fill="both", expand=True, padx=10, pady=10)
     text_box.insert("1.0", report)
     text_box.config(state="disabled")
+    return report_window
 
 
 def launch_dashboard(ranked_plants, runtime_state=None, open_university=False):
@@ -489,7 +490,31 @@ def launch_dashboard(ranked_plants, runtime_state=None, open_university=False):
         if not inventory:
             report += "No simulator inventory for this session.\n"
         report += "Availability does not establish simulation execution or physical validation."
-        open_text_window(window, "RESEARCH LABORATORIES", report)
+        lab = open_text_window(window, "RESEARCH LABORATORIES", report)
+
+        def read_saved_iv():
+            from pathlib import Path
+            from tkinter import filedialog
+            from g23_simulation_exchange_contract import inspect_scaps_iv, format_scaps_iv_summary
+            active_root = Path(__file__).resolve().parent
+            initial = active_root / 'reports'
+            selected = filedialog.askopenfilename(
+                parent=lab, title="Select one saved SCAPS I-V export from the active project root",
+                initialdir=str(initial if initial.is_dir() else active_root),
+                filetypes=[("SCAPS I-V export", "*.iv")],
+            )
+            if not selected:
+                return
+            try:
+                imported = inspect_scaps_iv(selected)
+            except (ValueError, OSError, UnicodeError) as error:
+                messagebox.showerror("SCAPS I-V import blocked", str(error), parent=lab)
+                return
+            # Session evidence only: never change plant data or locked scientific files.
+            lab.g23_scaps_import = imported
+            open_text_window(lab, "SCAPS SAVED I-V REVIEW", format_scaps_iv_summary(imported), "1050x720")
+
+        tk.Button(lab, text="READ SAVED SCAPS I-V", command=read_saved_iv).pack(pady=8)
 
     university_callbacks = {
         "college_of_materials": show_material_analysis,

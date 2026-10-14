@@ -593,6 +593,39 @@ class ViewConstructionTests(unittest.TestCase):
                 project['command']()
             launch.assert_called_once_with(state['ranked_plants'], runtime_state=state, parent=frame)
 
+    def test_saved_scaps_reader_button_uses_same_session_and_leaves_source_unchanged(self):
+        import dashboard_city
+        import main
+        import g23_simulation_exchange_contract as exchange
+        from test_g23_simulation_exchange_contract import SavedScapsIvTests
+        from contextlib import ExitStack
+        import tempfile
+        state = main.prepare_runtime()
+        with tempfile.TemporaryDirectory(dir=Path(exchange.__file__).parent) as folder:
+            source = Path(folder) / 'synthetic.iv'
+            data = SavedScapsIvTests.sample.encode()
+            source.write_bytes(data)
+            with ExitStack() as stack:
+                root, frame, tree, buttons = self.widgets(stack)
+                frame.after.side_effect = lambda delay, callback: callback() if delay == 1900 else None
+                analysis = stack.enter_context(patch.object(main, 'analyze_plant'))
+                process = stack.enter_context(patch('subprocess.Popen'))
+                choose = stack.enter_context(patch('tkinter.filedialog.askopenfilename', return_value=str(source)))
+                blocked = stack.enter_context(patch('tkinter.messagebox.showerror'))
+                inspect = stack.enter_context(patch.object(exchange, 'inspect_scaps_iv', wraps=exchange.inspect_scaps_iv))
+                dashboard_city.launch_dashboard(state['ranked_plants'], runtime_state=state, open_university=True)
+                labs = next(b for b in buttons if 'Research Laboratories' in b['text'] and b.get('state') == 'normal')
+                labs['command']()
+                reader = next(b for b in buttons if b['text'] == 'READ SAVED SCAPS I-V')
+                reader['command']()
+                inspect.assert_called_once_with(str(source))
+                choose.assert_called_once()
+                blocked.assert_not_called()
+                analysis.assert_not_called()
+                process.assert_not_called()
+            self.assertEqual(source.read_bytes(), data)
+            self.assertEqual(list(Path(folder).iterdir()), [source])
+
     def test_university_missing_callback_is_disabled(self):
         from city.university_plaza import open_university_plaza
         from contextlib import ExitStack
