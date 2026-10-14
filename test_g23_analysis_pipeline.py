@@ -601,6 +601,7 @@ class ViewConstructionTests(unittest.TestCase):
             open_university_plaza(frame, [], {})
             self.assertEqual(len(buttons), 7)
             self.assertTrue(all(b['state'] == 'disabled' for b in buttons))
+            self.assertTrue(all(b['wraplength'] == 230 for b in buttons))
 
     def test_university_launcher_import_has_no_gui_side_effect(self):
         import importlib

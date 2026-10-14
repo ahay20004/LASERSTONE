@@ -31,6 +31,10 @@ def open_university_plaza(
     plaza.title("LASERSTONE International Scientific University - Grand Plaza")
     plaza.geometry("1120x780")
     plaza.configure(bg=BACKGROUND_COLOR)
+    plaza_window = plaza
+    from dashboard import create_scrollable_content
+    plaza = create_scrollable_content(plaza_window)
+    plaza.configure(bg=BACKGROUND_COLOR)
 
     university_name = UNIVERSITY_NAME.get(language, UNIVERSITY_NAME["en"])
     motto = UNIVERSITY_MOTTO.get(language, UNIVERSITY_MOTTO["en"])
@@ -128,6 +132,7 @@ def open_university_plaza(
             font=("Segoe UI", 10, "bold"),
             width=28,
             height=8,
+            wraplength=230,
             bg=bg_color,
             fg=TEXT_COLOR,
             relief="raised",
@@ -150,4 +155,4 @@ def open_university_plaza(
         fg="#555555"
     )
     footer.pack(pady=10)
-    return plaza
+    return plaza_window
