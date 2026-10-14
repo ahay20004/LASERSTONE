@@ -41,9 +41,8 @@ exports reports, preserving existing reports rather than overwriting them.
 
 UI engine counts and connections come from registry declarations. They are not
 execution counts or maturity certificates. `ANALYSIS_READY` means the checked
-heuristic pipeline completed, not physical validation. SCAPS is still an
-inventory/contract identifier: its direct invocation and scientific result
-import are not implemented by this runtime repair. MATLAB file exchange remains
+heuristic pipeline completed, not physical validation. SCAPS inventory and explicit GUI invocation are available; automatic calculation
+and scientific result import remain unimplemented. MATLAB file exchange remains
 a synthetic benchmark. Windows GUI rendering and external simulator execution
 require a separate local test; repository tests do not prove them.
 
@@ -71,3 +70,20 @@ python -m city.plaza_launcher
 Importing the campus launcher no longer opens a GUI. Tests construct both views
 with mocked Tk widgets and exercise gateway/building callbacks; visual rendering
 on Windows remains a local verification step.
+
+
+## Explicit SCAPS GUI invocation
+
+From the active project root, use the existing G23 exchange tool:
+
+```powershell
+python g23_simulation_exchange_contract.py --launch-scaps --executable "scaps-1d=C:\Program Files (x86)\Scaps3312\scaps3312.exe"
+```
+
+This Windows-only operation reads the executable SHA-256 and size, checks the
+process list by image name, and opens SCAPS with no calculation arguments. It
+starts no additional process when the image name is already running; a name match
+alone does not verify that process's executable path. Missing files, wrong roots,
+failed process listing and immediate process exit do not count as readiness.
+A process ID is not proof of a visible GUI, valid physics or result integration.
+No calculation is selected and no scientific result is imported by this command.

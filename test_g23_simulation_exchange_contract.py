@@ -163,5 +163,102 @@ class MatlabFileExchangeTests(unittest.TestCase):
             self.assertEqual(bad.returncode, 1)
 
 
+class ScapsInvocationTests(unittest.TestCase):
+    def test_explicit_launch_uses_argument_list_and_never_claims_simulation(self):
+        import hashlib
+        import subprocess
+        import g23_simulation_exchange_contract as m
+        from unittest.mock import MagicMock
+        with tempfile.TemporaryDirectory() as folder:
+            executable = Path(folder) / 'scaps3312.exe'
+            content = b'MZ synthetic test fixture, not an actual executable'
+            executable.write_bytes(content)
+            process = MagicMock(pid=123)
+            process.poll.return_value = None
+            with patch('platform.system', return_value='Windows'), \
+                    patch('subprocess.run', return_value=subprocess.CompletedProcess([], 0, stdout='INFO: No tasks match', stderr='')) as inventory, \
+                    patch('subprocess.Popen', return_value=process) as launch:
+                report = m.launch_scaps_gui(str(executable))
+            launch.assert_called_once_with([str(executable.resolve())], cwd=str(executable.parent.resolve()), shell=False)
+            self.assertEqual(inventory.call_args.args[0], ['tasklist.exe', '/FI', 'IMAGENAME eq scaps3312.exe', '/FO', 'CSV', '/NH'])
+            self.assertEqual(report['sha256'], hashlib.sha256(content).hexdigest())
+            self.assertEqual(report['status'], 'PROCESS_STARTED')
+            self.assertEqual(report['simulation_execution'], 'NOT_TESTED')
+            self.assertEqual(report['physical_validation'], 'NOT_ESTABLISHED')
+            self.assertEqual(report['result_import'], 'NOT_IMPLEMENTED')
+            self.assertEqual(executable.read_bytes(), content)
+
+    def test_existing_image_name_blocks_duplicate_launch_without_claiming_path_match(self):
+        import subprocess
+        import g23_simulation_exchange_contract as m
+        with tempfile.TemporaryDirectory() as folder:
+            executable = Path(folder) / 'scaps3312.exe'
+            executable.write_bytes(b'MZ fixture')
+            listing = '"scaps3312.exe","456","Console","1","100 K"\n'
+            with patch('platform.system', return_value='Windows'), \
+                    patch('subprocess.run', return_value=subprocess.CompletedProcess([], 0, stdout=listing, stderr='')), \
+                    patch('subprocess.Popen') as launch:
+                report = m.launch_scaps_gui(executable)
+            launch.assert_not_called()
+            self.assertEqual(report['status'], 'IMAGE_NAME_ALREADY_RUNNING')
+            self.assertEqual(report['process_ids'], [456])
+            self.assertFalse(report['new_process_started'])
+            self.assertEqual(report['existing_process_path'], 'NOT_VERIFIED')
+
+    def test_failed_process_listing_never_launches(self):
+        import subprocess
+        import g23_simulation_exchange_contract as m
+        with tempfile.TemporaryDirectory() as folder:
+            executable = Path(folder) / 'scaps3312.exe'
+            executable.write_bytes(b'MZ fixture')
+            with patch('platform.system', return_value='Windows'), \
+                    patch('subprocess.run', side_effect=subprocess.TimeoutExpired('tasklist.exe', 10)), \
+                    patch('subprocess.Popen') as launch:
+                with self.assertRaises(subprocess.TimeoutExpired):
+                    m.launch_scaps_gui(executable)
+            launch.assert_not_called()
+
+    def test_windows_active_root_and_binary_gates(self):
+        import g23_simulation_exchange_contract as m
+        with patch('platform.system', return_value='Linux'), patch('subprocess.Popen') as launch:
+            with self.assertRaisesRegex(ValueError, 'requires Windows'):
+                m.launch_scaps_gui('missing')
+            launch.assert_not_called()
+        with tempfile.TemporaryDirectory() as folder:
+            executable = Path(folder) / 'scaps3312.exe'
+            executable.write_bytes(b'not a Windows binary')
+            with patch('platform.system', return_value='Windows'), patch('subprocess.Popen') as launch:
+                with self.assertRaisesRegex(ValueError, 'absolute'):
+                    m.launch_scaps_gui('scaps3312.exe')
+                with self.assertRaisesRegex(ValueError, 'header'):
+                    m.launch_scaps_gui(executable)
+                with patch.object(m.Path, 'cwd', return_value=Path(folder)):
+                    with self.assertRaisesRegex(ValueError, 'active project root'):
+                        m.launch_scaps_gui(executable)
+            launch.assert_not_called()
+
+    def test_cli_arguments_and_early_exit_failures(self):
+        import io
+        import json
+        import sys
+        import g23_simulation_exchange_contract as m
+        from contextlib import redirect_stdout
+        cases = [(['--launch-scaps'], None),
+                 (['--launch-scaps', '--executable', 'matlab=x'], None),
+                 (['--launch-scaps', '--executable', 'scaps-1d=x', '--run-id', 'unused'], None),
+                 (['--launch-scaps', '--executable', 'scaps-1d=x'], {'status': 'PROCESS_EXITED_EARLY', 'exit_code': 1})]
+        for args, result in cases:
+            stream = io.StringIO()
+            with self.subTest(args=args), patch.object(sys, 'argv', [m.__file__] + args), \
+                    patch.object(m, 'launch_scaps_gui', return_value=result) as launch, redirect_stdout(stream):
+                self.assertEqual(m._main(), 1)
+            if result is None:
+                launch.assert_not_called()
+                self.assertEqual(json.loads(stream.getvalue())['status'], 'ERROR')
+            else:
+                launch.assert_called_once_with('x')
+
+
+
 if __name__ == "__main__":
     unittest.main()

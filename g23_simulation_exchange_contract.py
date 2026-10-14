@@ -1,9 +1,11 @@
-"""G23 simulation exchange contract; no external simulator is invoked.
+"""G23 simulation exchange contract, inventory and explicit SCAPS GUI invocation.
 
 Standard-library-only validation of a transport envelope. Passing this
 contract does not validate the underlying physics or provenance claims.
+No external simulator is invoked unless --launch-scaps is explicitly selected.
 """
 import math
+import subprocess
 
 SUPPORTED = frozenset({"python", "matlab", "scaps-1d", "comsol", "zemax", "lumerical"})
 REQUIRED = ("simulator", "simulator_version", "model_id", "run_id",
@@ -250,11 +252,78 @@ def import_matlab_result(request_path, result_path):
     return report
 
 
+
+def launch_scaps_gui(executable):
+    """Explicit GUI invocation only; no calculation or scientific import.
+
+    Read a binary snapshot for traceability, check process names before launch,
+    and keep simulator resources relative to its own installation directory.
+    A PID is process evidence, not proof of a visible GUI or valid calculation.
+    """
+    import csv
+    import hashlib
+    import io
+    import platform
+    import subprocess
+
+    active_root = Path(__file__).resolve().parent
+    if Path.cwd().resolve() != active_root:
+        raise ValueError("Run SCAPS invocation from the active project root")
+    if platform.system() != "Windows":
+        raise ValueError("SCAPS GUI invocation requires Windows")
+    if not isinstance(executable, (str, Path)) or not str(executable).strip():
+        raise ValueError("Explicit SCAPS executable path required")
+    path = Path(executable).expanduser()
+    if not path.is_absolute():
+        raise ValueError("SCAPS executable path must be absolute")
+    path = path.resolve(strict=True)
+    if not re.fullmatch(r"scaps[0-9]+\.exe", path.name, re.IGNORECASE):
+        raise ValueError("Expected a versioned SCAPS executable")
+    if not path.is_file():
+        raise ValueError("SCAPS executable is not a file")
+    with path.open('rb') as stream:
+        header = stream.read(2)
+        if header != b'MZ':
+            raise ValueError("Expected a Windows executable header")
+        digest = hashlib.sha256()
+        digest.update(header)
+        for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+            digest.update(chunk)
+    snapshot = path.stat()
+    process_list = subprocess.run(
+        ['tasklist.exe', '/FI', f'IMAGENAME eq {path.name}', '/FO', 'CSV', '/NH'],
+        capture_output=True, text=True, check=True, timeout=10,
+    )
+    matching = []
+    for row in csv.reader(io.StringIO(process_list.stdout)):
+        if row and row[0].casefold() == path.name.casefold():
+            if len(row) < 2 or not row[1].isdigit():
+                raise ValueError("Cannot verify existing SCAPS process listing")
+            matching.append(int(row[1]))
+    report = {
+        'scope': 'GUI_INVOCATION_ONLY', 'active_root': str(active_root),
+        'executable': str(path), 'sha256': digest.hexdigest(),
+        'size_bytes': snapshot.st_size, 'simulator_version': 'NOT_VERIFIED',
+        'gui_visibility': 'NOT_VERIFIED', 'simulation_execution': 'NOT_TESTED',
+        'result_import': 'NOT_IMPLEMENTED', 'physical_validation': 'NOT_ESTABLISHED',
+    }
+    if matching:
+        report.update(status='IMAGE_NAME_ALREADY_RUNNING', process_ids=matching,
+                      new_process_started=False, existing_process_path='NOT_VERIFIED')
+        return report
+    process = subprocess.Popen([str(path)], cwd=str(path.parent), shell=False)
+    # This does not wait for simulation or manipulate the native application.
+    exit_code = process.poll()
+    report.update(status='PROCESS_STARTED' if exit_code is None else 'PROCESS_EXITED_EARLY',
+                  process_ids=[process.pid], new_process_started=True, exit_code=exit_code)
+    return report
+
 def _main():
     import argparse
-    parser = argparse.ArgumentParser(description='Read-only inventory and synthetic MATLAB file exchange')
+    parser = argparse.ArgumentParser(description='Inventory, synthetic MATLAB exchange and explicit SCAPS GUI invocation')
     modes = parser.add_mutually_exclusive_group(required=True)
     modes.add_argument('--inventory', action='store_true')
+    modes.add_argument('--launch-scaps', action='store_true')
     modes.add_argument('--export-matlab', action='store_true')
     modes.add_argument('--verify-matlab', action='store_true')
     parser.add_argument('--executable', action='append', default=[])
@@ -265,7 +334,15 @@ def _main():
     parser.add_argument('--result')
     args = parser.parse_args()
     try:
-        if args.inventory:
+        if args.launch_scaps:
+            if (len(args.executable) != 1 or any(x is not None for x in
+                    (args.output_root, args.run_id, args.wavelength_nm, args.request, args.result))):
+                raise ValueError("SCAPS invocation requires only --executable scaps-1d=ABSOLUTE_PATH")
+            name, sep, path = args.executable[0].partition('=')
+            if name != 'scaps-1d' or not sep or not path:
+                raise ValueError("Use --executable scaps-1d=ABSOLUTE_PATH")
+            result = launch_scaps_gui(path)
+        elif args.inventory:
             if any(x is not None for x in (args.output_root, args.run_id, args.wavelength_nm, args.request, args.result)):
                 raise ValueError('Exchange arguments require an exchange mode')
             paths = {}
@@ -284,8 +361,8 @@ def _main():
                 raise ValueError('Verification requires --request and --result only')
             result = import_matlab_result(args.request, args.result)
         print(json.dumps(result, indent=2, allow_nan=False))
-        return 0 if result.get('valid', True) else 1
-    except (ValueError, OSError, TypeError, OverflowError) as exc:
+        return 0 if result.get('valid', True) and result.get('status') != 'PROCESS_EXITED_EARLY' else 1
+    except (ValueError, OSError, TypeError, OverflowError, UnicodeError, subprocess.SubprocessError) as exc:
         print(json.dumps({'status': 'ERROR', 'error': str(exc)}))
         return 1
 
