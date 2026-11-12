@@ -133,6 +133,13 @@ G23_COMPONENT_REGISTRY = {
         "inputs": ["photochemcad_record", "optional_legacy_plants"],
         "outputs": ["evidence_safe_analysis_package"],
     },
+    "g23_intelligence_hub": {
+        "status": "EXPERIMENTAL_VERIFIED",
+        "role": "Strict Intelligence and Connectivity Candidate",
+        "production_promoted": False,
+        "inputs": ["complete_heuristic_score_record", "registry_metadata"],
+        "outputs": ["strict_intelligence_summary", "structural_connectivity_report"],
+    },
 }
 
 
