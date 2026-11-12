@@ -17,6 +17,7 @@ TEST_MODULES = (
     "test_g23_spectral_path_comparison",
     "test_g23_evidence_safety_repairs",
     "test_g23_strict_decision_path",
+    "test_g23_legacy_provenance_audit",
 )
 
 
