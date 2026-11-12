@@ -20,6 +20,7 @@ TEST_MODULES = (
     "test_g23_legacy_provenance_audit",
     "test_g23_compound_evidence_linker",
     "test_g23_external_evidence_pipeline",
+    "test_g23_research_composer_gate",
 )
 
 
