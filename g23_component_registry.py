@@ -154,6 +154,13 @@ G23_COMPONENT_REGISTRY = {
         "inputs": ["research_directive", "prior_art_assessment"],
         "outputs": ["research_composition_authorization"],
     },
+    "g23_manuscript_contract": {
+        "status": "EXPERIMENTAL_VERIFIED",
+        "role": "Authoritative Master Manuscript Contract",
+        "production_promoted": False,
+        "inputs": ["research_directive", "master_manuscript"],
+        "outputs": ["master_contract_validation"],
+    },
 }
 
 
