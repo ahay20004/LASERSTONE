@@ -2,6 +2,10 @@
 
 import unittest
 
+from g23_intelligence_hub import (
+    analyze_declared_registry_connectivity,
+    generate_intelligence_summary_strict,
+)
 from g23_component_registry import (
     G23_COMPONENT_REGISTRY,
     component_registry_snapshot,
@@ -10,6 +14,7 @@ from g23_component_registry import (
 from g23_scientific_missing_policy import MissingScientificDataError
 from g23_strict_decision_path import (
     calculate_lri_strict,
+    calculate_material_score_strict,
     calculate_scientific_confidence_strict,
     evaluate_physics_consistency_strict,
     generate_final_decision_strict,
@@ -64,6 +69,56 @@ class StrictDecisionPathTests(unittest.TestCase):
             "HEURISTIC_CONFIDENCE_MODEL_STRICT_INPUTS",
         )
         self.assertFalse(result["physical_confidence_claim"])
+
+
+    def test_material_score_strict_refuses_missing_spectral_quality(self):
+        record = dict(VALID)
+        record["lsi"] = 3.0
+        with self.assertRaises(MissingScientificDataError):
+            calculate_material_score_strict(record)
+
+    def test_material_score_strict_accepts_recognized_quality(self):
+        record = dict(VALID)
+        record["lsi"] = 3.0
+        record["spectral_quality"] = "Moderate"
+        result = calculate_material_score_strict(record)
+        self.assertEqual(
+            result["status"],
+            "HEURISTIC_MATERIAL_SCORE_STRICT_INPUTS",
+        )
+        self.assertEqual(result["physical_validation"], "NOT_ESTABLISHED")
+        self.assertTrue(0 <= result["score"] <= 100)
+
+
+class G23IntelligenceHubTests(unittest.TestCase):
+    def test_intelligence_summary_refuses_missing_score(self):
+        record = dict(VALID)
+        record["system_integrity_score"] = 80.0
+        del record["research_novelty_score"]
+        with self.assertRaises(MissingScientificDataError):
+            generate_intelligence_summary_strict(record)
+
+    def test_intelligence_summary_is_explicitly_heuristic(self):
+        record = dict(VALID)
+        record["system_integrity_score"] = 80.0
+        result = generate_intelligence_summary_strict(record)
+        self.assertEqual(
+            result["status"],
+            "HEURISTIC_INTELLIGENCE_STRICT_INPUTS",
+        )
+        self.assertEqual(result["physical_validation"], "NOT_ESTABLISHED")
+
+    def test_registry_connectivity_counts_isolated_entries_correctly(self):
+        registry = {
+            "a": {"inputs": ["x"], "outputs": []},
+            "b": {"inputs": [], "outputs": []},
+            "c": {"inputs": [], "outputs": ["y"]},
+        }
+        result = analyze_declared_registry_connectivity(registry)
+        self.assertEqual(result["declared_connected"], 2)
+        self.assertEqual(result["declared_isolated"], 1)
+        self.assertEqual(result["declared_connectivity_percent"], 66.67)
+        self.assertEqual(result["status"], "STRUCTURAL_CONNECTIVITY_ONLY")
 
 
 class G23ComponentRegistryTests(unittest.TestCase):
