@@ -140,6 +140,20 @@ G23_COMPONENT_REGISTRY = {
         "inputs": ["complete_heuristic_score_record", "registry_metadata"],
         "outputs": ["strict_intelligence_summary", "structural_connectivity_report"],
     },
+    "g23_research_directive": {
+        "status": "EXPERIMENTAL_VERIFIED",
+        "role": "Research Directive Validation",
+        "production_promoted": False,
+        "inputs": ["research_directive"],
+        "outputs": ["directive_validation"],
+    },
+    "g23_research_novelty_gate": {
+        "status": "EXPERIMENTAL_VERIFIED",
+        "role": "Prior-Art Based Novelty Gate",
+        "production_promoted": False,
+        "inputs": ["research_directive", "prior_art_assessment"],
+        "outputs": ["research_composition_authorization"],
+    },
 }
 
 
