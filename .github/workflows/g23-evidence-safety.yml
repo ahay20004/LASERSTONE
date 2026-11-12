@@ -32,4 +32,5 @@ jobs:
             test_g23_legacy_provenance_audit.py \
             test_g23_compound_evidence_linker.py \
             test_g23_external_evidence_pipeline.py \
-            test_g23_research_composer_gate.py
+            test_g23_research_composer_gate.py \
+            test_g23_paper1_master_contract.py
