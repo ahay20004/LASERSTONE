@@ -10,6 +10,9 @@ from g23_data_standardization_engine import (
     standardize_quality_value_strict,
 )
 from g23_evidence_registry import EvidenceConflictError, EvidenceRegistry
+from g23_evidence_interpretation_engine import generate_evidence_interpretation
+from g23_evidence_output_engine import generate_evidence_output
+from g23_evidence_trace_engine import generate_evidence_trace
 from g23_engine_compatibility_audit import audit_engine_compatibility
 from g23_scientific_missing_policy import (
     MissingScientificDataError,
@@ -173,6 +176,50 @@ class EvidenceRegistryTests(unittest.TestCase):
         fetched["normalized_record"]["phi_f"] = 0.99
         fetched_again = registry.get("PhotochemCAD:BX003")
         self.assertEqual(fetched_again["normalized_record"]["phi_f"], 0.0074)
+
+
+class EvidenceReportingLayerTests(unittest.TestCase):
+    def test_interpretation_is_evidence_bounded(self):
+        normalized = normalize_photochemcad_record(ASN_BX)
+        statements = generate_evidence_interpretation(normalized)
+        self.assertTrue(any("Reported absorption peak" in s for s in statements))
+        self.assertTrue(any("does not by itself establish optical gain" in s for s in statements))
+
+    def test_trace_never_authorizes_prototype(self):
+        normalized = normalize_photochemcad_record(ASN_BX)
+        trace = generate_evidence_trace(normalized)
+        self.assertEqual(trace["trace_status"], "TRACEABLE_EVIDENCE_RECORD")
+        self.assertEqual(
+            trace["prototype_decision"],
+            "NOT_AUTHORIZED_FROM_THIS_EVIDENCE",
+        )
+
+    def test_output_without_emission_does_not_invent_frequency_or_power(self):
+        normalized = normalize_photochemcad_record(ASN_BX)
+        output = generate_evidence_output(normalized)
+        self.assertIsNone(output["reported_emission_wavelength_nm"])
+        self.assertIsNone(output["derived_frequency_hz"])
+        self.assertIsNone(output["estimated_laser_power"])
+        self.assertEqual(output["laser_output_claim"], "NOT_ESTABLISHED")
+
+    def test_output_with_emission_derives_only_spectral_physics(self):
+        normalized = normalize_photochemcad_record(dict(ASN_BX, lambda_em_nm=510))
+        output = generate_evidence_output(normalized)
+        self.assertIsNotNone(output["derived_frequency_hz"])
+        self.assertIsNotNone(output["derived_photon_energy_ev"])
+        self.assertIsNone(output["estimated_laser_power"])
+        self.assertIsNone(output["laser_safety_class"])
+
+    def test_compatibility_audit_marks_evidence_reporting_engines_ready(self):
+        normalized = normalize_photochemcad_record(ASN_BX)
+        audit = audit_engine_compatibility(normalized)
+        for engine in (
+            "g23_evidence_interpretation_engine",
+            "g23_evidence_trace_engine",
+            "g23_evidence_output_engine",
+            "g23_evidence_decision_gate",
+        ):
+            self.assertIn(engine, audit["ready_engines"])
 
 
 class EvidenceDecisionGateTests(unittest.TestCase):
