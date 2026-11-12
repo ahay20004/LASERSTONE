@@ -21,6 +21,7 @@ TEST_MODULES = (
     "test_g23_compound_evidence_linker",
     "test_g23_external_evidence_pipeline",
     "test_g23_research_composer_gate",
+    "test_g23_paper1_master_contract",
 )
 
 
