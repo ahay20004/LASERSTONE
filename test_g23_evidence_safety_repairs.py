@@ -4,6 +4,11 @@ import copy
 import unittest
 
 from g23_evidence_decision_gate import assess_evidence_decision_gate
+from g23_data_standardization_engine import (
+    classify_numeric_score_strict,
+    standardize_field_strict,
+    standardize_quality_value_strict,
+)
 from g23_evidence_registry import EvidenceConflictError, EvidenceRegistry
 from g23_engine_compatibility_audit import audit_engine_compatibility
 from g23_scientific_missing_policy import (
@@ -64,6 +69,39 @@ class MissingDataPolicyTests(unittest.TestCase):
     def test_weighted_sum_refuses_partial_record(self):
         with self.assertRaises(MissingScientificDataError):
             strict_weighted_sum({"a": 10.0}, {"a": 0.5, "b": 0.5})
+
+
+class StrictStandardizationTests(unittest.TestCase):
+    def test_none_and_unknown_remain_missing_not_zero(self):
+        self.assertEqual(
+            standardize_quality_value_strict(None),
+            {"value": None, "status": "MISSING"},
+        )
+        self.assertEqual(
+            standardize_quality_value_strict("unknown"),
+            {"value": None, "status": "MISSING"},
+        )
+
+    def test_real_numeric_zero_is_preserved(self):
+        result = standardize_quality_value_strict(0)
+        self.assertEqual(result["value"], 0.0)
+        self.assertEqual(result["status"], "NUMERIC_REPORTED")
+
+    def test_unrecognized_category_is_not_silently_scored(self):
+        result = standardize_quality_value_strict("mystery quality")
+        self.assertIsNone(result["value"])
+        self.assertEqual(result["status"], "UNRECOGNIZED")
+        self.assertEqual(classify_numeric_score_strict("mystery quality"), "UNAVAILABLE")
+
+    def test_standardize_field_returns_detached_record(self):
+        source = {"quality": None}
+        result = standardize_field_strict(
+            source, "quality", "quality_score", "quality_class"
+        )
+        self.assertEqual(source, {"quality": None})
+        self.assertIsNone(result["quality_score"])
+        self.assertEqual(result["quality_class"], "UNAVAILABLE")
+        self.assertEqual(result["quality_score_status"], "MISSING")
 
 
 class UnitContractTests(unittest.TestCase):
