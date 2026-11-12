@@ -126,6 +126,13 @@ G23_COMPONENT_REGISTRY = {
         "inputs": ["legacy_plant_record", "normalized_compound_evidence"],
         "outputs": ["supporting_compound_links", "substitution_guard"],
     },
+    "g23_external_evidence_pipeline": {
+        "status": "EXPERIMENTAL_VERIFIED",
+        "role": "Unified External Evidence Orchestration",
+        "production_promoted": False,
+        "inputs": ["photochemcad_record", "optional_legacy_plants"],
+        "outputs": ["evidence_safe_analysis_package"],
+    },
 }
 
 
