@@ -18,6 +18,7 @@ TEST_MODULES = (
     "test_g23_evidence_safety_repairs",
     "test_g23_strict_decision_path",
     "test_g23_legacy_provenance_audit",
+    "test_g23_compound_evidence_linker",
 )
 
 
