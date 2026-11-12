@@ -1,0 +1,5 @@
+seed,n_trials_per_claim,corruption_rate,completeness,numerical_only_admission,evidence_aware_admission,blocked_fraction_all,mean_false_promotion_rate_given_numerical_admission
+20261112,50000,0.10,0.25,0.038345,0.025395,0.012950,0.402667
+20261112,50000,0.10,0.50,0.156175,0.101445,0.054730,0.417772
+20261112,50000,0.10,0.75,0.376395,0.237020,0.139375,0.419379
+20261112,50000,0.10,1.00,0.756145,0.449105,0.307040,0.422412
