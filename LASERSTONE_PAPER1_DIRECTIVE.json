@@ -1,0 +1,55 @@
+{
+  "research_id": "LASERSTONE-PAPER-001",
+  "master_policy": "ONE_RESEARCH_ONE_MASTER_ONE_EVIDENCE_TRAIL",
+  "title": "LASERSTONE: An Evidence-Aware and Provenance-Constrained Framework for the Scientific Evaluation of Natural Photonic Materials",
+  "article_type": "Original Research Article",
+  "domain": "Natural photonic materials; scientific data provenance; computational evidence evaluation",
+  "research_question": "Can heterogeneous photophysical evidence for natural photonic materials be integrated and evaluated without converting missing, semantically incompatible, or unit-ambiguous data into artificial numerical confidence or unsupported laser-performance claims?",
+  "scientific_gap": "Photophysical databases and materials-informatics workflows support data access, calculation, harmonization, and provenance, but a domain-specific fail-closed mechanism is needed to determine whether each external photophysical quantity is scientifically compatible with a given downstream analysis and whether the resulting evidence authorizes a specific laser-related claim.",
+  "proposed_contribution": [
+    "Evidence-state separation of literature-reported, derived, and missing quantities",
+    "Explicit semantic and unit contracts before cross-source mapping",
+    "Fail-closed handling of missing scientific quantities",
+    "Per-engine evidence compatibility assessment",
+    "Claim-level decision gating that separates evidence-supported analysis from unsupported laser-performance claims",
+    "Safe separation of isolated-compound evidence from plant-extract evidence",
+    "A unified external-evidence pipeline with provenance-preserving trace and output"
+  ],
+  "evidence_scope": [
+    "PhotochemCAD primary/database literature",
+    "LASERSTONE G23 source code and automated tests",
+    "Three benchmark PhotochemCAD records: Asn-Bx, Quercetin, Lutein",
+    "Seven legacy LASERSTONE plant records for provenance audit"
+  ],
+  "benchmark_results": {
+    "Asn-Bx_evidence_completeness_percent": 75,
+    "Quercetin_evidence_completeness_percent": 50,
+    "Lutein_evidence_completeness_percent": 25,
+    "automated_acceptance_tests_passed": 79,
+    "legacy_plant_records_audited": 7
+  },
+  "claim_boundary": "Evidence-bounded computational validation only; no experimental laser action is claimed.",
+  "excluded_claims": [
+    "Optical gain experimentally established",
+    "Lasing feasibility experimentally established",
+    "Laser efficiency experimentally established",
+    "Q-factor experimentally established",
+    "Laser output power established",
+    "Prototype readiness established"
+  ],
+  "manuscript_structure": "IMRAD",
+  "application_relevance": [
+    "Evidence-aware photonic-material screening",
+    "Reproducible scientific software",
+    "Natural dye and chromophore research",
+    "Traceable database integration",
+    "Experimental planning and research-gap identification"
+  ],
+  "future_research_path": [
+    "Scale to additional PhotochemCAD dye families",
+    "Upgrade legacy field-level provenance",
+    "Perform experimental validation on selected candidates",
+    "Compare computational evidence readiness with laboratory measurements"
+  ],
+  "status": "ACTIVE_MASTER_RESEARCH_DIRECTIVE"
+}
