@@ -1,0 +1,63 @@
+{
+  "research_id": "LASERSTONE-PAPER-001",
+  "review_status": "REVIEWED",
+  "review_date": "2026-11-12",
+  "search_scope_documented": true,
+  "search_scope": [
+    "PhotochemCAD program and primary spectral-database literature",
+    "FAIR scientific data principles and computational workflow provenance",
+    "Materials-data lineage and harmonization frameworks",
+    "Natural photonic materials and dye/chromophore screening frameworks",
+    "Materials informatics approaches for incomplete heterogeneous data"
+  ],
+  "direct_competitor_found": false,
+  "direct_competitor_interpretation": "No reviewed source was identified that combined natural-photonic-material evidence states, explicit unit contracts, per-engine compatibility gating, claim-level authorization boundaries, compound-versus-extract separation, and manuscript-ready provenance tracing in one framework. This is a bounded literature-review finding, not a universal first-in-literature claim.",
+  "distinct_contribution_supported": true,
+  "distinct_contribution": "LASERSTONE operationalizes provenance and missing-data discipline as executable scientific gates that determine whether a photophysical quantity may enter a specific analysis and whether a downstream laser-related claim is authorized.",
+  "evidence_sufficient_for_current_claims": true,
+  "claim_scope": "Computational evidence-safety architecture and benchmark validation only; no experimental lasing claim.",
+  "reviewed_sources": [
+    {
+      "title": "PhotochemCAD 3: Diverse Modules for Photophysical Calculations with Multiple Spectral Databases",
+      "year": 2018,
+      "doi": "10.1111/php.12862",
+      "url": "https://onlinelibrary.wiley.com/doi/10.1111/php.12862",
+      "relevance": "Primary PhotochemCAD architecture and calculations"
+    },
+    {
+      "title": "Database of Absorption and Fluorescence Spectra of >300 Common Compounds for Use in PhotochemCAD",
+      "year": 2018,
+      "doi": "10.1111/php.12860",
+      "url": "https://onlinelibrary.wiley.com/doi/10.1111/php.12860",
+      "relevance": "Primary spectral database with literature-linked photophysical parameters"
+    },
+    {
+      "title": "The FAIR Guiding Principles for scientific data management and stewardship",
+      "year": 2016,
+      "doi": "10.1038/sdata.2016.18",
+      "url": "https://www.nature.com/articles/sdata201618",
+      "relevance": "Foundational provenance and reusability principles"
+    },
+    {
+      "title": "Applying the FAIR Principles to computational workflows",
+      "year": 2025,
+      "doi": "10.1038/s41597-025-04451-9",
+      "url": "https://www.nature.com/articles/s41597-025-04451-9",
+      "relevance": "Workflow-level FAIR and machine-actionable provenance"
+    },
+    {
+      "title": "Tracking materials science data lineage to manage millions of materials experiments and analyses",
+      "year": 2019,
+      "doi": "10.1038/s41524-019-0216-x",
+      "url": "https://www.nature.com/articles/s41524-019-0216-x",
+      "relevance": "Materials data lineage and traceable experiment-to-knowledge workflow"
+    },
+    {
+      "title": "Optical properties of natural small molecules and their applications in imaging and nanomedicine",
+      "year": 2021,
+      "doi": "10.1016/j.addr.2021.113917",
+      "url": "https://doi.org/10.1016/j.addr.2021.113917",
+      "relevance": "Natural chromophore photophysics and application context"
+    }
+  ]
+}
