@@ -18,6 +18,26 @@ ENGINE_REQUIREMENTS = {
         "external_dependencies": (),
         "claim_level": "EVIDENCE_ANALYSIS",
     },
+    "g23_evidence_interpretation_engine": {
+        "legacy_fields": (),
+        "external_dependencies": (),
+        "claim_level": "EVIDENCE_REPORTING",
+    },
+    "g23_evidence_trace_engine": {
+        "legacy_fields": (),
+        "external_dependencies": (),
+        "claim_level": "EVIDENCE_TRACEABILITY",
+    },
+    "g23_evidence_output_engine": {
+        "legacy_fields": (),
+        "external_dependencies": (),
+        "claim_level": "EVIDENCE_SAFE_OUTPUT",
+    },
+    "g23_evidence_decision_gate": {
+        "legacy_fields": (),
+        "external_dependencies": (),
+        "claim_level": "EVIDENCE_GOVERNANCE",
+    },
     "spectral_analysis": {
         "legacy_fields": ("lambda_abs", "lambda_em"),
         "external_dependencies": (),
@@ -161,7 +181,13 @@ def audit_engine_compatibility(
             or available_external.get(field) is None
         ]
 
-        if engine == "physical_spectral_evidence_engine":
+        if engine in {
+            "physical_spectral_evidence_engine",
+            "g23_evidence_interpretation_engine",
+            "g23_evidence_trace_engine",
+            "g23_evidence_output_engine",
+            "g23_evidence_decision_gate",
+        }:
             status = "READY"
             reason = "NORMALIZED_EVIDENCE_SUPPORTED"
         elif missing_legacy or missing_external:
