@@ -26,11 +26,13 @@ is replaced until its migration gate passes.
 | Trace | missing values may be displayed as scores | `g23_evidence_trace_engine.py` | Experimental verified |
 | Output | heuristic power/class may look physical | `g23_evidence_output_engine.py` | Experimental verified |
 | Legacy decisions | get(...,0) in decision path | `g23_strict_decision_path.py` | Experimental verified |
+| Material score | missing/unrecognized spectral quality may be defaulted | strict material-score wrapper in `g23_strict_decision_path.py` | Experimental verified |
+| Intelligence hub | missing->0 plus duplicate/for...else connectivity bug | `g23_intelligence_hub.py` | Experimental verified |
 | Component governance | experimental code could look production-ready | `g23_component_registry.py` | Experimental verified |
 | Legacy provenance | generic references not tied to fields | `g23_legacy_provenance_audit.py` | Experimental verified |
 | Plant/compound linkage | isolated compound could overwrite extract data | `g23_compound_evidence_linker.py` | Experimental verified |
 | External orchestration | evidence modules could remain fragmented | `g23_external_evidence_pipeline.py` | Experimental verified |
-| Regression | no dedicated evidence CI | G23 evidence workflow + local runner | PASS: 74/74 tests on Python 3.12 |
+| Regression | no dedicated evidence CI | G23 evidence workflow + local runner | PASS: 79/79 tests on Python 3.12 |
 
 ## Current scientific field contracts
 
@@ -154,7 +156,7 @@ A GitHub Actions workflow is staged at:
 `.github/workflows/g23-evidence-safety.yml`
 
 Latest verified GitHub Actions evidence-safety run completed successfully on
-Python 3.12 with **74/74 tests passed**. The suite includes normalization,
+Python 3.12 with **79/79 tests passed**. The suite includes normalization,
 integration gates, strict missing-data behavior, unit contracts, reporting,
 legacy provenance audit, plant/compound linkage, and the unified external
 evidence pipeline.
