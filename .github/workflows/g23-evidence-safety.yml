@@ -1,0 +1,31 @@
+name: G23 Evidence Safety Tests
+
+on:
+  push:
+    branches:
+      - g23/photochemcad-evidence-adapter
+  pull_request:
+    branches:
+      - g23/stage13-integration
+
+jobs:
+  evidence-safety:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run G23 evidence acceptance suites
+        run: |
+          python -m unittest -v \
+            test_g23_photochemcad_evidence_adapter.py \
+            test_g23_photochemcad_integration_gate.py \
+            test_g23_physical_spectral_evidence_engine.py \
+            test_g23_spectral_path_comparison.py \
+            test_g23_evidence_safety_repairs.py \
+            test_g23_strict_decision_path.py
