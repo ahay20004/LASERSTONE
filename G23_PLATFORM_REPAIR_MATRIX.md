@@ -27,7 +27,10 @@ is replaced until its migration gate passes.
 | Output | heuristic power/class may look physical | `g23_evidence_output_engine.py` | Experimental verified |
 | Legacy decisions | get(...,0) in decision path | `g23_strict_decision_path.py` | Experimental verified |
 | Component governance | experimental code could look production-ready | `g23_component_registry.py` | Experimental verified |
-| Regression | no dedicated evidence CI | G23 evidence workflow + local runner | Workflow staged; CI run not yet observed |
+| Legacy provenance | generic references not tied to fields | `g23_legacy_provenance_audit.py` | Experimental verified |
+| Plant/compound linkage | isolated compound could overwrite extract data | `g23_compound_evidence_linker.py` | Experimental verified |
+| External orchestration | evidence modules could remain fragmented | `g23_external_evidence_pipeline.py` | Experimental verified |
+| Regression | no dedicated evidence CI | G23 evidence workflow + local runner | PASS: 74/74 tests on Python 3.12 |
 
 ## Current scientific field contracts
 
@@ -150,8 +153,11 @@ A GitHub Actions workflow is staged at:
 
 `.github/workflows/g23-evidence-safety.yml`
 
-At the time this matrix was written, GitHub reported zero workflow runs for the
-branch. Therefore CI status is **NOT YET EXECUTED**, not passed.
+Latest verified GitHub Actions evidence-safety run completed successfully on
+Python 3.12 with **74/74 tests passed**. The suite includes normalization,
+integration gates, strict missing-data behavior, unit contracts, reporting,
+legacy provenance audit, plant/compound linkage, and the unified external
+evidence pipeline.
 
 ## Promotion sequence
 
@@ -182,3 +188,61 @@ The platform can already use PhotochemCAD safely for evidence storage,
 absorption/fluorescence analysis, unit-bearing derivations, evidence-aware
 reporting, and compatibility assessment while the remaining legacy contracts
 and scoring semantics are repaired.
+
+
+## Legacy provenance audit result
+
+For the current seven legacy plant records:
+
+- 6/7 have at least one general reference record;
+- 1/7 has no reference record (Acacia Nilotica);
+- Henna resolves to two reference records and requires reconciliation;
+- 0/7 currently have field-level provenance complete for the critical
+  photophysical values;
+- 0/7 current reference bundles contain a DOI in the stored metadata.
+
+These findings do not invalidate the legacy records; they define the evidence
+upgrade work required before those values can be promoted as physical source
+data.
+
+## Safe plant/compound linkage
+
+The new compound linker permits exact-name supporting links while enforcing:
+
+`substitution_allowed = False`
+
+Current verified example:
+
+- Legacy Moringa record lists active compound **Quercetin**.
+- PhotochemCAD FL109 is **Quercetin**.
+- The link is stored as `SUPPORTING_COMPOUND_EVIDENCE_ONLY`.
+- Moringa extract `lambda_abs = 410 nm` remains untouched.
+- PhotochemCAD isolated-compound `lambda_abs = 256 nm` remains a separate
+  evidence object.
+
+This boundary is required because isolated-compound spectra and plant-extract
+spectra are not interchangeable.
+
+## Unified external evidence pipeline
+
+`g23_external_evidence_pipeline.py` now provides one evidence-safe entry path:
+
+PhotochemCAD raw record
+-> normalization
+-> evidence registry
+-> physical spectral analysis
+-> engine compatibility audit
+-> evidence decision gate
+-> bounded interpretation
+-> provenance trace
+-> evidence-safe output
+-> optional exact compound linkage to legacy plants
+
+The returned package explicitly records:
+
+- `legacy_scoring_invoked = False`
+- `production_registry_mutated = False`
+- `advanced_claims_authorized = False`
+
+This enables continued database expansion while the legacy scoring contracts
+are repaired in parallel.
