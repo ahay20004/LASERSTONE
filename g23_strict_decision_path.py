@@ -10,9 +10,14 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any, Mapping
 
-from constants import LRI_WEIGHTS
+from constants import LRI_WEIGHTS, MATERIAL_SCORE_WEIGHTS
 from final_decision_engine import generate_final_decision
-from g23_scientific_missing_policy import require_score
+from g23_data_standardization_engine import standardize_quality_value_strict
+from g23_scientific_missing_policy import (
+    MissingScientificDataError,
+    require_finite_number,
+    require_score,
+)
 from physics_consistency_engine import evaluate_physics_consistency
 from scientific_confidence_engine import calculate_scientific_confidence
 
@@ -45,6 +50,42 @@ CONFIDENCE_FIELDS = (
     "research_novelty_score",
     "patent_potential_score",
 )
+
+
+def calculate_material_score_strict(
+    record: Mapping[str, Any],
+) -> dict[str, Any]:
+    lsi = require_finite_number(record, "lsi", minimum=0.0)
+    thermal = require_score(record, "thermal_score")
+    q_factor = require_score(record, "q_factor_score")
+    beam = require_score(record, "beam_quality_score")
+    efficiency = require_score(record, "laser_efficiency_score")
+
+    if "spectral_quality" not in record:
+        raise MissingScientificDataError("spectral_quality is required and is missing")
+    spectral_result = standardize_quality_value_strict(record.get("spectral_quality"))
+    if spectral_result["value"] is None:
+        raise MissingScientificDataError(
+            "spectral_quality is unavailable or unrecognized"
+        )
+    spectral = spectral_result["value"]
+
+    normalized_lsi = min(lsi * 10.0, 100.0)
+    score = (
+        normalized_lsi * MATERIAL_SCORE_WEIGHTS["lsi"]
+        + thermal * MATERIAL_SCORE_WEIGHTS["thermal"]
+        + q_factor * MATERIAL_SCORE_WEIGHTS["q_factor"]
+        + beam * MATERIAL_SCORE_WEIGHTS["beam_quality"]
+        + efficiency * MATERIAL_SCORE_WEIGHTS["efficiency"]
+        + spectral * MATERIAL_SCORE_WEIGHTS["spectral"]
+    )
+
+    return {
+        "score": round(score, 2),
+        "status": "HEURISTIC_MATERIAL_SCORE_STRICT_INPUTS",
+        "physical_validation": "NOT_ESTABLISHED",
+        "spectral_standardization_status": spectral_result["status"],
+    }
 
 
 def calculate_lri_strict(record: Mapping[str, Any]) -> dict[str, Any]:
