@@ -119,6 +119,13 @@ G23_COMPONENT_REGISTRY = {
         "inputs": ["legacy_plant_record", "legacy_reference_registry"],
         "outputs": ["provenance_gap_report", "reference_reconciliation_flags"],
     },
+    "g23_compound_evidence_linker": {
+        "status": "EXPERIMENTAL_VERIFIED",
+        "role": "Plant/Compound Evidence Linkage",
+        "production_promoted": False,
+        "inputs": ["legacy_plant_record", "normalized_compound_evidence"],
+        "outputs": ["supporting_compound_links", "substitution_guard"],
+    },
 }
 
 
