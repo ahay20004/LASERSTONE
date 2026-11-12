@@ -192,3 +192,82 @@ it must not be fed into the legacy scoring pipeline until:
 
 Until those conditions are met, PhotochemCAD evidence must not be interpreted
 as proof of laser gain, lasing feasibility, or prototype readiness.
+
+
+## Physical spectral evidence path
+
+The branch now includes `physical_spectral_evidence_engine.py`, an
+evidence-first analysis path that is intentionally separate from legacy
+spectral quality scoring.
+
+The engine uses four independent reported core quantities:
+
+- `lambda_abs_nm`
+- `lambda_em_nm`
+- `epsilon_M_cm`
+- `phi_f`
+
+Derived `sigma_a_cm2` is not counted as an independent evidence item because
+it is computed from epsilon.
+
+The evidence completeness metric is therefore:
+
+```
+evidence_completeness = 100 * reported_core_fields / 4
+```
+
+This is a data-coverage metric only. It is not a laser-performance score.
+
+For the three initial PhotochemCAD records:
+
+| Record | Independent reported core fields | Evidence completeness |
+| --- | ---: | ---: |
+| BX003 Asn-Bx | 3/4 | 75% |
+| FL109 Quercetin | 2/4 | 50% |
+| CAR021a-6 Lutein [HPLC] | 1/4 | 25% |
+
+When both absorption and emission peaks are explicitly reported, the engine may
+also derive Stokes shift as:
+
+```
+Delta_lambda = lambda_em - lambda_abs
+Delta_wavenumber = 1e7 * (1/lambda_abs - 1/lambda_em)
+```
+
+with wavelengths in nm and the wavenumber shift in cm^-1.
+
+No gain, lasing feasibility, or prototype-readiness claim is produced by this
+engine.
+
+Run:
+
+```
+python -m unittest -v test_g23_physical_spectral_evidence_engine.py
+```
+
+## Legacy versus physical path diagnostic
+
+The branch also includes `spectral_path_comparison.py`.
+
+Its purpose is diagnostic only. It does not convert physical evidence
+completeness into legacy spectral quality and does not rank the two outputs
+against each other.
+
+For all three initial PhotochemCAD cases:
+
+- the physical evidence path is available;
+- the legacy spectral-quality path is blocked by missing or scientifically
+  unsafe fields;
+- legacy `sigma_a` remains unresolved because its unit contract is not
+  documented;
+- missing values are not replaced by zero.
+
+The comparison status is explicitly:
+
+`NON_EQUIVALENT_OUTPUTS_DO_NOT_RANK_AGAINST_EACH_OTHER`.
+
+Run:
+
+```
+python -m unittest -v test_g23_spectral_path_comparison.py
+```
