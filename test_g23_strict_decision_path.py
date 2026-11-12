@@ -34,6 +34,8 @@ VALID = {
     "experimental_success_score": 60.0,
     "research_novelty_score": 55.0,
     "patent_potential_score": 50.0,
+    "scientific_confidence_score": 75.0,
+    "system_integrity_score": 80.0,
 }
 
 
@@ -93,7 +95,6 @@ class StrictDecisionPathTests(unittest.TestCase):
 class G23IntelligenceHubTests(unittest.TestCase):
     def test_intelligence_summary_refuses_missing_score(self):
         record = dict(VALID)
-        record["system_integrity_score"] = 80.0
         del record["research_novelty_score"]
         with self.assertRaises(MissingScientificDataError):
             generate_intelligence_summary_strict(record)
