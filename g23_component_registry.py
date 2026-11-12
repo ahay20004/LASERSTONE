@@ -77,6 +77,41 @@ G23_COMPONENT_REGISTRY = {
         "inputs": ["normalized_evidence_record", "engine_compatibility_report"],
         "outputs": ["allowed_actions", "blocked_claims"],
     },
+    "g23_data_standardization_engine": {
+        "status": "EXPERIMENTAL_VERIFIED",
+        "role": "Strict Data Standardization",
+        "production_promoted": False,
+        "inputs": ["raw_quality_value"],
+        "outputs": ["standardized_value", "standardization_status"],
+    },
+    "g23_strict_decision_path": {
+        "status": "EXPERIMENTAL_VERIFIED",
+        "role": "Strict Legacy Decision Wrappers",
+        "production_promoted": False,
+        "inputs": ["complete_heuristic_score_record"],
+        "outputs": ["strict_heuristic_decision_outputs"],
+    },
+    "g23_evidence_interpretation_engine": {
+        "status": "EXPERIMENTAL_VERIFIED",
+        "role": "Evidence-Aware Interpretation",
+        "production_promoted": False,
+        "inputs": ["normalized_evidence_record"],
+        "outputs": ["evidence_bounded_interpretation"],
+    },
+    "g23_evidence_trace_engine": {
+        "status": "EXPERIMENTAL_VERIFIED",
+        "role": "Evidence Traceability",
+        "production_promoted": False,
+        "inputs": ["normalized_evidence_record"],
+        "outputs": ["provenance_trace"],
+    },
+    "g23_evidence_output_engine": {
+        "status": "EXPERIMENTAL_VERIFIED",
+        "role": "Evidence-Safe Output Representation",
+        "production_promoted": False,
+        "inputs": ["normalized_evidence_record"],
+        "outputs": ["derived_spectral_output", "blocked_output_claims"],
+    },
 }
 
 
