@@ -32,7 +32,7 @@ is replaced until its migration gate passes.
 | Legacy provenance | generic references not tied to fields | `g23_legacy_provenance_audit.py` | Experimental verified |
 | Plant/compound linkage | isolated compound could overwrite extract data | `g23_compound_evidence_linker.py` | Experimental verified |
 | External orchestration | evidence modules could remain fragmented | `g23_external_evidence_pipeline.py` | Experimental verified |
-| Regression | no dedicated evidence CI | G23 evidence workflow + local runner | PASS: 79/79 tests on Python 3.12 |
+| Regression | no dedicated evidence CI | G23 evidence workflow + local runner | PASS: 86/86 tests on Python 3.12 |
 
 ## Current scientific field contracts
 
@@ -156,7 +156,7 @@ A GitHub Actions workflow is staged at:
 `.github/workflows/g23-evidence-safety.yml`
 
 Latest verified GitHub Actions evidence-safety run completed successfully on
-Python 3.12 with **79/79 tests passed**. The suite includes normalization,
+Python 3.12 with **86/86 tests passed**. The suite includes normalization,
 integration gates, strict missing-data behavior, unit contracts, reporting,
 legacy provenance audit, plant/compound linkage, and the unified external
 evidence pipeline.
