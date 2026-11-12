@@ -13,7 +13,7 @@ This work introduces **LASERSTONE**, a computational research framework develope
 
 PhotochemCAD was used as the initial external spectral-evidence source. Reported molar extinction coefficients were converted, where applicable, into molecular absorption cross sections using a Beer–Lambert-based relation while preserving the derived status and physical units of the calculated quantity. Three representative records—Asn-Bx, quercetin, and lutein—were selected to test different levels of evidence completeness. Their independent core spectral-evidence completeness was 75%, 50%, and 25%, respectively. The framework allowed only operations supported by the available evidence, including absorption analysis, unit-bearing cross-section derivation, and Stokes-shift calculation when both absorption and emission information were explicitly available. Operations requiring unresolved quantities, including legacy absorption parameters, fluorescence lifetime, non-radiative decay terms, or incompletely defined efficiency quantities, were blocked rather than completed using default values.
 
-A provenance audit of the existing LASERSTONE plant dataset additionally identified unresolved field-level source and unit requirements that must be addressed before legacy numerical values can be promoted as physical evidence. Compound-level literature evidence was also kept distinct from plant-extract evidence so that isolated-compound spectra could support interpretation without replacing extract measurements. The evidence-safety architecture, together with the first research-composition entry gates, was validated through **86 automated acceptance tests under Python 3.12**. LASERSTONE therefore provides an evidence-bounded computational framework for the scientific evaluation of natural photonic materials while explicitly preventing unsupported claims of optical gain, laser efficiency, resonator quality, output power, or prototype readiness.
+A provenance audit of the existing LASERSTONE plant dataset additionally identified unresolved field-level source and unit requirements that must be addressed before legacy numerical values can be promoted as physical evidence. Compound-level literature evidence was also kept distinct from plant-extract evidence so that isolated-compound spectra could support interpretation without replacing extract measurements. The evidence-safety architecture, together with the first research-composition entry gates, was validated through **90 automated acceptance tests under Python 3.12**. LASERSTONE therefore provides an evidence-bounded computational framework for the scientific evaluation of natural photonic materials while explicitly preventing unsupported claims of optical gain, laser efficiency, resonator quality, output power, or prototype readiness.
 
 **Keywords:** natural photonic materials; scientific provenance; PhotochemCAD; evidence-aware computation; data harmonization; natural chromophores; reproducible scientific software; laser-material screening
 
@@ -379,7 +379,7 @@ The G23 evidence-safety and research-entry architecture was developed and tested
 
 Automated acceptance tests were created to verify source immutability, physical-domain validation, evidence-state separation, epsilon-to-cross-section conversion, strict missing-data behavior, unit contracts, engine compatibility, registry conflict handling, claim gating, strict decision wrappers, evidence-aware interpretation, legacy provenance auditing, compound–extract separation, unified external-evidence orchestration, Research Directive validation, and prior-art-based novelty authorization.
 
-At the present development checkpoint, **86 automated acceptance tests completed successfully** under the dedicated GitHub Actions workflow.
+At the present development checkpoint, **90 automated acceptance tests completed successfully** under the dedicated GitHub Actions workflow.
 
 The test result demonstrates software and rule consistency for the evaluated architecture. It does not constitute experimental validation of laser action or material performance.
 
@@ -531,7 +531,7 @@ The implemented novelty gate therefore authorized composition of the present pap
 
 ### 3.9. Automated verification
 
-Following integration of the evidence-safety and research-entry components, the dedicated GitHub Actions workflow executed **86 acceptance tests** under Python 3.12. All 86 tests completed successfully.
+Following integration of the evidence-safety and research-entry components, the dedicated GitHub Actions workflow executed **90 acceptance tests** under Python 3.12. All 90 tests completed successfully.
 
 The tests covered the data path from normalization through evidence storage, physical derivation, compatibility, claim gating, provenance, reporting, compound linkage, strict decision wrappers, unified external-evidence orchestration, Research Directive validation, and novelty authorization.
 
@@ -661,7 +661,7 @@ Three benchmark PhotochemCAD records produced evidence-completeness values of 75
 
 The framework also separated analysis from claim authorization. Spectral evidence alone was not permitted to establish optical gain, laser efficiency, resonator quality, output power, or prototype readiness.
 
-The complete evidence-safety and research-entry architecture passed **86 automated acceptance tests under Python 3.12**.
+The complete evidence-safety and research-entry architecture passed **90 automated acceptance tests under Python 3.12**.
 
 The present work therefore establishes LASERSTONE as an evidence-aware research framework rather than a conventional scoring system. Its next development stage will expand the evidence base, strengthen field-level provenance, and test whether evidence-aware computational selection predicts experimentally measured photophysical behavior.
 
