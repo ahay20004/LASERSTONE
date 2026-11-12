@@ -112,6 +112,13 @@ G23_COMPONENT_REGISTRY = {
         "inputs": ["normalized_evidence_record"],
         "outputs": ["derived_spectral_output", "blocked_output_claims"],
     },
+    "g23_legacy_provenance_audit": {
+        "status": "EXPERIMENTAL_VERIFIED",
+        "role": "Legacy Data Provenance Audit",
+        "production_promoted": False,
+        "inputs": ["legacy_plant_record", "legacy_reference_registry"],
+        "outputs": ["provenance_gap_report", "reference_reconciliation_flags"],
+    },
 }
 
 
