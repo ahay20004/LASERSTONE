@@ -28,4 +28,5 @@ jobs:
             test_g23_physical_spectral_evidence_engine.py \
             test_g23_spectral_path_comparison.py \
             test_g23_evidence_safety_repairs.py \
-            test_g23_strict_decision_path.py
+            test_g23_strict_decision_path.py \
+            test_g23_legacy_provenance_audit.py
