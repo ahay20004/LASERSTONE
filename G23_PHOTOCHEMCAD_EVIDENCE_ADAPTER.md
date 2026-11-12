@@ -138,17 +138,57 @@ Run:
 python -m unittest -v test_g23_photochemcad_evidence_adapter.py
 ```
 
-## Future integration gate
+## Integration gate findings
 
-Production integration must be a separate reviewed step. Before wiring this
-adapter to `spectral_quality_engine.py`, LASERSTONE must define:
+The legacy G23 scientific input gate explicitly defines `phi` as quantum
+yield, so a reported PhotochemCAD fluorescence quantum yield `phi_f` may be
+mapped to legacy `phi` with provenance.
 
-- unit compatibility for legacy `sigma_a`;
-- mapping rules for `phi_f` versus legacy `phi`;
-- behavior when tau, knr, eta, or refractive_index are absent;
-- provenance propagation through downstream ranking engines;
-- explicit prevention of missing scientific values being replaced by zero.
+The legacy `sigma_a` field does not currently have a documented physical
+unit or normalization contract. Existing project values are numerically of
+order unity, while a physically derived molecular absorption cross section
+from PhotochemCAD is typically of order 1e-16 cm^2 molecule^-1. Therefore
+`sigma_a_cm2` must not be copied into legacy `sigma_a`.
 
-Until those points are resolved, this adapter remains evidence-only and must
-not be interpreted as proof of laser gain, lasing feasibility, or prototype
-readiness.
+The integration gate in `photochemcad_integration_gate.py` therefore permits
+only the following evidence-preserving mappings:
+
+- `phi_f -> phi`, when `phi_f` is explicitly reported;
+- `lambda_abs_nm -> lambda_abs`, when explicitly reported;
+- `lambda_em_nm -> lambda_em`, when explicitly reported.
+
+Derived `sigma_a_cm2` remains a separate unit-bearing physical evidence
+field.
+
+Legacy scientific execution remains blocked whenever any required legacy
+quantity is unresolved. In particular, PhotochemCAD records must not receive
+fabricated values for `tau`, `sigma_a`, `eta`, `knr`,
+`refractive_index`, or `lambda_em`.
+
+Run:
+
+```
+python -m unittest -v test_g23_photochemcad_integration_gate.py
+```
+
+The isolated integration-gate logic has eight acceptance cases covering safe
+mapping, sigma separation, missing-data preservation, non-promotion, source
+immutability, source validation, and conditional emission-wavelength mapping.
+
+## Production integration status
+
+**BLOCKED FROM LEGACY SCIENTIFIC EXECUTION.**
+
+This is a scientific safeguard, not a software failure. The PhotochemCAD
+evidence layer is usable now for traceable evidence storage and analysis, but
+it must not be fed into the legacy scoring pipeline until:
+
+- the legacy `sigma_a` unit/normalization contract is defined;
+- missing-field behavior is changed so absence is not silently converted to
+  zero;
+- downstream provenance is preserved through ranking and decision engines;
+- any additional photophysical quantities are supplied from traceable sources
+  rather than inferred merely to satisfy a score formula.
+
+Until those conditions are met, PhotochemCAD evidence must not be interpreted
+as proof of laser gain, lasing feasibility, or prototype readiness.
