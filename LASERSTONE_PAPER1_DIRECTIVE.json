@@ -25,7 +25,7 @@
     "Asn-Bx_evidence_completeness_percent": 75,
     "Quercetin_evidence_completeness_percent": 50,
     "Lutein_evidence_completeness_percent": 25,
-    "automated_acceptance_tests_passed": 79,
+    "automated_acceptance_tests_passed": 86,
     "legacy_plant_records_audited": 7
   },
   "claim_boundary": "Evidence-bounded computational validation only; no experimental laser action is claimed.",
