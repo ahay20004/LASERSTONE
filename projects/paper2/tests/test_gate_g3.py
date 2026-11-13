@@ -17,6 +17,14 @@ class PhysicalEvidenceGateTests(unittest.TestCase):
             self.assertEqual(r["claims"][claim]["status"], "NOT_SUPPORTED")
         self.assertTrue(all(r["physical_boundary_checks"].values()))
 
+    def test_descriptive_similarity_is_not_repeatability(self):
+        r = g3.evaluate(["absorption"])
+        self.assertEqual(r["claims"]["spectral_shape_similarity"]["status"], "ELIGIBLE_FOR_REVIEW")
+        self.assertEqual(r["claims"]["spectral_similarity_repeatability"]["status"], "NOT_SUPPORTED")
+        r2 = g3.evaluate(["absorption", "independent_repeat"])
+        self.assertEqual(r2["claims"]["spectral_similarity_repeatability"]["status"], "ELIGIBLE_FOR_REVIEW")
+        self.assertEqual(r2["claims"]["optical_gain"]["status"], "NOT_SUPPORTED")
+
     def test_emission_and_absorption_stokes_eligible(self):
         r = g3.evaluate(["absorption", "emission"])
         self.assertEqual(r["claims"]["stokes_shift"]["status"], "ELIGIBLE_FOR_REVIEW")
