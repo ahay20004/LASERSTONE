@@ -28,8 +28,8 @@ jobs:
       - name: Install minimal numerical dependencies
         run: python -m pip install 'numpy>=1.26,<3'
       - name: Compile G1-G7 and tests
-        run: python -m compileall -q projects/paper2/gate_g1.py projects/paper2/gate_g2.py projects/paper2/gate_g3.py projects/paper2/gate_g4.py projects/paper2/gate_g5.py projects/paper2/gate_g6.py projects/paper2/gate_g7.py projects/paper2/tests
-      - name: Run G1-G7 synthetic tests
+        run: python -m compileall -q projects/paper2/gate_g1.py projects/paper2/gate_g2.py projects/paper2/gate_g3.py projects/paper2/gate_g4.py projects/paper2/gate_g5.py projects/paper2/gate_g6.py projects/paper2/gate_g7.py projects/paper2/research_hub_status.py projects/paper2/tests
+      - name: Run G1-G7 and Research Hub synthetic tests
         run: python -m unittest discover -s projects/paper2/tests -p 'test_*.py' -v
       - name: Demonstrate absorption-only claim boundaries
         run: python projects/paper2/gate_g3.py --evidence absorption --out /tmp/paper2-g3
