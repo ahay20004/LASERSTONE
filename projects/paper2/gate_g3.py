@@ -24,7 +24,8 @@ EVIDENCE_TYPES = frozenset({
 # Evidence requirements are necessary, not sufficient.
 CLAIM_REQUIREMENTS = {
     "absorption_peak": ({"absorption"},),
-    "spectral_shape_similarity": ({"absorption", "independent_repeat"},),
+    "spectral_shape_similarity": ({"absorption"},),
+    "spectral_similarity_repeatability": ({"absorption", "independent_repeat"},),
     "emission_peak": ({"emission"},),
     "stokes_shift": ({"absorption", "emission"},),
     "photoluminescence_quantum_yield": ({"quantum_yield"},),
@@ -64,7 +65,7 @@ def evaluate(evidence):
             "Eligibility is not proof; evaluate provenance, experimental conditions, and uncertainty.",
             "Normalized absorption does not provide absolute absorption cross-section.",
             "Optical gain and laser threshold require independent gain/pump-specific evidence.",
-            "Independent datasets or measurement repeats are needed to substantiate repeatability.",
+            "Descriptive spectral shape similarity needs absorption records and compatible metadata; independent repeats are needed to substantiate repeatability.",
         ],
     }
 
