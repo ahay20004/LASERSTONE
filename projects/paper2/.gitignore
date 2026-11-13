@@ -1,0 +1,13 @@
+# Keep local unpublished research and raw/third-party data out of public GitHub.
+private/
+input/
+raw/
+manuscripts/
+output/
+reports/
+*.docx
+*.pdf
+*.zip
+__pycache__/
+*.py[cod]
+.venv/
