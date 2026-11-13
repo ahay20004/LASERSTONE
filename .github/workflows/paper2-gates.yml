@@ -1,0 +1,33 @@
+name: Paper II G4 checks
+
+on:
+  push:
+    branches:
+      - paper2/physics-constrained-spectral-evidence
+    paths:
+      - 'projects/paper2/**'
+      - '.github/workflows/paper2-gates.yml'
+  pull_request:
+    paths:
+      - 'projects/paper2/**'
+      - '.github/workflows/paper2-gates.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  g4-synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install minimal numerical dependencies
+        run: python -m pip install 'numpy>=1.26,<3'
+      - name: Compile G4 and tests
+        run: python -m py_compile projects/paper2/gate_g4.py projects/paper2/tests/test_gate_g4.py
+      - name: Run synthetic G4 tests
+        run: python -m unittest discover -s projects/paper2/tests -p 'test_*.py' -v
