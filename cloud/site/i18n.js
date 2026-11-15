@@ -17,6 +17,13 @@ const translations = {
     "cockpitAccessDesc": "Restricted access awaits verified authentication and authorization.",
     "statusRestricted": "Not enabled",
     "cockpitFootnote": "Illustrative interface only · No live telemetry, private data, or authenticated sessions.",
+    "selectPanel": "Illuminate panel",
+    "readoutIdle": "No panel selected",
+    "readoutIdleDesc": "Choose a panel to inspect its preview status. No scientific engine will start.",
+    "readoutEvidence": "Evidence registry · concept preview only. No datasets are loaded.",
+    "readoutPhysics": "Physics engines · disconnected. No calculations are running.",
+    "readoutSolar": "Solar simulation · disconnected. No SCAPS execution or validation is performed.",
+    "readoutOwner": "Owner workspace · not enabled. No login or private access is available.",
     "skip": "Skip to content",
     "brandSub": "Research platform",
     "navResearch": "Research",
@@ -66,6 +73,13 @@ const translations = {
     "cockpitAccessDesc": "الوصول المقيد ينتظر تنفيذ المصادقة والتحقق من الصلاحيات.",
     "statusRestricted": "غير مفعّل",
     "cockpitFootnote": "واجهة توضيحية فقط · لا قياسات حية أو بيانات خاصة أو جلسات دخول موثقة.",
+    "selectPanel": "إضاءة القسم",
+    "readoutIdle": "لم يُحدَّد قسم",
+    "readoutIdleDesc": "اختر قسمًا لعرض حالته التجريبية. لن يعمل أي محرك علمي.",
+    "readoutEvidence": "سجل الأدلة · معاينة تصورية فقط. لم تُحمَّل أي بيانات.",
+    "readoutPhysics": "المحركات الفيزيائية · غير متصلة. لا توجد حسابات جارية.",
+    "readoutSolar": "محاكاة الخلايا الشمسية · غير متصلة. لا يُشغَّل SCAPS ولا يُتحقق من نتائجه.",
+    "readoutOwner": "مساحة المالك · غير مفعّلة. لا يوجد تسجيل دخول أو وصول خاص.",
     "skip": "انتقل إلى المحتوى",
     "brandSub": "منصة بحثية",
     "navResearch": "البحوث",
@@ -116,7 +130,33 @@ function applyLanguage(lang) {
   });
   select.value = chosen;
   document.title = 'LASERSTONE | ' + messages.brandSub;
+  updateReadout(chosen);
   try { localStorage.setItem('laserstone-language', chosen); } catch (_) { /* storage unavailable */ }
 }
 select.addEventListener('change', () => applyLanguage(select.value));
 applyLanguage(requested);
+
+/* Visual selection only: no network calls, authentication or engine execution. */
+const cockpitButtons = Array.from(document.querySelectorAll('.cockpit-switch'));
+const cockpitReadout = document.getElementById('cockpit-readout');
+const readoutKeys = { evidence: 'readoutEvidence', physics: 'readoutPhysics', solar: 'readoutSolar', owner: 'readoutOwner' };
+let selectedPanel = null;
+function updateReadout(lang) {
+  if (!cockpitReadout) return;
+  const messages = translations[lang] || translations.en;
+  const title = cockpitReadout.querySelector('strong');
+  const description = cockpitReadout.querySelector('p');
+  title.textContent = selectedPanel ? messages[selectedPanel === 'evidence' ? 'cockpitEvidenceTitle' : selectedPanel === 'physics' ? 'cockpitPhysicsTitle' : selectedPanel === 'solar' ? 'cockpitSolarTitle' : 'cockpitAccessTitle'] : messages.readoutIdle;
+  description.textContent = selectedPanel ? messages[readoutKeys[selectedPanel]] : messages.readoutIdleDesc;
+}
+cockpitButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    selectedPanel = button.dataset.panel === selectedPanel ? null : button.dataset.panel;
+    cockpitButtons.forEach(item => {
+      const active = item.dataset.panel === selectedPanel;
+      item.setAttribute('aria-pressed', String(active));
+      item.closest('.cockpit-panel').classList.toggle('is-selected', active);
+    });
+    updateReadout(document.documentElement.lang);
+  });
+});
