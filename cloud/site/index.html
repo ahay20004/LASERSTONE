@@ -22,6 +22,17 @@
     <div class="language"><label for="language-select" data-i18n="languageLabel">Language</label><select id="language-select" aria-label="Language"><option value="en">English</option><option value="ar">العربية</option></select></div>
   </header>
   <main id="main">
+    <div class="mission-shell">
+      <aside class="mission-sidebar" aria-label="Mission Control">
+        <p class="mission-sidebar-heading" data-i18n="missionMenu">MISSION CONTROL</p>
+        <a href="#cockpit" data-i18n="missionDashboard">◈ Dashboard</a>
+        <a href="#research" data-i18n="missionProjects">◇ Research projects</a>
+        <a href="#cockpit" data-i18n="missionAgents">◎ Scientific agents</a>
+        <a href="#integrity" data-i18n="missionEvidence">▤ Evidence & integrity</a>
+        <a href="#access" data-i18n="missionSecurity">⬡ Security & access</a>
+        <p class="mission-sidebar-note" data-i18n="missionMenuNote">Navigation preview · no private workspaces connected</p>
+      </aside>
+      <div class="mission-content">
     <section class="hero">
       <p class="eyebrow" data-i18n="preview">PUBLIC PREVIEW · UNDER DEVELOPMENT</p>
       <h1><span data-i18n="hero1">Scientific modelling with</span> <em data-i18n="hero2">traceable evidence.</em></h1>
@@ -42,6 +53,16 @@
       <div id="cockpit-readout" class="cockpit-readout" role="status" aria-live="polite"><strong data-i18n="readoutIdle">No panel selected</strong><p data-i18n="readoutIdleDesc">Choose a panel to inspect its preview status. No scientific engine will start.</p></div>
       <p class="cockpit-footnote" data-i18n="cockpitFootnote">Illustrative interface only · No live telemetry, private data, or authenticated sessions.</p>
     </section>
+    <section class="mission-monitor section" aria-label="Mission monitoring preview">
+      <p class="eyebrow" data-i18n="missionMonitorEyebrow">MONITORING PANELS · DESIGN PREVIEW</p>
+      <h2 data-i18n="missionMonitorTitle">Research mission overview</h2>
+      <div class="mission-monitor-grid">
+        <article class="mission-monitor-card"><span class="monitor-icon" aria-hidden="true">◇</span><h3 data-i18n="missionProjectsTitle">Research projects</h3><p data-i18n="missionProjectsDesc">Project metrics await a verified data source.</p><span class="status" data-i18n="missionNoData">No live data</span></article>
+        <article class="mission-monitor-card"><span class="monitor-icon" aria-hidden="true">◎</span><h3 data-i18n="missionAgentsTitle">Scientific agents</h3><p data-i18n="missionAgentsDesc">Agent status requires authenticated telemetry.</p><span class="status" data-i18n="missionNoData">No live data</span></article>
+        <article class="mission-monitor-card"><span class="monitor-icon" aria-hidden="true">⚑</span><h3 data-i18n="missionAlertsTitle">Alerts and reviews</h3><p data-i18n="missionAlertsDesc">No private alerts or researcher messages are displayed.</p><span class="status" data-i18n="missionNoData">No live data</span></article>
+        <article class="mission-monitor-card"><span class="monitor-icon" aria-hidden="true">▥</span><h3 data-i18n="missionProgressTitle">Validation progress</h3><p data-i18n="missionProgressDesc">No percentage is shown without an audited measurement.</p><span class="status" data-i18n="missionNoData">No live data</span></article>
+      </div>
+    </section>
     <section id="research" class="section">
       <p class="eyebrow" data-i18n="domains">RESEARCH DOMAINS</p><h2 data-i18n="researchTitle">Designed for scientific workflows</h2>
       <div class="cards">
@@ -59,6 +80,8 @@
       <p data-i18n="accessDesc">Private projects, datasets and compute services are not available on this public preview. Researcher registration and owner approval will be introduced only after authentication, authorization and audit checks are implemented.</p>
       <div class="notice" role="status" data-i18n="notice">Private login is not enabled yet. No account details are collected on this page.</div>
     </section>
+      </div>
+    </div>
   </main>
   <footer><span data-i18n="footer1">© LASERSTONE™ · Research platform preview</span><span data-i18n="footer2">Public information only · No live simulations</span></footer>
 </body>
