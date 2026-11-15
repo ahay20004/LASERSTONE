@@ -134,8 +134,6 @@ function applyLanguage(lang) {
   try { localStorage.setItem('laserstone-language', chosen); } catch (_) { /* storage unavailable */ }
 }
 select.addEventListener('change', () => applyLanguage(select.value));
-applyLanguage(requested);
-
 /* Visual selection only: no network calls, authentication or engine execution. */
 const cockpitButtons = Array.from(document.querySelectorAll('.cockpit-switch'));
 const cockpitReadout = document.getElementById('cockpit-readout');
@@ -160,3 +158,4 @@ cockpitButtons.forEach(button => {
     updateReadout(document.documentElement.lang);
   });
 });
+applyLanguage(requested);
