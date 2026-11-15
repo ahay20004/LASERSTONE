@@ -1,6 +1,14 @@
 name: Deploy LASERSTONE static preview to Hugging Face
 
 on:
+  push:
+    branches:
+      - cloud/hybrid-access-foundation
+    paths:
+      - 'cloud/site/**'
+      - 'cloud/huggingface/**'
+      - 'cloud/test_preview_static.py'
+      - '.github/workflows/huggingface-preview.yml'
   workflow_dispatch:
 
 permissions:
