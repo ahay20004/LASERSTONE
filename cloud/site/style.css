@@ -7,3 +7,30 @@
 
 /* Accessible cockpit indicator lamps: selected UI panel, not operational status. */
 .cockpit-switch{display:inline-flex;align-items:center;gap:10px;margin-top:20px;padding:10px 15px;background:#123046;color:#e9f8f6;border:1px solid #6b91a4;border-radius:10px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .16s,border-color .16s}.cockpit-switch:hover{background:#27566b}.cockpit-switch:focus-visible{outline:3px solid #8debdc;outline-offset:3px}.lamp{width:12px;height:12px;flex:none;border-radius:50%;background:#8196a3;box-shadow:0 0 0 2px #415e6c}.cockpit-switch[aria-pressed="true"]{background:#215d60;border-color:#8debdc}.cockpit-switch[aria-pressed="true"] .lamp{background:#8debdc;box-shadow:0 0 0 2px #26786d,0 0 15px #8debdc}.cockpit-panel.is-selected{border-color:#8debdc;box-shadow:0 0 0 1px #8debdc}.cockpit-readout{margin-top:22px;padding:18px 22px;border:1px solid #547c8d;background:#193b54;border-radius:12px}.cockpit-readout strong{color:#fff}.cockpit-readout p{margin:6px 0 0;color:#d5e6eb}@media(prefers-reduced-motion:reduce){.cockpit-switch{transition:none}}
+
+/* Mission Control visual direction: CSS-only interpretation of the approved reference.
+   No reference image, live counters, proprietary datasets or engines are published. */
+:root{color-scheme:dark;--mission-bg:#050f24;--mission-panel:#071d3c;--mission-line:#1c88e8;--mission-glow:#37d9ff;--mission-text:#eaf7ff}
+body{background:radial-gradient(ellipse at 50% 0%,#12396b 0%,#08162f 38%,var(--mission-bg) 82%);color:var(--mission-text)}
+.topbar{background:linear-gradient(110deg,#06142d,#0a2b54 55%,#06142d);border-bottom:1px solid #1784ce;box-shadow:0 4px 24px #009eff33}
+.brand{color:#fff;text-shadow:0 0 15px #47cfff70}.brand small{color:#9bdcf5}.topbar nav a{color:#e5f6ff}.topbar nav a:hover{color:#65eaff}
+.language{color:#ccecff}.language select{background:#0b2446;border-color:#2c8ed4;color:#fff}
+.hero{position:relative;background:radial-gradient(ellipse at 50% 110%,#1c6b9e 0%,transparent 57%),linear-gradient(135deg,#06142d,#102e60 55%,#07172e);border-bottom:1px solid #138ad3;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0,transparent 89px,#52bfff0a 90px),linear-gradient(180deg,transparent 80%,#1fc8ff19)}
+.hero h1{position:relative;text-shadow:0 0 22px #47bfff35}.hero h1 em{color:#67edff;text-shadow:0 0 25px #0bcaff80}
+.hero .eyebrow,.cockpit .eyebrow{color:#65edff}.primary{background:linear-gradient(110deg,#49d7ff,#85f4e6);box-shadow:0 0 18px #00bfff55}.secondary{border-color:#45bde9}
+.section:not(.cockpit):not(.band){background:transparent}.section h2{color:#f2fbff}.eyebrow{color:#6edaff}
+.card{background:linear-gradient(145deg,#0a2447,#07172e);border:1px solid #237fc2;box-shadow:inset 0 1px #6fdcff22,0 0 24px #0ba6ff1c}
+.card p,.access p{color:#c0dbeb}.glyph{color:#5eeaff;text-shadow:0 0 15px #24d6ff}.tag{background:#123e62;color:#a4e9ff}
+.cockpit{background:linear-gradient(140deg,#030d20,#0a2247 50%,#040e23);border-block:1px solid #2077b9}
+.cockpit-panel{background:linear-gradient(155deg,#0a2a50,#07152e);border:1px solid #1a8fd6;box-shadow:inset 0 1px #75dfff24,0 8px 25px #0005}
+.cockpit-panel h3{color:#f2fbff}.cockpit-panel p{color:#bddbea}.panel-symbol{color:#54dfff}
+.cockpit-panel.is-selected{border-color:#5aeaff;box-shadow:0 0 0 1px #53eaff,0 0 28px #0bbfff66}
+.cockpit-switch{background:#0a2447;border-color:#348ec7}.cockpit-switch:hover{background:#11426b}.cockpit-switch[aria-pressed="true"]{background:#075a71;border-color:#62f2ff;box-shadow:0 0 18px #09c9ff55}
+.cockpit-switch[aria-pressed="true"] .lamp{background:#6afaff;box-shadow:0 0 0 2px #197d9b,0 0 18px #46efff}
+.cockpit-readout{background:#092648;border-color:#2696d4;box-shadow:inset 0 0 20px #00aeff12}
+.band{background:linear-gradient(120deg,#081a34,#0c3156);border-block:1px solid #1b659a}.band p:last-child{color:#c5e2ee}
+.notice{background:#0c2947;color:#cceaf5;border-left-color:#43e0ff;border:1px solid #2388c5}
+footer{background:#030c1c;border-top:1px solid #126da7;color:#a7cee2}
+[dir=rtl] .notice{border-left:1px solid #2388c5;border-right:4px solid #43e0ff}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
