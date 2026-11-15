@@ -1,0 +1,55 @@
+name: Deploy LASERSTONE static preview to Hugging Face
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: "Approved branch or commit to deploy"
+        required: true
+        default: "cloud/hybrid-access-foundation"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: huggingface-laserstone-preview
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: ${{ github.repository == 'ahay20004/LASERSTONE' }}
+    runs-on: ubuntu-latest
+    environment: huggingface-preview
+    steps:
+      - name: Checkout approved source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate preview
+        run: python -m unittest -v cloud/test_preview_static.py
+      - name: Stage only approved static files
+        run: python cloud/huggingface/prepare_space.py --output /tmp/laserstone-hf-preview
+      - name: Install Hugging Face client
+        run: python -m pip install "huggingface_hub>=0.26,<2"
+      - name: Upload static preview to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python - <<'PY'
+          import os
+          from huggingface_hub import HfApi
+          token = os.environ.get("HF_TOKEN")
+          if not token:
+              raise SystemExit("Missing HF_TOKEN secret in huggingface-preview environment")
+          HfApi(token=token).upload_folder(
+              folder_path="/tmp/laserstone-hf-preview",
+              repo_id="LASERSTONE/scientific-preview",
+              repo_type="space",
+              commit_message="Deploy reviewed LASERSTONE bilingual static preview",
+          )
+          print("Upload finished; verify Space content and revision.")
+          PY
