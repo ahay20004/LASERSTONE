@@ -2,12 +2,12 @@
 title: LASERSTONE Scientific Preview
 emoji: 🔬
 colorFrom: blue
-colorTo: teal
+colorTo: indigo
 sdk: static
 app_file: index.html
 pinned: false
 license: other
-short_description: Bilingual scientific platform preview — no live research services
+short_description: Bilingual LASERSTONE scientific preview
 ---
 
 # LASERSTONE™ — Scientific Preview
