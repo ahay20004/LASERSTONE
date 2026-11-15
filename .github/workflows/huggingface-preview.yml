@@ -40,7 +40,6 @@ jobs:
               repo_id="LASERSTONE/scientific-preview",
               repo_type="space",
               commit_message="Deploy reviewed LASERSTONE bilingual static preview",
-              delete_patterns=["index.html", "style.css", "i18n.js", "icon.svg", "manifest.webmanifest", "README.md"],
           )
           print("Hugging Face upload requested; verify the Space App tab and revision.")
           PY
