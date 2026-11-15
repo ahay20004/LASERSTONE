@@ -6,7 +6,7 @@
 - [ ] Inventory third-party dependencies and license obligations.
 - [ ] Confirm no unpublished research data, personal information, keys, or internal file paths in public site assets.
 - [ ] Approve LASERSTONE name/logo usage and trademark search plan.
-- [ ] Review English, Arabic and French text, plus additional locale quality.
+- [ ] Review English and Arabic text and RTL; do not enable additional languages before approval.
 - [ ] Test RTL, keyboard navigation, mobile layout and language persistence.
 - [ ] Check hosting limits, domain, HTTPS, headers, backup, and operational ownership.
 - [ ] Approve privacy notice and feedback mechanism; do not claim a contact channel is active before configured.
