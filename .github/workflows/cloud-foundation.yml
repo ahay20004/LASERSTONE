@@ -25,6 +25,9 @@ jobs:
       - name: Compile Python sources
         shell: bash
         run: python -m compileall -q .
+      - name: Bilingual cloud preview static tests
+        shell: bash
+        run: python -m unittest -v cloud/test_preview_static.py
       - name: Scientific regression tests
         shell: bash
         run: python -m unittest -v test_g23_simulation_exchange_contract test_g23_analysis_pipeline
