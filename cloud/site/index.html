@@ -12,39 +12,41 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="stylesheet" href="./style.css">
   <title>LASERSTONE | Scientific Research Platform</title>
+  <script src="./i18n.js" defer></script>
 </head>
 <body>
-  <a class="skip" href="#main">Skip to content</a>
+  <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
   <header class="topbar">
-    <a class="brand" href="./" aria-label="LASERSTONE home"><img src="./icon.svg" alt="" width="44" height="44"><span>LASERSTONE<span class="tm">™</span><small>Research platform</small></span></a>
-    <nav aria-label="Primary"><a href="#research">Research</a><a href="#integrity">Integrity</a><a href="#access">Access</a></nav>
+    <a class="brand" href="./" aria-label="LASERSTONE home"><img src="./icon.svg" alt="" width="44" height="44"><span>LASERSTONE<span class="tm">™</span><small data-i18n="brandSub">Research platform</small></span></a>
+    <nav aria-label="Primary"><a href="#research" data-i18n="navResearch">Research</a><a href="#integrity" data-i18n="navIntegrity">Integrity</a><a href="#access" data-i18n="navAccess">Access</a></nav>
+    <div class="language"><label for="language-select" data-i18n="languageLabel">Language</label><select id="language-select" aria-label="Language"><option value="en">English</option><option value="ar">العربية</option><option value="fr">Français</option><option value="es">Español</option><option value="de">Deutsch</option><option value="pt">Português</option></select></div>
   </header>
   <main id="main">
     <section class="hero">
-      <p class="eyebrow">PUBLIC PREVIEW · UNDER DEVELOPMENT</p>
-      <h1>Scientific modelling with <em>traceable evidence.</em></h1>
-      <p class="lead">LASERSTONE connects laser physics, photonics, materials and photovoltaic research through transparent computational workflows. This preview contains no private research data or live simulation service.</p>
-      <div class="actions"><a class="primary" href="#research">Explore research areas</a><a class="secondary" href="#access">Research access</a></div>
-      <p class="note">Scientific status: platform development. No experimental or numerical validation is implied by this preview.</p>
+      <p class="eyebrow" data-i18n="preview">PUBLIC PREVIEW · UNDER DEVELOPMENT</p>
+      <h1><span data-i18n="hero1">Scientific modelling with</span> <em data-i18n="hero2">traceable evidence.</em></h1>
+      <p class="lead" data-i18n="lead">LASERSTONE connects laser physics, photonics, materials and photovoltaic research through transparent computational workflows. This preview contains no private research data or live simulation service.</p>
+      <div class="actions"><a class="primary" href="#research" data-i18n="explore">Explore research areas</a><a class="secondary" href="#access" data-i18n="researchAccess">Research access</a></div>
+      <p class="note" data-i18n="note">Scientific status: platform development. No experimental or numerical validation is implied by this preview.</p>
     </section>
     <section id="research" class="section">
-      <p class="eyebrow">RESEARCH DOMAINS</p><h2>Designed for scientific workflows</h2>
+      <p class="eyebrow" data-i18n="domains">RESEARCH DOMAINS</p><h2 data-i18n="researchTitle">Designed for scientific workflows</h2>
       <div class="cards">
-        <article class="card"><span class="glyph" aria-hidden="true">◈</span><h3>Laser & photonics</h3><p>Modelling, spectral analysis, efficiency and evidence-aware interpretation.</p><span class="tag">Preview only</span></article>
-        <article class="card"><span class="glyph" aria-hidden="true">☼</span><h3>Photovoltaic modelling</h3><p>Solar-cell simulation result inspection with explicit model and source provenance.</p><span class="tag">Preview only</span></article>
-        <article class="card"><span class="glyph" aria-hidden="true">⌁</span><h3>Research analytics</h3><p>Transparent plots and reports separating measurements, simulations and predictions.</p><span class="tag">Preview only</span></article>
+        <article class="card"><span class="glyph" aria-hidden="true">◈</span><h3 data-i18n="laserTitle">Laser & photonics</h3><p data-i18n="laserDesc">Modelling, spectral analysis, efficiency and evidence-aware interpretation.</p><span class="tag" data-i18n="previewOnly">Preview only</span></article>
+        <article class="card"><span class="glyph" aria-hidden="true">☼</span><h3 data-i18n="solarTitle">Photovoltaic modelling</h3><p data-i18n="solarDesc">Solar-cell simulation result inspection with explicit model and source provenance.</p><span class="tag">Preview only</span></article>
+        <article class="card"><span class="glyph" aria-hidden="true">⌁</span><h3 data-i18n="analyticsTitle">Research analytics</h3><p data-i18n="analyticsDesc">Transparent plots and reports separating measurements, simulations and predictions.</p><span class="tag">Preview only</span></article>
       </div>
     </section>
     <section id="integrity" class="section band">
-      <p class="eyebrow">SCIENTIFIC INTEGRITY</p><h2>Evidence before claims</h2>
-      <p>Results must identify their source and status: <strong>MEASURED</strong>, <strong>DERIVED</strong>, <strong>SIMULATED</strong> or <strong>PREDICTED</strong>. Parsing a SCAPS I–V export does not establish solver convergence or physical validation.</p>
+      <p class="eyebrow" data-i18n="integrity">SCIENTIFIC INTEGRITY</p><h2 data-i18n="integrityTitle">Evidence before claims</h2>
+      <p data-i18n="integrityDesc">Results must identify their source and status: MEASURED, DERIVED, SIMULATED or PREDICTED. Parsing a SCAPS I–V export does not establish solver convergence or physical validation.</p>
     </section>
     <section id="access" class="section access">
-      <p class="eyebrow">CONTROLLED COLLABORATION</p><h2>Research spaces are invitation-only</h2>
-      <p>Private projects, datasets and compute services are not available on this public preview. Researcher registration and owner approval will be introduced only after authentication, authorization and audit checks are implemented.</p>
-      <div class="notice" role="status">Private login is not enabled yet. No account details are collected on this page.</div>
+      <p class="eyebrow" data-i18n="collaboration">CONTROLLED COLLABORATION</p><h2 data-i18n="accessTitle">Research spaces are invitation-only</h2>
+      <p data-i18n="accessDesc">Private projects, datasets and compute services are not available on this public preview. Researcher registration and owner approval will be introduced only after authentication, authorization and audit checks are implemented.</p>
+      <div class="notice" role="status" data-i18n="notice">Private login is not enabled yet. No account details are collected on this page.</div>
     </section>
   </main>
-  <footer><span>© LASERSTONE™ · Research platform preview</span><span>Public information only · No live simulations</span></footer>
+  <footer><span data-i18n="footer1">© LASERSTONE™ · Research platform preview</span><span data-i18n="footer2">Public information only · No live simulations</span></footer>
 </body>
 </html>
