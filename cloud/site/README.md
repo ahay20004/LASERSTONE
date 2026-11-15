@@ -18,3 +18,6 @@ From repository root: `python -m http.server 8000 --directory cloud/site`, then 
 - Security headers verified on deployed host.
 - Social preview requires a deployed absolute OG image URL; not configured yet.
 - SVG favicon and web manifest included; cross-browser installability not guaranteed.
+
+## Localization
+The public UI includes English, Arabic (RTL), French, Spanish, German and Portuguese. The selector stores a local language preference; URL query `?lang=ar` can override it. Translations are static and editable in `i18n.js`. No automatic translation of user files, equations, scientific data or research results occurs. Additional languages require a reviewed translation dictionary and a selector option. No account or remote language preferences are stored.
