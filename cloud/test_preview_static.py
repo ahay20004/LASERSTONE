@@ -4,6 +4,9 @@ from pathlib import Path
 import json
 import re
 import unittest
+import subprocess
+import sys
+import tempfile
 
 SITE = Path(__file__).resolve().parent / "site"
 
@@ -58,6 +61,38 @@ class PreviewTests(unittest.TestCase):
         self.assertIn("default-src 'none'", headers)
         self.assertIn("script-src 'self'", headers)
         self.assertIn("frame-ancestors 'none'", headers)
+
+    def test_cockpit_is_explicitly_non_live(self):
+        for anchor in ('id="cockpit"', 'id="research"', 'id="integrity"', 'id="access"'):
+            self.assertIn(anchor, self.html)
+        for lang in ("en", "ar"):
+            for key in ("cockpitTitle", "cockpitFootnote", "statusDisconnected", "statusRestricted"):
+                self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
+        self.assertIn("No live telemetry", self.messages["en"]["cockpitFootnote"])
+        self.assertIn("غير متصل", self.messages["ar"]["statusDisconnected"])
+
+    def test_no_external_script_or_form_actions(self):
+        self.assertNotRegex(self.html, r'(?i)<script[^>]+src=["\\\']https?://')
+        self.assertNotRegex(self.html, r'(?i)<form\\b')
+        self.assertNotRegex(self.html, r'(?i)<iframe\\b')
+        self.assertNotRegex(self.js, r'(?i)\\b(fetch|XMLHttpRequest|WebSocket|sendBeacon)\\s*\\(')
+
+    def test_staging_has_only_approved_public_assets(self):
+        script = SITE.parent / "huggingface" / "prepare_space.py"
+        allowed = {"README.md", "index.html", "style.css", "i18n.js", "icon.svg", "manifest.webmanifest"}
+        with tempfile.TemporaryDirectory() as temp:
+            target = Path(temp) / "preview"
+            subprocess.run([sys.executable, str(script), "--output", str(target)],
+                           check=True, capture_output=True, text=True)
+            self.assertEqual({p.name for p in target.iterdir()}, allowed)
+            self.assertFalse((target / "_headers").exists())
+            self.assertFalse(any(p.is_dir() for p in target.iterdir()))
+
+    def test_security_headers_are_not_claimed_as_deployed(self):
+        # These headers are a source template, not enforced by the static HF Space.
+        script = (SITE.parent / "huggingface" / "prepare_space.py").read_text(encoding="utf-8")
+        self.assertIn('ASSETS = ("index.html", "style.css", "i18n.js", "icon.svg", "manifest.webmanifest")', script)
+        self.assertIn("NOT applied by this static Space", script)
 
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
