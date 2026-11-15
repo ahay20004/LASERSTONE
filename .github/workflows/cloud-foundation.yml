@@ -1,0 +1,30 @@
+name: Cloud foundation checks
+
+on:
+  pull_request:
+    paths:
+      - "cloud/**"
+      - ".github/workflows/cloud-foundation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile Python sources
+        shell: bash
+        run: python -m compileall -q .
+      - name: Scientific regression tests
+        shell: bash
+        run: python -m unittest -v test_g23_simulation_exchange_contract test_g23_analysis_pipeline
