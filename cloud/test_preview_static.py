@@ -73,9 +73,9 @@ class PreviewTests(unittest.TestCase):
 
     def test_no_external_script_or_form_actions(self):
         self.assertNotRegex(self.html, r'(?i)<script[^>]+src=["\\\']https?://')
-        self.assertNotRegex(self.html, r'(?i)<form\\b')
-        self.assertNotRegex(self.html, r'(?i)<iframe\\b')
-        self.assertNotRegex(self.js, r'(?i)\\b(fetch|XMLHttpRequest|WebSocket|sendBeacon)\\s*\\(')
+        self.assertNotRegex(self.html, r'(?i)<form\b')
+        self.assertNotRegex(self.html, r'(?i)<iframe\b')
+        self.assertNotRegex(self.js, r'(?i)\b(fetch|XMLHttpRequest|WebSocket|sendBeacon)\s*\(')
 
     def test_staging_has_only_approved_public_assets(self):
         script = SITE.parent / "huggingface" / "prepare_space.py"
