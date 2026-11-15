@@ -19,6 +19,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -30,4 +32,7 @@ jobs:
         run: python -m unittest -v cloud/test_preview_static.py
       - name: Scientific regression tests
         shell: bash
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONUTF8: '1'
         run: python -m unittest -v test_g23_simulation_exchange_contract test_g23_analysis_pipeline
