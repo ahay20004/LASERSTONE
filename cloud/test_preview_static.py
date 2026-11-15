@@ -94,6 +94,36 @@ class PreviewTests(unittest.TestCase):
         self.assertIn('ASSETS = ("index.html", "style.css", "i18n.js", "icon.svg", "manifest.webmanifest")', script)
         self.assertIn("NOT applied by this static Space", script)
 
+    def test_cockpit_controls_are_accessible_and_non_operational(self):
+        from html.parser import HTMLParser
+        class Buttons(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.panels = []
+            def handle_starttag(self, tag, attrs):
+                if tag == "button":
+                    attrs = dict(attrs)
+                    if "data-panel" in attrs:
+                        self.panels.append(attrs)
+        buttons = Buttons()
+        buttons.feed(self.html)
+        self.assertEqual({p["data-panel"] for p in buttons.panels},
+                         {"evidence", "physics", "solar", "owner"})
+        self.assertEqual(len(buttons.panels), 4)
+        for panel in buttons.panels:
+            self.assertEqual(panel.get("type"), "button")
+            self.assertEqual(panel.get("aria-pressed"), "false")
+            self.assertEqual(panel.get("aria-controls"), "cockpit-readout")
+        self.assertIn('id="cockpit-readout"', self.html)
+        self.assertIn('aria-live="polite"', self.html)
+        self.assertIn("selectedPanel = button.dataset.panel === selectedPanel ? null", self.js)
+        self.assertIn("updateReadout(document.documentElement.lang)", self.js)
+        self.assertIn("updateReadout(chosen)", self.js)
+        for lang in ("en", "ar"):
+            for key in ("selectPanel", "readoutIdle", "readoutIdleDesc",
+                        "readoutEvidence", "readoutPhysics", "readoutSolar", "readoutOwner"):
+                self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
