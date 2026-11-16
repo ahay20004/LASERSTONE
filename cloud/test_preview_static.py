@@ -37,6 +37,15 @@ class PreviewTests(unittest.TestCase):
             raise AssertionError("Translations dictionary not found")
         cls.messages = json.loads(match.group(1))
 
+    def test_flight_csv_export_is_user_initiated_and_provenance_marked(self):
+        self.assertIn('id="flight-export"', self.html)
+        self.assertIn('id="flight-export-status"', self.html)
+        for marker in ("function exportFlightCSV()", "addEventListener('click', exportFlightCSV)",
+                       "'DERIVED_MODEL'", "NOT MEASURED", "i <= 40",
+                       "laserstone_attenuation_model.csv", "URL.revokeObjectURL(url)",
+                       "BLOCKED · Invalid input. No file exported."):
+            self.assertIn(marker, self.js)
+
     def test_flight_console_controls_and_automated_checks(self):
         for marker in ('id="flight-console"', 'id="flight-alpha"',
                        'id="flight-depth"', 'id="flight-intensity"',
