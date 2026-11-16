@@ -18,7 +18,7 @@ def assess_dataset():
     rows = []
     for original in plants:
         name = original.get("name", "Unnamed")
-        analyzed = analyze_plant(copy.deepcopy(original))
+        analyzed = analyze_plant(copy.deepcopy(original), canonical_spectral_handoff=True)
         if analyzed.get("analysis_status") != "COMPLETE_HEURISTIC_ANALYSIS":
             rows.append({
                 "name": name, "status": "BLOCKED",
