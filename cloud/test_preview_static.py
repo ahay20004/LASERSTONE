@@ -170,6 +170,26 @@ class PreviewTests(unittest.TestCase):
         self.assertIn("أصلية", self.messages["ar"]["gatesAttribution"])
         self.assertIn("البرهان", self.messages["ar"]["gateIntegrityQuote"])
 
+
+    def test_learning_path_is_bilingual_accessible_and_non_operational(self):
+        self.assertIn('id="learning-path"', self.html)
+        self.assertEqual(self.html.count('class="learning-step'), 5)
+        for index in range(5):
+            self.assertIn(f'data-step="{index}"', self.html)
+            for lang in ("en", "ar"):
+                self.assertTrue(self.messages[lang].get(f"learningStep{index}"))
+                self.assertTrue(self.messages[lang].get(f"learningDesc{index}"))
+        for key in ("learningIntro", "learningDisclaimer", "learningPrev", "learningNext"):
+            self.assertTrue(self.messages["en"].get(key))
+            self.assertTrue(self.messages["ar"].get(key))
+        self.assertIn('id="learning-readout"', self.html)
+        self.assertIn('id="learning-prev" disabled', self.html)
+        self.assertIn('id="learning-next"', self.html)
+        self.assertIn('aria-pressed="true"', self.html)
+        self.assertIn("updateLearning(chosen)", self.js)
+        self.assertIn("updateLearning(document.documentElement.lang)", self.js)
+        self.assertIn("No data collection", self.messages["en"]["learningDisclaimer"])
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
