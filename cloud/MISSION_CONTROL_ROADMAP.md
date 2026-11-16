@@ -297,3 +297,9 @@ to the public static Space.
 - `cloud/test_canonical_spectral_material_adapter.py` tests all three labels, score arithmetic, provenance, and invalid inputs. Synthetic fixture score changes compared with current `main.py` label handoff: High +6.00, Medium +2.00, Low -1.00 points; these are **not** empirical material-ranking changes.
 - `cloud/export_spectral_material_verification.py` emits `SPECTRAL_MATERIAL_VERIFICATION.md` and `spectral_material_verification.json` alongside the complete inventory CI artifacts on Windows/Linux.
 - **Critical deployment boundary:** original `main.py` and legacy engines remain unchanged; the production analysis path is **not yet corrected**. Before deploying a main.py change, verify actual dataset effects, approve mapping semantics and run full regression. No physical validation claimed.
+
+### Phase 1 release gate — opt-in spectral handoff (November 2026)
+
+- `main.analyze_plant(record, canonical_spectral_handoff=True)` explicitly selects the canonical numeric spectral score for the material-score calculation; the default `analyze_plant(record)` retains the frozen legacy result and its regression tests.
+- `cloud/test_main_spectral_handoff.py` checks real source records, numeric conversion, and expected impact; `cloud/source_dataset_spectral_impact.py` exports side-by-side source-record comparison. CI passed for commit `aa249727` on the cloud branch.
+- **Do not conflate CI success with public deployment:** PR #3 remains unmerged; Hugging Face deployment is a separate gated workflow. No public backend or experimental physics validation is claimed. The corrected mode must be explicitly selected, and university modules are unchanged.
