@@ -338,7 +338,7 @@ class PreviewTests(unittest.TestCase):
         self.assertIn('id="university-campus"', self.html)
         self.assertIn('id="campus-title"', self.html)
         self.assertIn('class="campus-sky"', self.html)
-        self.assertEqual(self.html.count('class="campus-building"'), 7)
+        self.assertEqual(self.html.split('id="university-campus"', 1)[1].split('id="agent-council"', 1)[0].count('class="campus-building"'), 7)
         for anchor in ('#knowledge-library', '#scientific-explorer',
                        '#research', '#mission-roadmap', '#integrity', '#cockpit'):
             self.assertIn(f'href="{anchor}"', self.html)
