@@ -266,6 +266,8 @@
           <input id="flight-intensity" type="number" min="0.01" max="1000" step="0.1" value="10">
           <button type="button" id="flight-run">Run scientific checks | تشغيل الفحوص</button>
           <button type="button" id="flight-export">Export CSV | تصدير النتائج</button>
+          <label for="flight-import">Inspect CSV locally | فحص ملف CSV محليًا</label>
+          <input id="flight-import" type="file" accept=".csv,text/csv" aria-describedby="flight-import-status">
         </div>
         <div class="flight-output" role="status" aria-live="polite">
           <div class="flight-metrics"><div><small>Transmitted intensity | الشدة النافذة</small><strong id="flight-transmitted">—</strong></div><div><small>Transmission | النفاذية</small><strong id="flight-transmission">—</strong></div></div>
@@ -275,6 +277,8 @@
           <p id="flight-simulator-check">Simulation reviewer: awaiting input</p>
           <p id="flight-status">READY · Deterministic teaching model, not an experimental result.</p>
           <p id="flight-export-status" aria-live="polite">CSV export contains model-derived values only, never experimental measurements.</p>
+          <p id="flight-import-status" role="status" aria-live="polite">Choose a LASERSTONE model CSV to validate its schema and provenance locally. No upload.</p>
+          <div id="flight-import-summary" aria-live="polite"></div>
         </div>
       </div>
     </section>
