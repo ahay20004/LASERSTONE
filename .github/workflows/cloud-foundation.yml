@@ -30,6 +30,9 @@ jobs:
       - name: Bilingual cloud preview static tests
         shell: bash
         run: python -m unittest -v cloud/test_preview_static.py
+      - name: Scientific equation contract tests
+        shell: bash
+        run: python -m unittest -v cloud.test_equation_contract
       - name: Scientific regression tests
         shell: bash
         env:
