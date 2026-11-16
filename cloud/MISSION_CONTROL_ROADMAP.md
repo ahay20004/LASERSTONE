@@ -245,3 +245,11 @@ to the public static Space.
 - Added `cloud/test_core_registry_dataflow_audit.py` and Windows/Linux CI inclusion. Missing providers may be external inputs, and multiple declared providers may be intentional: neither is automatically a defect.
 - The audit is a **triage tool only**: registry `ACTIVE` does not prove runtime operation, callable compatibility, scientific validity or a patentable innovation. Review each flagged item against source interfaces and actual test evidence before changing the canonical registry.
 - University remains frozen and untouched. Next: identify one core dataflow edge with matching function contracts and implement a bounded execution test.
+
+### First bounded core-to-core scientific execution
+
+- `cloud/core_spectral_photon_integration.py` composes the **existing** `laser_physics_engine.calculate_laser_physics` (via its bounded independent-SI adapter) with the **existing** `spectral_region.predict_spectral_region` on the same input wavelength.
+- Allowed wavelength: **380–1100 nm**. This deliberately restricts the legacy classifier to visible and near-IR labels, and does not imply that its 750 nm threshold is a universal physical standard.
+- Tests: 532, 632.8 and 1064 nm independent SI comparisons; exact legacy 750 nm boundary; refractive-index invariance of photon energy; invalid inputs. `cloud/test_core_spectral_photon_integration.py` added to Windows/Linux foundation CI.
+- Acceptance is limited to **bounded software integration and numerical agreement**. No experimental verification, material characterization, gain/cavity claims, cloud execution, or university integration.
+- Preserve originals; do not copy or modify university files. Next: CI verification, source-to-contract comparison and broader physical input evidence.
