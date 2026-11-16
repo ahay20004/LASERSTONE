@@ -30,11 +30,19 @@ def classify(paths):
         "interpretation": "Path-based triage only; not a code security audit or scientific validation",
     }
 
+def changed_since_base():
+    base = 'origin/g23/stage13-integration'
+    try:
+        subprocess.check_output(['git', 'rev-parse', '--verify', base], stderr=subprocess.DEVNULL)
+        paths = subprocess.check_output(['git', 'diff', '--name-only', base + '...HEAD'], text=True, encoding='utf-8').splitlines()
+        return paths, base + '...HEAD'
+    except subprocess.CalledProcessError:
+        raise RuntimeError('Review base unavailable: fail closed; fetch full history and base branch')
+
 def main():
-    paths = subprocess.check_output(
-        ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD"],
-        text=True, encoding="utf-8").splitlines()
+    paths, scope = changed_since_base()
     report = classify(paths)
+    report["review_scope"] = scope
     out = Path("audit-artifacts/governance")
     out.mkdir(parents=True, exist_ok=True)
     (out / "risk_assessment.json").write_text(
