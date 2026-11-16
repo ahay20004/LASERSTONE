@@ -974,3 +974,45 @@ if (ivFile) {
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   });
 }
+
+
+/* Public-preview update highlights. Browser-local only; no server-side read receipts. */
+(function initializeUpdateNotices() {
+  const unreadLifetimeMs = 7 * 24 * 60 * 60 * 1000;
+  const openedGraceMs = 48 * 60 * 60 * 1000;
+  const notices = Array.from(document.querySelectorAll('.update-notice[data-update-id][data-released]'));
+  const storagePrefix = 'laserstone-update-opened:';
+  function readOpened(id) {
+    try {
+      const value = localStorage.getItem(storagePrefix + id);
+      return value === null ? null : Number(value);
+    } catch (_) { return null; }
+  }
+  function markOpened(id, when) {
+    try { localStorage.setItem(storagePrefix + id, String(when)); } catch (_) { /* private mode: ephemeral */ }
+  }
+  function refresh() {
+    const now = Date.now();
+    for (const notice of notices) {
+      const released = Date.parse(notice.dataset.released);
+      const opened = readOpened(notice.dataset.updateId);
+      const validRelease = Number.isFinite(released) && released <= now;
+      const fresh = validRelease && now < released + unreadLifetimeMs &&
+        (opened === null || (Number.isFinite(opened) && opened >= released && now < opened + openedGraceMs));
+      notice.classList.toggle('is-fresh', fresh);
+      const tag = notice.querySelector('.update-new');
+      if (tag) tag.setAttribute('aria-hidden', fresh ? 'false' : 'true');
+    }
+  }
+  for (const notice of notices) {
+    notice.addEventListener('toggle', () => {
+      if (notice.open && readOpened(notice.dataset.updateId) === null) {
+        markOpened(notice.dataset.updateId, Date.now());
+      }
+      refresh();
+    });
+  }
+  refresh();
+  document.addEventListener('visibilitychange', refresh);
+  window.addEventListener('focus', refresh);
+})();
