@@ -37,6 +37,17 @@ class PreviewTests(unittest.TestCase):
             raise AssertionError("Translations dictionary not found")
         cls.messages = json.loads(match.group(1))
 
+    def test_local_csv_import_fail_closed(self):
+        for marker in ('id="flight-import"', 'id="flight-import-status"',
+                       'id="flight-import-summary"', 'accept=".csv,text/csv"'):
+            self.assertIn(marker, self.html)
+        for marker in ("function inspectFlightCSV(source)", "records.length !== 41",
+                       "fields[3] !== 'DERIVED_MODEL'", "file.size > 1024 * 1024",
+                       "Math.abs(depth - index / 4)", "await file.text()",
+                       "No analysis or upload performed", "summary.replaceChildren()"):
+            self.assertIn(marker, self.js)
+        self.assertNotRegex(self.js, r'(?i)\\b(fetch|XMLHttpRequest|WebSocket|sendBeacon)\\s*\\(')
+
     def test_flight_csv_export_is_user_initiated_and_provenance_marked(self):
         self.assertIn('id="flight-export"', self.html)
         self.assertIn('id="flight-export-status"', self.html)
