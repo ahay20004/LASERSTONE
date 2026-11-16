@@ -268,3 +268,10 @@ to the public static Space.
 - Independent branch-by-branch threshold arithmetic is checked against the legacy function. `cloud/test_core_thermal_screen_gate.py` exercises valid, invalid, missing and boundary cases in cross-platform CI.
 - **Scientific limitation:** the output is a heuristic screening label, not a measurement of thermal stability, temperature, photobleaching, or physical thermal lifetime. The underlying weights and thresholds require calibration before any predictive claims.
 - University assets unchanged. Next: confirm CI and only then propose a documented thermal-to-material scoring handoff, without converting heuristic labels into measured evidence.
+
+### Verified-contract thermal-to-material handoff (CI pending)
+
+- `cloud/core_thermal_material_handoff.py` runs the existing thermal engine through its bounded gate, passes its output as a `DERIVED` score to the existing material scoring engine through its bounded gate, and retains input-level provenance.
+- The handoff rejects caller-injected `thermal_score`, missing fields and invalid physical input domains. No legacy engine, registry or university source was modified.
+- Synthetic fixture: thermal heuristic 100 and material heuristic 75.25. These are test values, **not experimental or calibrated physical findings**. `cloud/test_core_thermal_material_handoff.py` runs in Windows/Linux CI.
+- Do not certify runtime integration until the updated workflow succeeds; do not claim experimental thermal stability, validated material performance or patentability from these heuristic scores.
