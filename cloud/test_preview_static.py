@@ -413,6 +413,13 @@ class PreviewTests(unittest.TestCase):
                 self.assertTrue(self.messages[lang].get(f"campusD{i}"))
         self.assertIn("no live campus session", self.messages["en"]["campusFootnote"])
 
+    def test_update_expiry_is_timer_driven_and_fail_closed(self):
+        self.assertIn("expiryTimer = setTimeout(refresh", self.js)
+        self.assertIn("clearTimeout(expiryTimer)", self.js)
+        self.assertIn("opened <= now", self.js)
+        self.assertIn("now >= released && now < released + unreadLifetimeMs", self.js)
+        self.assertIn("Number.isFinite(parsed) ? parsed : null", self.js)
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
