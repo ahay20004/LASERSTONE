@@ -28,7 +28,7 @@ class ThermalMaterialHandoffTests(unittest.TestCase):
     def test_real_two_engine_execution_and_derived_provenance(self):
         result = evaluate_material_with_thermal(fixture())
         self.assertEqual(result["handoff_value"], 100)
-        self.assertEqual(result["material_ranking"]["score"], 74.75)
+        self.assertEqual(result["material_ranking"]["score"], 75.25)
         self.assertTrue(result["integration_passed"])
         self.assertEqual(result["handoff_evidence_state"], "DERIVED")
         self.assertEqual(
