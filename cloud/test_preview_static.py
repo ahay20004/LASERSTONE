@@ -201,6 +201,19 @@ class PreviewTests(unittest.TestCase):
         self.assertIn("No measured data", self.messages["en"]["exampleValidation"])
         self.assertIn("لا تُعرض هنا بيانات مقاسة", self.messages["ar"]["exampleValidation"])
 
+
+    def test_physics_teaching_stages_follow_selected_learning_step(self):
+        self.assertIn('id="example-stage-title"', self.html)
+        self.assertIn('id="example-stage-detail"', self.html)
+        self.assertIn("messages['exampleStageTitle' + learningIndex]", self.js)
+        self.assertIn("messages['exampleStageDetail' + learningIndex]", self.js)
+        for lang in ("en", "ar"):
+            for index in range(5):
+                self.assertTrue(self.messages[lang].get(f"exampleStageTitle{index}"))
+                self.assertTrue(self.messages[lang].get(f"exampleStageDetail{index}"))
+        self.assertIn("dI/dz", self.messages["en"]["exampleStageDetail2"])
+        self.assertIn("عدم اليقين", self.messages["ar"]["exampleStageDetail3"])
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
