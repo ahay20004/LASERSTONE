@@ -107,6 +107,13 @@
         <h3 id="lab-title" data-i18n="labTitle">Explore the exponential attenuation law</h3>
         <p data-i18n="labIntro">Adjust a hypothetical attenuation coefficient and path length. The output is a deterministic mathematical illustration, not an experimental result.</p>
         <div class="lab-controls">
+          <label for="lab-wavelength"><span data-i18n="labWavelength">Illustrative wavelength (nm)</span></label>
+          <select id="lab-wavelength" aria-describedby="lab-coefficient-note">
+            <option value="532">532 nm</option><option value="632.8" selected>632.8 nm</option><option value="1064">1064 nm</option>
+          </select>
+          <p id="lab-coefficient-note" data-i18n="labCoefficientNote">Wavelength presets use invented teaching coefficients, not measured optical constants for a real material. Changing wavelength updates α.</p>
+          <label for="lab-incident"><span data-i18n="labIncident">Incident intensity I₀ (mW/cm²)</span><output id="lab-incident-value" for="lab-incident">10.0</output></label>
+          <input id="lab-incident" type="range" min="1" max="20" step="0.5" value="10">
           <label for="lab-alpha"><span data-i18n="labAlpha">Attenuation coefficient α (cm⁻¹)</span><output id="lab-alpha-value" for="lab-alpha">0.50</output></label>
           <input id="lab-alpha" type="range" min="0" max="2" step="0.05" value="0.5">
           <label for="lab-depth"><span data-i18n="labDepth">Path length z (cm)</span><output id="lab-depth-value" for="lab-depth">2.0</output></label>
@@ -116,6 +123,7 @@
           <span data-i18n="labResult">Modelled transmitted intensity I/I₀</span>
           <strong id="lab-ratio">0.3679</strong>
           <span id="lab-percent">36.79%</span>
+          <span data-i18n="labAbsolute">Calculated transmitted intensity</span><strong id="lab-absolute">3.679 mW/cm²</strong>
         </div>
         <div class="lab-track" role="img" aria-label="Illustrative relative transmitted intensity bar"><div id="lab-bar" class="lab-bar" style="width:36.79%"></div></div>
         <p class="example-warning" data-i18n="labDisclaimer">Calculated from exp(−αz) with user-selected hypothetical parameters. This does not verify the physical model, account for reflections or scattering, or represent laboratory measurements.</p>
