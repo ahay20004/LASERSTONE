@@ -38,7 +38,7 @@ jobs:
         run: python -m unittest -v cloud.test_legacy_integration_inventory cloud.test_legacy_laser_photon_adapter cloud.test_core_first_university_audit cloud.test_core_registry_dataflow_audit cloud.test_core_spectral_photon_integration cloud.test_core_material_score_gate cloud.test_core_thermal_screen_gate cloud.test_core_thermal_material_handoff
       - name: Whole-engine AST audit regression
         shell: bash
-        run: python -m unittest -v cloud.test_full_engine_audit cloud.test_spectral_material_contract_diagnostic cloud.test_canonical_spectral_material_adapter cloud.test_source_dataset_spectral_impact
+        run: python -m unittest -v cloud.test_full_engine_audit cloud.test_spectral_material_contract_diagnostic cloud.test_canonical_spectral_material_adapter cloud.test_source_dataset_spectral_impact cloud.test_main_spectral_handoff
       - name: Generate full engine audit artifacts
         shell: bash
         run: python -m cloud.write_full_engine_audit
