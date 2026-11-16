@@ -243,6 +243,23 @@ class PreviewTests(unittest.TestCase):
         self.assertIn("invented teaching coefficients", self.messages["en"]["labCoefficientNote"])
         self.assertIn("افتراضية", self.messages["ar"]["labCoefficientNote"])
 
+
+    def test_mission_roadmap_is_static_bilingual_and_has_attention_control(self):
+        self.assertIn('id="mission-roadmap"', self.html)
+        self.assertIn('id="roadmap-alert-button"', self.html)
+        self.assertIn('aria-controls="roadmap-alert-details"', self.html)
+        self.assertIn('id="roadmap-alert-details" hidden', self.html)
+        self.assertIn("roadmapAlertButton.addEventListener('click'", self.js)
+        self.assertIn("roadmapAlertDetails.hidden = expanded", self.js)
+        self.assertIn("not live GitHub telemetry", self.messages["en"]["roadmapIntro"])
+        self.assertIn("ولا يرسل إشعارات", self.messages["ar"]["roadmapAlertDisclaimer"])
+        for lang in ("en", "ar"):
+            for key in ("navRoadmap", "missionRoadmap", "roadmapTitle",
+                        "roadmapAlertButton", "roadmapAlertHide",
+                        "roadmapDone6", "roadmapNext5", "roadmapRisk3"):
+                self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
+        self.assertTrue((SITE.parent / "MISSION_CONTROL_ROADMAP.md").is_file())
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
