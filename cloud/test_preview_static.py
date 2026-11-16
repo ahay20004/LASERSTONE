@@ -293,6 +293,19 @@ class PreviewTests(unittest.TestCase):
                 self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
         self.assertIn("not a live literature search", self.messages["en"]["libraryIntro"])
 
+    def test_library_field_filter_and_source_link(self):
+        self.assertIn('id="library-category"', self.html)
+        for category in ("all", "laser", "optics", "solar"):
+            self.assertIn(f'value="{category}"', self.html)
+        self.assertIn("libraryCategory.addEventListener('change', renderKnowledgeLibrary)", self.js)
+        self.assertIn('entry.category === libraryCategory.value', self.js)
+        self.assertIn('https://doi.org/10.1007/978-1-4419-1302-9', self.js)
+        self.assertIn('link.rel = "noopener noreferrer"', self.js)
+        for lang in ("en", "ar"):
+            for key in ("libraryCategoryLabel", "libraryAll", "libraryLaser",
+                        "libraryOptics", "librarySolar", "libraryOpenSource"):
+                self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
