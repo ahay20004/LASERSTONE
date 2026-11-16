@@ -1,6 +1,27 @@
 /* LASERSTONE public-preview UI translations. Scientific data is never auto-translated. */
 const translations = {
   "en": {
+    "libraryEyebrow": "SCIENTIFIC EXPLORER · CURATED LIBRARY",
+    "libraryTitle": "Search the scientific concept library",
+    "libraryIntro": "Search a small reviewed teaching glossary locally in Arabic or English. This is not a live literature search or AI answer engine.",
+    "librarySearchLabel": "Search scientific concepts",
+    "librarySearchPlaceholder": "Try: laser, photon, absorption",
+    "libraryDisclaimer": "Educational summaries only. References are starting points, not automatically verified evidence for research claims. No external queries or personal data are transmitted.",
+    "libraryResults": "Matching concepts",
+    "libraryEmpty": "No matching concept in the current glossary.",
+    "libraryReference": "Further reading",
+    "libraryTopic0": "Spontaneous emission",
+    "libraryDesc0": "An excited system emits radiation without an incident stimulating photon. In a simple radiative channel Rsp = A21 N2.",
+    "libraryTopic1": "Stimulated emission",
+    "libraryDesc1": "A resonant field induces emission into the stimulating optical mode; net gain requires stimulated emission to exceed absorption.",
+    "libraryTopic2": "Photon energy",
+    "libraryDesc2": "In vacuum E = hν = hc/λ. The energy is measured in joules or electronvolts.",
+    "libraryTopic3": "Optical absorption",
+    "libraryDesc3": "For a homogeneous non-scattering medium with negligible reflections, I(z) = I0 exp(−αz), where α is in inverse length.",
+    "libraryTopic4": "Population inversion",
+    "libraryDesc4": "In a two-level transition model, positive stimulated gain requires B21 N2 > B12 N1; a laser also needs gain above cavity losses.",
+    "libraryTopic5": "Photovoltaic quantum efficiency",
+    "libraryDesc5": "EQE is collected charge carriers per incident photon; IQE refers to absorbed photons under the specified definition and measurement conditions.",
     "navExplorer": "Explorer",
     "missionExplorer": "✧ Scientific Explorer",
     "explorerEyebrow": "SCIENTIFIC EXPLORER · LESSON 01",
@@ -185,6 +206,27 @@ const translations = {
     "footer2": "Public information only · No live simulations"
   },
   "ar": {
+    "libraryEyebrow": "المستكشف العلمي · المكتبة المنتقاة",
+    "libraryTitle": "ابحث في مكتبة المفاهيم العلمية",
+    "libraryIntro": "ابحث محليًا في مسرد تعليمي محدود بالعربية أو الإنجليزية. هذه ليست خدمة بحث مباشر في المنشورات ولا محرك إجابات ذكاء اصطناعي.",
+    "librarySearchLabel": "ابحث عن مفهوم علمي",
+    "librarySearchPlaceholder": "مثال: الليزر، الفوتون، الامتصاص",
+    "libraryDisclaimer": "ملخصات تعليمية فقط. المراجع نقاط بداية للقراءة وليست تحققًا آليًا من ادعاءات بحثية. لا تُرسل استفسارات خارجية أو بيانات شخصية.",
+    "libraryResults": "المفاهيم المطابقة",
+    "libraryEmpty": "لا توجد نتيجة مطابقة في المسرد الحالي.",
+    "libraryReference": "للاستزادة",
+    "libraryTopic0": "الانبعاث التلقائي",
+    "libraryDesc0": "يصدر النظام المثار إشعاعًا دون فوتون وارد محفز. في قناة إشعاعية بسيطة Rsp = A21 N2.",
+    "libraryTopic1": "الانبعاث المحفَّز",
+    "libraryDesc1": "يحفز مجال رنيني إصدار فوتون إلى النمط البصري المحفز؛ ويتطلب الكسب الصافي تفوق الانبعاث المحفز على الامتصاص.",
+    "libraryTopic2": "طاقة الفوتون",
+    "libraryDesc2": "في الفراغ E = hν = hc/λ، وتقاس الطاقة بالجول أو الإلكترون فولت.",
+    "libraryTopic3": "الامتصاص البصري",
+    "libraryDesc3": "في وسط متجانس دون تشتت مع إهمال الانعكاسات I(z) = I0 exp(−αz)، ووحدة α مقلوب الطول.",
+    "libraryTopic4": "الانقلاب السكاني",
+    "libraryDesc4": "في نموذج انتقال ذي مستويين يتطلب الكسب المحفز B21 N2 > B12 N1؛ ويستلزم الليزر تجاوز خسائر التجويف.",
+    "libraryTopic5": "الكفاءة الكمية للخلايا الشمسية",
+    "libraryDesc5": "الكفاءة الخارجية EQE نسبة حاملات الشحنة المجموعة إلى الفوتونات الساقطة، والداخلية IQE إلى الفوتونات الممتصة وفق التعريف وشروط القياس.",
     "navExplorer": "المستكشف",
     "missionExplorer": "✧ المستكشف العلمي",
     "explorerEyebrow": "المستكشف العلمي · الدرس الأول",
@@ -513,4 +555,51 @@ function updatePhotonEnergy() {
 if (explorerWavelength) {
   explorerWavelength.addEventListener('change', updatePhotonEnergy);
   updatePhotonEnergy();
+}
+
+/* Curated local glossary: no fetch, external API, user tracking or HTML injection. */
+const libraryEntries = Object.freeze([
+  {id:0, terms:"spontaneous emission Einstein A21 radiative lifetime انبعاث تلقائي عمر إشعاعي", reference:"Siegman, Lasers (1986)"},
+  {id:1, terms:"stimulated emission Einstein B21 laser gain انبعاث محفز تضخيم ليزر", reference:"Svelto, Principles of Lasers (2010)"},
+  {id:2, terms:"photon energy wavelength frequency joule electronvolt فوتون طاقة طول موجي تردد", reference:"CODATA SI constants; BIPM SI Brochure"},
+  {id:3, terms:"optical absorption Beer Lambert coefficient intensity امتصاص بصري شدة معامل", reference:"Hecht, Optics"},
+  {id:4, terms:"population inversion gain threshold laser انقلاب سكاني عتبة كسب", reference:"Siegman, Lasers (1986)"},
+  {id:5, terms:"solar cell photovoltaic quantum efficiency EQE IQE كفاءة كمية خلية شمسية", reference:"Nelson, The Physics of Solar Cells"}
+]);
+const librarySearch = document.getElementById('library-search');
+function renderKnowledgeLibrary() {
+  if (!librarySearch) return;
+  const lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
+  const messages = translations[lang];
+  const query = librarySearch.value.trim().toLocaleLowerCase();
+  const results = document.getElementById('library-results');
+  const matches = libraryEntries.filter(entry =>
+    (entry.terms + ' ' + translations.en['libraryTopic' + entry.id] + ' ' +
+     translations.ar['libraryTopic' + entry.id] + ' ' +
+     translations.en['libraryDesc' + entry.id] + ' ' +
+     translations.ar['libraryDesc' + entry.id]).toLocaleLowerCase().includes(query));
+  results.replaceChildren();
+  document.getElementById('library-count').textContent = messages.libraryResults + ': ' + matches.length;
+  if (!matches.length) {
+    const empty = document.createElement('p');
+    empty.textContent = messages.libraryEmpty;
+    results.appendChild(empty);
+  }
+  matches.forEach(entry => {
+    const article = document.createElement('article');
+    article.className = 'library-entry';
+    const title = document.createElement('h3');
+    title.textContent = messages['libraryTopic' + entry.id];
+    const desc = document.createElement('p');
+    desc.textContent = messages['libraryDesc' + entry.id];
+    const source = document.createElement('small');
+    source.textContent = messages.libraryReference + ': ' + entry.reference;
+    article.append(title, desc, source);
+    results.appendChild(article);
+  });
+}
+if (librarySearch) {
+  librarySearch.addEventListener('input', renderKnowledgeLibrary);
+  document.getElementById('language-select').addEventListener('change', renderKnowledgeLibrary);
+  renderKnowledgeLibrary();
 }
