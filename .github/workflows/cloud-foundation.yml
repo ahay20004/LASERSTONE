@@ -42,7 +42,10 @@ jobs:
       - name: Generate full engine audit artifacts
         shell: bash
         run: python -m cloud.write_full_engine_audit
-      - name: Export spectral material correction verification\n        shell: bash\n        run: python -m cloud.export_spectral_material_verification\n      - name: Upload engine audit reports
+      - name: Export spectral material correction verification
+        shell: bash
+        run: python -m cloud.export_spectral_material_verification
+      - name: Upload engine audit reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
