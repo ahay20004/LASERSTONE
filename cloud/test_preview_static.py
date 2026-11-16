@@ -37,6 +37,21 @@ class PreviewTests(unittest.TestCase):
             raise AssertionError("Translations dictionary not found")
         cls.messages = json.loads(match.group(1))
 
+    def test_all_internal_navigation_targets_exist(self):
+        ids = set(re.findall(r'\\bid="([^"]+)"', self.html))
+        targets = re.findall(r'<a\\b[^>]*\\bhref="#([^"]+)"', self.html)
+        self.assertTrue(targets)
+        for target in targets:
+            self.assertIn(target, ids, f"Broken internal icon/navigation link: #{target}")
+        self.assertIn('href="#agent-council"', self.html)
+        self.assertIn('id="agent-council"', self.html)
+        self.assertEqual(self.html.count('class="research-link"'), 3)
+        for lang in ("en", "ar"):
+            for key in ("agentsTitle", "agentsIntro", "agentsFootnote",
+                        "agentsPhysics", "agentsEvidence", "agentsSimulator",
+                        "agentsCoordinator"):
+                self.assertTrue(self.messages[lang].get(key))
+
     def test_only_arabic_english(self):
         self.assertEqual(set(self.messages), {"en", "ar"})
         self.assertEqual(set(self.markup.languages), {"en", "ar"})
