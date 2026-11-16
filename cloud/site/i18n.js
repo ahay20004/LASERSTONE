@@ -1,6 +1,10 @@
 /* LASERSTONE public-preview UI translations. Scientific data is never auto-translated. */
 const translations = {
   "en": {
+    "librarySourceId": "Source ID",
+    "librarySourceStatus": "Reference status",
+    "libraryBibliographic": "Bibliographic reference; concept-level verification pending",
+    "libraryDoiRecorded": "DOI recorded; landing-page check not automated",
     "libraryCategoryLabel": "Scientific field",
     "libraryAll": "All fields",
     "libraryLaser": "Laser physics",
@@ -212,6 +216,10 @@ const translations = {
     "footer2": "Public information only · No live simulations"
   },
   "ar": {
+    "librarySourceId": "معرّف المصدر",
+    "librarySourceStatus": "حالة المرجع",
+    "libraryBibliographic": "مرجع ببليوغرافي؛ التحقق على مستوى المفهوم لم يكتمل",
+    "libraryDoiRecorded": "DOI مسجل؛ لم يُفحص رابط الناشر آليًا",
     "libraryCategoryLabel": "المجال العلمي",
     "libraryAll": "جميع المجالات",
     "libraryLaser": "فيزياء الليزر",
@@ -571,12 +579,12 @@ if (explorerWavelength) {
 
 /* Curated local glossary: no fetch, external API, user tracking or HTML injection. */
 const libraryEntries = Object.freeze([
-  {id:0, category:"laser", terms:"spontaneous emission Einstein A21 radiative lifetime انبعاث تلقائي عمر إشعاعي", reference:"Siegman, Lasers (1986)"},
-  {id:1, category:"laser", terms:"stimulated emission Einstein B21 laser gain انبعاث محفز تضخيم ليزر", reference:"Svelto, Principles of Lasers (2010)", url:"https://doi.org/10.1007/978-1-4419-1302-9"},
-  {id:2, category:"optics", terms:"photon energy wavelength frequency joule electronvolt فوتون طاقة طول موجي تردد", reference:"CODATA SI constants; BIPM SI Brochure"},
-  {id:3, category:"optics", terms:"optical absorption Beer Lambert coefficient intensity امتصاص بصري شدة معامل", reference:"Hecht, Optics"},
-  {id:4, category:"laser", terms:"population inversion gain threshold laser انقلاب سكاني عتبة كسب", reference:"Siegman, Lasers (1986)"},
-  {id:5, category:"solar", terms:"solar cell photovoltaic quantum efficiency EQE IQE كفاءة كمية خلية شمسية", reference:"Nelson, The Physics of Solar Cells"}
+  {id:0, sourceId:"LS-REF-001", status:"bibliographic", category:"laser", terms:"spontaneous emission Einstein A21 radiative lifetime انبعاث تلقائي عمر إشعاعي", reference:"Siegman, Lasers (1986)"},
+  {id:1, sourceId:"LS-REF-002", status:"doi_recorded", category:"laser", terms:"stimulated emission Einstein B21 laser gain انبعاث محفز تضخيم ليزر", reference:"Svelto, Principles of Lasers (2010)", url:"https://doi.org/10.1007/978-1-4419-1302-9"},
+  {id:2, sourceId:"LS-REF-003", status:"bibliographic", category:"optics", terms:"photon energy wavelength frequency joule electronvolt فوتون طاقة طول موجي تردد", reference:"CODATA SI constants; BIPM SI Brochure"},
+  {id:3, sourceId:"LS-REF-004", status:"bibliographic", category:"optics", terms:"optical absorption Beer Lambert coefficient intensity امتصاص بصري شدة معامل", reference:"Hecht, Optics"},
+  {id:4, sourceId:"LS-REF-001", status:"bibliographic", category:"laser", terms:"population inversion gain threshold laser انقلاب سكاني عتبة كسب", reference:"Siegman, Lasers (1986)"},
+  {id:5, sourceId:"LS-REF-005", status:"bibliographic", category:"solar", terms:"solar cell photovoltaic quantum efficiency EQE IQE كفاءة كمية خلية شمسية", reference:"Nelson, The Physics of Solar Cells"}
 ]);
 const librarySearch = document.getElementById('library-search');
 const libraryCategory = document.getElementById('library-category');
@@ -609,7 +617,10 @@ function renderKnowledgeLibrary() {
     desc.textContent = messages['libraryDesc' + entry.id];
     const source = document.createElement('small');
     source.textContent = messages.libraryReference + ': ' + entry.reference;
-    article.append(title, desc, source);
+    const provenance = document.createElement("small");
+    provenance.className = "library-provenance";
+    provenance.textContent = messages.librarySourceId + ": " + entry.sourceId + " · " + messages.librarySourceStatus + ": " + messages[entry.status === "doi_recorded" ? "libraryDoiRecorded" : "libraryBibliographic"];
+    article.append(title, desc, source, provenance);
     if (entry.url) {
       const link = document.createElement("a");
       link.href = entry.url;
