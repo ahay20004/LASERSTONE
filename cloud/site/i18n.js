@@ -1,6 +1,18 @@
 /* LASERSTONE public-preview UI translations. Scientific data is never auto-translated. */
 const translations = {
   "en": {
+    "agentsEyebrow": "SCIENTIFIC AGENT COUNCIL · DESIGN",
+    "agentsTitle": "Specialist agents with explicit evidence gates",
+    "agentsIntro": "The council is an integration design, not a running autonomous service. Explore each role's existing destination; execution remains disabled until a secure backend and owner approval exist.",
+    "agentsPhysics": "Physics reviewer",
+    "agentsPhysicsDesc": "Equation scope, numerical comparison and assumptions.",
+    "agentsEvidence": "Evidence auditor",
+    "agentsEvidenceDesc": "Source provenance and validation boundaries.",
+    "agentsSimulator": "Simulation reviewer",
+    "agentsSimulatorDesc": "Solver, input contracts and reproducibility checks.",
+    "agentsCoordinator": "Research coordinator",
+    "agentsCoordinatorDesc": "Priorities, conflicts and owner decisions.",
+    "agentsFootnote": "Role links are active navigation; agent execution, private-data access and automated publication are not enabled.",
     "navCampus": "University",
     "missionCampus": "♜ Scientific University",
     "campusEyebrow": "LASERSTONE INTERNATIONAL SCIENTIFIC UNIVERSITY",
@@ -238,6 +250,18 @@ const translations = {
     "footer2": "Public information only · No live simulations"
   },
   "ar": {
+    "agentsEyebrow": "مجلس الوكلاء العلميين · تصميم",
+    "agentsTitle": "وكلاء متخصصون بضوابط تحقق واضحة",
+    "agentsIntro": "المجلس تصميم للتكامل وليس خدمة ذاتية التشغيل حاليًا. يمكن استكشاف أقسام الأدوار، بينما يبقى التنفيذ معطلًا حتى إنشاء خدمة خلفية آمنة وموافقة المالك.",
+    "agentsPhysics": "مراجع الفيزياء",
+    "agentsPhysicsDesc": "حدود المعادلات والمقارنة العددية والافتراضات.",
+    "agentsEvidence": "مدقق الأدلة",
+    "agentsEvidenceDesc": "مصادر البيانات وحدود التحقق العلمي.",
+    "agentsSimulator": "مراجع المحاكاة",
+    "agentsSimulatorDesc": "المحللات العددية وعقود الإدخال وقابلية إعادة النتائج.",
+    "agentsCoordinator": "منسق البحوث",
+    "agentsCoordinatorDesc": "الأولويات والتعارضات وقرارات المالك.",
+    "agentsFootnote": "روابط الأدوار مفعلة للتنقل فقط؛ تشغيل الوكلاء والوصول للبيانات الخاصة والنشر الآلي غير مفعّل.",
     "navCampus": "الجامعة",
     "missionCampus": "♜ الجامعة العلمية",
     "campusEyebrow": "جامعة ليزرستون العلمية العالمية",
