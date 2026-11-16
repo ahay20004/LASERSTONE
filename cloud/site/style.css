@@ -106,3 +106,5 @@ footer{background:#030c1c;border-top:1px solid #126da7;color:#a7cee2}
 
 /* Curated knowledge-library search */
 .knowledge-library{border-top:1px solid #d8e6ed}.knowledge-library label{display:block;font-weight:650;margin:16px 0 8px}.knowledge-library input[type=search]{box-sizing:border-box;width:100%;max-width:680px;border:1px solid #9ebdc7;border-radius:10px;padding:13px 15px;font:inherit;color:#12354a;background:#fff}.library-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}.library-entry{border:1px solid #c9dce4;border-radius:13px;padding:18px;background:#f5fafb}.library-entry h3{margin:0 0 8px}.library-entry p{margin:0 0 12px}.library-entry small{color:#4c6372}@media(max-width:700px){.library-results{grid-template-columns:1fr}}
+
+.knowledge-library select{display:block;font:inherit;border:1px solid #9ebdc7;border-radius:10px;padding:10px 14px;min-width:220px;max-width:100%;background:white;color:#12354a}.library-entry a{display:inline-block;margin-top:12px;color:#08798a;font-weight:650}
