@@ -82,3 +82,6 @@ footer{background:#030c1c;border-top:1px solid #126da7;color:#a7cee2}
 .learning-example h3{color:#f1fcff}.learning-example p{line-height:1.8}
 .example-equation{direction:ltr;text-align:center;font-size:clamp(23px,3vw,36px);font-family:Georgia,serif;color:#84efff;padding:18px 10px;margin:16px 0;border-block:1px solid #3b8fb566;letter-spacing:.02em}
 .example-warning{border-inline-start:3px solid #f0c674;padding:10px 14px;background:#e2a83a14;color:#ffe5a7}
+
+.example-stage{margin:16px 0 22px;padding:17px 20px;border:1px solid #49a9db;border-radius:12px;background:linear-gradient(110deg,#0e3c63,#09233f)}
+.example-stage strong{color:#83f0ff;font-size:18px}.example-stage p{color:#e5f5ff;margin-bottom:0}
