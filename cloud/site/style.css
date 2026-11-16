@@ -116,3 +116,22 @@ footer{background:#030c1c;border-top:1px solid #126da7;color:#a7cee2}
 
 /* Clear, keyboard-accessible active navigation for formerly decorative research icons */
 .research-link{display:inline-block;margin-top:12px;color:#096d7b;font-weight:700;text-underline-offset:4px}.research-link:hover,.campus-building a:hover{color:#064c61;text-decoration-thickness:2px}.research-link:focus-visible,.campus-building a:focus-visible{outline:3px solid #14a5a0;outline-offset:4px}.agent-council{border-top:1px solid #d8e6ed}
+
+/* Live local scientific flight console */
+.flight-console{border:1px solid #b5d9dd;border-radius:22px;background:linear-gradient(135deg,#f0faf9,#e9f3fa)}
+.flight-grid{display:grid;grid-template-columns:minmax(250px,1fr) minmax(300px,1.35fr);gap:22px;margin-top:22px}
+.flight-controls,.flight-output{background:#fff;border:1px solid #c9e0e5;border-radius:16px;padding:22px;min-width:0}
+.flight-controls label{display:block;margin:15px 0 8px;font-weight:650;color:#173b52}
+.flight-controls input[type=range]{width:100%;accent-color:#087b83}
+.flight-controls input[type=number]{display:block;width:100%;box-sizing:border-box;padding:11px;border:1px solid #93b6c2;border-radius:9px;font:inherit}
+.flight-controls output{display:block;color:#276679;font-variant-numeric:tabular-nums}
+.flight-controls button{margin-top:20px;padding:12px 18px;border:0;border-radius:10px;background:#075e70;color:white;font:inherit;font-weight:700;cursor:pointer}
+.flight-controls button:focus-visible{outline:3px solid #e5a633;outline-offset:3px}
+.flight-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.flight-metrics>div{padding:13px;background:#eaf5f6;border-radius:10px}
+.flight-metrics small{display:block;color:#476575}
+.flight-metrics strong{display:block;font-size:clamp(16px,2vw,24px);color:#0b4f60;font-variant-numeric:tabular-nums}
+#flight-chart{width:100%;height:auto;margin-top:15px;background:#f7fbfc;border-radius:10px}
+.flight-output p{border-bottom:1px solid #e3ebee;padding-bottom:8px;color:#284c5d}
+#flight-status{font-weight:700;color:#075e70}
+@media(max-width:760px){.flight-grid{grid-template-columns:1fr}.flight-metrics{grid-template-columns:1fr}}
