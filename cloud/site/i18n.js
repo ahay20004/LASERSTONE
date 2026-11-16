@@ -60,6 +60,16 @@ const translations = {
     "exampleAssumptions": "Model conditions: a homogeneous medium, constant α, and a single exponential attenuation law; reflection, scattering and complex geometry require additional treatment.",
     "exampleValidation": "Validation path: measure transmitted intensity at known depths, fit the attenuation law, report uncertainty, and check systematic deviations. No measured data are supplied here.",
     "exampleWarning": "Teaching example only · A symbolic equation is not evidence of experimental agreement or numerical validation.",
+    "exampleStageTitle0": "1 · Observe the phenomenon",
+    "exampleStageDetail0": "Compare incident and transmitted intensity qualitatively; do not infer a coefficient without measurements.",
+    "exampleStageTitle1": "2 · Explain attenuation",
+    "exampleStageDetail1": "In a simplified absorbing medium, intensity loss per unit distance is proportional to the local intensity. This is a model assumption, not a universal law for all materials.",
+    "exampleStageTitle2": "3 · Formulate the model",
+    "exampleStageDetail2": "With constant attenuation coefficient α, dI/dz = −αI integrates to I(z) = I₀ exp(−αz). The product αz is dimensionless.",
+    "exampleStageTitle3": "4 · Design a test",
+    "exampleStageDetail3": "Measure I(z) at several known depths, estimate uncertainty and compare ln[I(z)/I₀] against −αz; investigate reflection and scattering.",
+    "exampleStageTitle4": "5 · Evaluate evidence",
+    "exampleStageDetail4": "A fit alone does not establish causality or general validity. Check residuals, calibration, repeatability and independent conditions before drawing conclusions.",
     "missionMotto": "We dream with the imagination of scientists, build with the precision of engineers, and declare success only when supported by evidence.",
     "missionMenu": "MISSION CONTROL",
     "missionDashboard": "◈ Dashboard",
@@ -171,6 +181,16 @@ const translations = {
     "exampleAssumptions": "شروط النموذج: وسط متجانس، ومعامل α ثابت، وقانون توهين أسي واحد؛ أما الانعكاس والتشتت والهندسة المعقدة فتحتاج معالجة إضافية.",
     "exampleValidation": "مسار التحقق: قياس شدة الضوء النافذ عند أعماق معلومة، وملاءمة قانون التوهين، والإبلاغ عن عدم اليقين، وفحص الانحرافات المنتظمة. لا تُعرض هنا بيانات مقاسة.",
     "exampleWarning": "مثال تعليمي فقط · المعادلة الرمزية لا تثبت توافقًا تجريبيًا أو تحققًا عدديًا.",
+    "exampleStageTitle0": "١ · تأمّل الظاهرة",
+    "exampleStageDetail0": "قارن نوعيًا بين الشدة الساقطة والنافذة؛ ولا تستنتج معامل التوهين دون قياسات.",
+    "exampleStageTitle1": "٢ · افهم التوهين",
+    "exampleStageDetail1": "في نموذج مبسط لوسط ماص، يتناسب فقد الشدة لكل وحدة طول مع الشدة المحلية. هذا افتراض نمذجي، وليس قانونًا عامًا لجميع المواد.",
+    "exampleStageTitle2": "٣ · صُغ النموذج",
+    "exampleStageDetail2": "عند ثبات معامل التوهين α، يؤدي تكامل dI/dz = −αI إلى I(z) = I₀ exp(−αz). والجداء αz بلا أبعاد.",
+    "exampleStageTitle3": "٤ · صمّم الاختبار",
+    "exampleStageDetail3": "قِس I(z) عند أعماق معلومة، وقدّر عدم اليقين، وقارن ln[I(z)/I₀] مع −αz؛ وافحص أثر الانعكاس والتشتت.",
+    "exampleStageTitle4": "٥ · قيّم الدليل",
+    "exampleStageDetail4": "الملاءمة وحدها لا تثبت السببية أو عمومية النموذج. افحص البواقي والمعايرة والتكرارية والظروف المستقلة قبل الاستنتاج.",
     "missionMotto": "نحلم بخيال العلماء، ونبني بدقة المهندسين، ولا نعلن نجاحًا إلا بشهادة الدليل.",
     "missionMenu": "غرفة القيادة",
     "missionDashboard": "◈ لوحة القيادة",
@@ -281,6 +301,8 @@ function updateLearning(lang) {
   const messages = translations[lang] || translations.en;
   learningReadout.querySelector('strong').textContent = messages['learningStep' + learningIndex];
   learningReadout.querySelector('p').textContent = messages['learningDesc' + learningIndex];
+  document.getElementById('example-stage-title').textContent = messages['exampleStageTitle' + learningIndex];
+  document.getElementById('example-stage-detail').textContent = messages['exampleStageDetail' + learningIndex];
   learningButtons.forEach((button, index) => {
     const active = index === learningIndex;
     button.setAttribute('aria-pressed', String(active));
