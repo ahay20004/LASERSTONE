@@ -571,6 +571,7 @@ function renderKnowledgeLibrary() {
   if (!librarySearch) return;
   const lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
   const messages = translations[lang];
+  librarySearch.placeholder = messages.librarySearchPlaceholder;
   const query = librarySearch.value.trim().toLocaleLowerCase();
   const results = document.getElementById('library-results');
   const matches = libraryEntries.filter(entry =>
