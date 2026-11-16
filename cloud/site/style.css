@@ -95,3 +95,5 @@ footer{background:#030c1c;border-top:1px solid #126da7;color:#a7cee2}
 .lab-track{height:15px;overflow:hidden;border:1px solid #3895c5;border-radius:30px;background:#041329;margin:16px 0}
 .lab-bar{height:100%;background:linear-gradient(90deg,#167dbb,#6af1ff);transition:width .15s ease}
 @media(prefers-reduced-motion:reduce){.lab-bar{transition:none}}
+
+.lab-controls select{width:100%;padding:11px;border:1px solid #3e9bc8;border-radius:9px;background:#092944;color:#e8faff;font:inherit}.lab-controls select:focus-visible{outline:2px solid #86efff;outline-offset:2px}#lab-coefficient-note{font-size:.88rem;color:#b7d9e9;margin:0 0 10px}
