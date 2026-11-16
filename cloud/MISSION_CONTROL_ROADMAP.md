@@ -275,3 +275,12 @@ to the public static Space.
 - The handoff rejects caller-injected `thermal_score`, missing fields and invalid physical input domains. No legacy engine, registry or university source was modified.
 - Synthetic fixture: thermal heuristic 100 and material heuristic 75.25. These are test values, **not experimental or calibrated physical findings**. `cloud/test_core_thermal_material_handoff.py` runs in Windows/Linux CI.
 - Do not certify runtime integration until the updated workflow succeeds; do not claim experimental thermal stability, validated material performance or patentability from these heuristic scores.
+
+### Phase 1 — comprehensive read-only engine inventory (2026-11-16)
+
+- **Baseline from current registry:** 32 declared ACTIVE entries; 31 nominal directed output-to-input edges connecting 24 entries; 8 isolated in the registry graph. These counts do not establish actual runtime activation.
+- **Source inventory:** `cloud/full_engine_audit.py` parses every repository Python file with AST, records top-level functions, class methods, signatures, registered engine presence, declared graph, and direct imported call sites in `main.py`. No imports/execution of original project modules; university files are parsed read-only and not changed.
+- **Automated tests:** `cloud/test_full_engine_audit.py` covers synthetic graph, signatures, call sites, read-only behavior and current 32/31/24/8 registry baseline. Windows and Linux foundation CI run these tests.
+- **Reproducible detailed results:** `python -m cloud.write_full_engine_audit` produces `audit-artifacts/engine_inventory.json` (full callable/signature/call-site evidence) and `audit-artifacts/ENGINE_AUDIT_REPORT.md` (per-engine table). GitHub Actions uploads separate `engine-audit-ubuntu-latest` and `engine-audit-windows-latest` artifacts for each successful workflow run. CI results must be checked before declaring this phase passed.
+- **Interpretation:** a direct call site is static evidence only, not reachability; indirect/dynamic dispatch may be missed. Registered inputs/outputs are not necessarily function arguments. This audit neither verifies physical models nor claims full runtime, GUI, simulator or university integration.
+- **Next acceptance gate:** review actual generated report, investigate mismatches and prioritize bounded engine contract tests without modifying canonical scientific modules.
