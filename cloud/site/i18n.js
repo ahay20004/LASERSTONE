@@ -70,6 +70,13 @@ const translations = {
     "exampleStageDetail3": "Measure I(z) at several known depths, estimate uncertainty and compare ln[I(z)/I₀] against −αz; investigate reflection and scattering.",
     "exampleStageTitle4": "5 · Evaluate evidence",
     "exampleStageDetail4": "A fit alone does not establish causality or general validity. Check residuals, calibration, repeatability and independent conditions before drawing conclusions.",
+    "labEyebrow": "INTERACTIVE MODEL · NO MEASURED DATA",
+    "labTitle": "Explore the exponential attenuation law",
+    "labIntro": "Adjust a hypothetical attenuation coefficient and path length. The output is a deterministic mathematical illustration, not an experimental result.",
+    "labAlpha": "Attenuation coefficient α (cm⁻¹)",
+    "labDepth": "Path length z (cm)",
+    "labResult": "Modelled transmitted intensity I/I₀",
+    "labDisclaimer": "Calculated from exp(−αz) with user-selected hypothetical parameters. This does not verify the physical model, account for reflections or scattering, or represent laboratory measurements.",
     "missionMotto": "We dream with the imagination of scientists, build with the precision of engineers, and declare success only when supported by evidence.",
     "missionMenu": "MISSION CONTROL",
     "missionDashboard": "◈ Dashboard",
@@ -191,6 +198,13 @@ const translations = {
     "exampleStageDetail3": "قِس I(z) عند أعماق معلومة، وقدّر عدم اليقين، وقارن ln[I(z)/I₀] مع −αz؛ وافحص أثر الانعكاس والتشتت.",
     "exampleStageTitle4": "٥ · قيّم الدليل",
     "exampleStageDetail4": "الملاءمة وحدها لا تثبت السببية أو عمومية النموذج. افحص البواقي والمعايرة والتكرارية والظروف المستقلة قبل الاستنتاج.",
+    "labEyebrow": "نموذج تفاعلي · دون بيانات مقاسة",
+    "labTitle": "استكشف قانون التوهين الأسي",
+    "labIntro": "غيّر معامل توهين افتراضيًا وطول المسار. الناتج توضيح رياضي حتمي، وليس نتيجة تجريبية.",
+    "labAlpha": "معامل التوهين α (سم⁻¹)",
+    "labDepth": "طول المسار z (سم)",
+    "labResult": "الشدة النافذة النسبية المحسوبة I/I₀",
+    "labDisclaimer": "حساب من exp(−αz) بمعلمات افتراضية يختارها المستخدم. لا يثبت صحة النموذج فيزيائيًا، ولا يعالج الانعكاس أو التشتت، ولا يمثل قياسات مختبرية.",
     "missionMotto": "نحلم بخيال العلماء، ونبني بدقة المهندسين، ولا نعلن نجاحًا إلا بشهادة الدليل.",
     "missionMenu": "غرفة القيادة",
     "missionDashboard": "◈ لوحة القيادة",
@@ -324,4 +338,23 @@ learningNext.addEventListener('click', () => {
   learningIndex = Math.min(learningButtons.length - 1, learningIndex + 1);
   updateLearning(document.documentElement.lang);
 });
+/* Bounded classroom calculator: fixed ranges, no remote execution or user data. */
+const labAlpha = document.getElementById('lab-alpha');
+const labDepth = document.getElementById('lab-depth');
+function updateAttenuation() {
+  if (!labAlpha || !labDepth) return;
+  const alpha = Number(labAlpha.value);
+  const depth = Number(labDepth.value);
+  const ratio = Math.exp(-alpha * depth);
+  document.getElementById('lab-alpha-value').textContent = alpha.toFixed(2);
+  document.getElementById('lab-depth-value').textContent = depth.toFixed(1);
+  document.getElementById('lab-ratio').textContent = ratio.toFixed(4);
+  document.getElementById('lab-percent').textContent = (ratio * 100).toFixed(2) + '%';
+  document.getElementById('lab-bar').style.width = (ratio * 100).toFixed(2) + '%';
+}
+if (labAlpha && labDepth) {
+  labAlpha.addEventListener('input', updateAttenuation);
+  labDepth.addEventListener('input', updateAttenuation);
+}
 applyLanguage(requested);
+updateAttenuation();
