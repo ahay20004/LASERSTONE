@@ -284,3 +284,9 @@ to the public static Space.
 - **Reproducible detailed results:** `python -m cloud.write_full_engine_audit` produces `audit-artifacts/engine_inventory.json` (full callable/signature/call-site evidence) and `audit-artifacts/ENGINE_AUDIT_REPORT.md` (per-engine table). GitHub Actions uploads separate `engine-audit-ubuntu-latest` and `engine-audit-windows-latest` artifacts for each successful workflow run. CI results must be checked before declaring this phase passed.
 - **Interpretation:** a direct call site is static evidence only, not reachability; indirect/dynamic dispatch may be missed. Registered inputs/outputs are not necessarily function arguments. This audit neither verifies physical models nor claims full runtime, GUI, simulator or university integration.
 - **Next acceptance gate:** review actual generated report, investigate mismatches and prioritize bounded engine contract tests without modifying canonical scientific modules.
+
+### Phase 1 follow-up — confirmed spectral label contract discrepancy
+
+- `cloud/spectral_material_contract_diagnostic.py` invokes the original spectral classifier, data standardizer, and material-score label converter on three explicitly synthetic fixtures. Current outputs: `High` => standardized 100 vs material direct 40; `Medium` => 60 vs 40; `Low` => 30 vs 40. This is an interface-semantic discrepancy, not a numerical calibration claim.
+- `cloud/test_spectral_material_contract_diagnostic.py` asserts the current behavior on Windows/Linux CI. The original engines remain unchanged. The guard documents a known defect; a future deliberate canonical mapping policy and independent tests are required before resolving it.
+- Prior full inventory generated reproducible Markdown/JSON artifacts successfully on both CI operating systems. Static inventory is not proof of runtime activation or physical correctness.
