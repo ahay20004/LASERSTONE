@@ -43,7 +43,9 @@ class PreviewTests(unittest.TestCase):
             self.assertIn(marker, self.html)
         for marker in ("function inspectFlightCSV(source)", "records.length !== 41",
                        "fields[3] !== 'DERIVED_MODEL'", "file.size > 1024 * 1024",
-                       "Math.abs(depth - index / 4)", "await file.text()",
+                       "Math.abs(depth - index / 4)", "Math.exp(-alpha * depth)",
+                       "Numerical values do not reproduce declared model parameters",
+                       "await file.text()",
                        "No analysis or upload performed", "summary.replaceChildren()"):
             self.assertIn(marker, self.js)
         for forbidden in ('fetch(', 'XMLHttpRequest(', 'WebSocket(', 'sendBeacon('):
