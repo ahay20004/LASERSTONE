@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+from cloud.governance.risk_gate import classify, changed_since_base
 
 def git(*args):
     return subprocess.check_output(["git", *args], text=True, encoding="utf-8", errors="replace").strip()
@@ -21,14 +22,17 @@ def main():
         fields = line.split("\t", 2)
         if len(fields) == 3:
             entries.append(dict(commit=fields[0], timestamp=fields[1], summary=fields[2]))
-    changed = git("diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").splitlines()
+    changed, comparison = changed_since_base()
+    risk = classify(changed)
     packet = {
         "generated_utc": now,
         "repository": os.environ.get("GITHUB_REPOSITORY", "ahay20004/LASERSTONE"),
         "commit_sha": sha,
         "run_id": os.environ.get("GITHUB_RUN_ID", "local"),
         "branch": os.environ.get("GITHUB_REF_NAME", "unknown"),
-        "latest_changed_paths": changed,
+        "review_scope": comparison,
+        "changed_paths_since_base": changed,
+        "risk_assessment": risk,
         "history": entries,
         "tests": "See workflow run results; packet generation does not imply PASS",
         "publication_status": "NOT_APPROVED",
@@ -45,7 +49,11 @@ def main():
         "Decision: PENDING OWNER REVIEW",
         "CI outcome must be checked independently before approval.",
         "",
-        "## Latest changed files",
+        f"Comparison: {comparison}",
+        f"Risk: {risk[\'risk_level\']} — owner review required",
+        "Risk is path-based; scientific and security validation are separate.",
+        "",
+        "## Changed files in review scope",
         *[f"- `{p}`" for p in changed],
         "",
         "## Last 30 recorded commits",
