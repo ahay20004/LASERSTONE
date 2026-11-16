@@ -1,6 +1,35 @@
 /* LASERSTONE public-preview UI translations. Scientific data is never auto-translated. */
 const translations = {
   "en": {
+    "navRoadmap": "Roadmap",
+    "missionRoadmap": "▣ Milestones & alerts",
+    "roadmapEyebrow": "MISSION CONTROL · REVIEWED MILESTONES",
+    "roadmapTitle": "Achievements, next tasks and attention queue",
+    "roadmapIntro": "Static project record as of 16 November 2026, not live GitHub telemetry. Scientific tests confirm software behavior, not experimental validation.",
+    "roadmapComplete": "Completed foundations",
+    "roadmapPending": "Prioritized next tasks",
+    "roadmapAlerts": "Attention items",
+    "roadmapDoneTitle": "Verified software milestones",
+    "roadmapDone1": "Bilingual public preview and isolated interactive attenuation example",
+    "roadmapDone2": "Evidence-tagged attenuation equation contract",
+    "roadmapDone3": "Exact-wavelength material-property gate with refusal rules",
+    "roadmapDone4": "Optical regime dispatcher that refuses unsupported physics",
+    "roadmapDone5": "Universal equation input, unit, provenance and relationship gate",
+    "roadmapDone6": "Cross-platform CI tests passed at commit 8c23f72",
+    "roadmapNextTitle": "Next execution sequence",
+    "roadmapNext1": "P0 · Audit existing physics engines and registry interfaces before integration",
+    "roadmapNext2": "P0 · Add dimension-aware unit conversions and equation-specific contracts",
+    "roadmapNext3": "P1 · Implement source-backed material adapters and conflict resolution",
+    "roadmapNext4": "P1 · Connect one real engine with independent numerical regression checks",
+    "roadmapNext5": "P2 · Add agent orchestration, reproducibility reports and experimental comparison",
+    "roadmapAlertTitle": "Attention desk · 3 open risks",
+    "roadmapAlertButton": "Show attention items",
+    "roadmapAlertHide": "Hide attention items",
+    "roadmapRisk1": "No authenticated live engine or scientific agent is connected to this preview",
+    "roadmapRisk2": "Real material properties and experimental validation datasets are not connected",
+    "roadmapRisk3": "Universal dimensional analysis and approved unit conversion are not implemented",
+    "roadmapAlertDisclaimer": "This button opens a local checklist; it does not send notifications or create reminders.",
+    "roadmapEvidenceLink": "View verified GitHub Actions run",
     "navCockpit": "Cockpit",
     "cockpitEyebrow": "SCIENTIFIC COCKPIT · PREVIEW",
     "cockpitTitle": "A transparent research control center",
@@ -133,6 +162,35 @@ const translations = {
     "footer2": "Public information only · No live simulations"
   },
   "ar": {
+    "navRoadmap": "خارطة الطريق",
+    "missionRoadmap": "▣ الإنجازات والتنبيهات",
+    "roadmapEyebrow": "منصة القيادة · مراحل موثقة",
+    "roadmapTitle": "الإنجازات والمهام القادمة وقائمة التنبيه",
+    "roadmapIntro": "سجل ثابت لحالة المشروع بتاريخ 16 نوفمبر 2026، وليس مراقبة مباشرة لـ GitHub. نجاح الاختبارات البرمجية لا يعني التحقق التجريبي.",
+    "roadmapComplete": "أسس برمجية مكتملة",
+    "roadmapPending": "مهام قادمة مرتبة",
+    "roadmapAlerts": "بنود تستدعي الانتباه",
+    "roadmapDoneTitle": "إنجازات برمجية اجتازت الاختبارات",
+    "roadmapDone1": "واجهة عامة ثنائية اللغة ومثال توهين تفاعلي مستقل",
+    "roadmapDone2": "عقد معادلة التوهين مع تصنيف الدليل",
+    "roadmapDone3": "بوابة خصائص المواد عند طول موجي محدد مع قواعد الرفض",
+    "roadmapDone4": "موجّه النماذج البصرية الذي يرفض الفيزياء غير المدعومة",
+    "roadmapDone5": "بوابة عامة للمدخلات والوحدات والمصادر والعلاقات",
+    "roadmapDone6": "نجاح اختبارات Linux وWindows عند الإصدار 8c23f72",
+    "roadmapNextTitle": "تسلسل العمل القادم",
+    "roadmapNext1": "P0 · تدقيق المحركات الفيزيائية الحالية وواجهات سجل المواد قبل الربط",
+    "roadmapNext2": "P0 · تطوير تحويلات الوحدات البعدية وعقود متخصصة للمعادلات",
+    "roadmapNext3": "P1 · ربط خصائص مواد موثقة بمصادرها وحل تعارض السجلات",
+    "roadmapNext4": "P1 · ربط محرك فعلي واحد واختباره عدديًا بصورة مستقلة",
+    "roadmapNext5": "P2 · تنسيق الوكلاء وتقارير إعادة الإنتاج والمقارنة التجريبية",
+    "roadmapAlertTitle": "مكتب التنبيه · 3 مخاطر مفتوحة",
+    "roadmapAlertButton": "عرض بنود التنبيه",
+    "roadmapAlertHide": "إخفاء بنود التنبيه",
+    "roadmapRisk1": "لا يوجد محرك حي موثق الدخول أو وكيل علمي متصل بالواجهة العامة",
+    "roadmapRisk2": "لم تُربط خصائص المواد الحقيقية وبيانات التحقق التجريبي",
+    "roadmapRisk3": "لم يكتمل التحليل البعدي العام والتحويل المعتمد للوحدات",
+    "roadmapAlertDisclaimer": "هذا الزر يعرض قائمة محلية فقط؛ ولا يرسل إشعارات أو ينشئ تذكيرات.",
+    "roadmapEvidenceLink": "عرض تقرير GitHub Actions الناجح",
     "navCockpit": "قمرة القيادة",
     "cockpitEyebrow": "القمرة العلمية · معاينة",
     "cockpitTitle": "مركز تحكم بحثي شفاف",
@@ -377,3 +435,16 @@ if (labAlpha && labDepth) {
 }
 applyLanguage(requested);
 updateAttenuation();
+
+/* Mission Control static attention checklist: local disclosure, not notifications. */
+const roadmapAlertButton = document.getElementById('roadmap-alert-button');
+const roadmapAlertDetails = document.getElementById('roadmap-alert-details');
+if (roadmapAlertButton && roadmapAlertDetails) {
+  roadmapAlertButton.addEventListener('click', () => {
+    const expanded = roadmapAlertButton.getAttribute('aria-expanded') === 'true';
+    roadmapAlertButton.setAttribute('aria-expanded', String(!expanded));
+    roadmapAlertDetails.hidden = expanded;
+    const language = document.documentElement.lang === 'ar' ? 'ar' : 'en';
+    roadmapAlertButton.textContent = translations[language][expanded ? 'roadmapAlertButton' : 'roadmapAlertHide'];
+  });
+}
