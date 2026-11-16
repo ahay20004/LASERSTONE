@@ -135,3 +135,14 @@ footer{background:#030c1c;border-top:1px solid #126da7;color:#a7cee2}
 .flight-output p{border-bottom:1px solid #e3ebee;padding-bottom:8px;color:#284c5d}
 #flight-status{font-weight:700;color:#075e70}
 @media(max-width:760px){.flight-grid{grid-template-columns:1fr}.flight-metrics{grid-template-columns:1fr}}
+
+/* Time-limited update notices: green before reading; neutral after 48h or 7-day expiry. */
+.update-feed{display:grid;gap:12px;margin-top:20px}
+.update-notice{background:#fff;border:1px solid #cbd9e2;border-radius:12px;padding:14px 18px;transition:background-color .3s,border-color .3s}
+.update-notice summary{cursor:pointer;font-weight:750;line-height:1.6}
+.update-notice summary:focus-visible{outline:3px solid #087b83;outline-offset:4px}
+.update-notice p{margin:10px 0}
+.update-notice.is-fresh{background:#e1f7e9;border:2px solid #15944d;box-shadow:0 0 0 2px #c3edd2}
+.update-notice.is-fresh .update-new{display:inline-block;color:#09642f;background:#b7efcb;padding:2px 9px;border-radius:99px;font-size:12px;margin-inline-start:8px}
+.update-notice:not(.is-fresh) .update-new{display:none}
+@media(prefers-reduced-motion:reduce){.update-notice{transition:none}}
