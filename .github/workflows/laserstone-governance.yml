@@ -1,0 +1,53 @@
+name: LASERSTONE continuous development ledger and review packet
+
+on:
+  push:
+    branches: [cloud/hybrid-access-foundation]
+  schedule:
+    - cron: '15 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: laserstone-review-packet
+  cancel-in-progress: true
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch review base for complete change comparison
+        run: git fetch --no-tags origin g23/stage13-integration:refs/remotes/origin/g23/stage13-integration
+      - name: Create dated development ledger and owner decision packet
+        shell: bash
+        run: python cloud/governance/build_review_packet.py
+      - name: Test owner governance rules
+        shell: bash
+        run: python -m unittest -v cloud.test_governance_risk_gate
+      - name: Classify change risk for owner review
+        shell: bash
+        run: python cloud/governance/risk_gate.py
+      - name: Validate static preview
+        shell: bash
+        run: python -m unittest -v cloud/test_preview_static.py
+      - name: Scientific baseline regression
+        shell: bash
+        run: |
+          python -m compileall -q .
+          python -m unittest -v test_g23_analysis_pipeline test_g23_simulation_exchange_contract cloud.test_main_spectral_handoff cloud.test_source_dataset_spectral_impact cloud.test_canonical_spectral_material_adapter
+      - name: Upload review packet even if tests fail
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: laserstone-review-packet-${{ github.sha }}
+          path: audit-artifacts/governance/
+          retention-days: 90
+          if-no-files-found: error

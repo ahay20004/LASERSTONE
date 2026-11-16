@@ -1,0 +1,63 @@
+name: Cloud foundation checks
+
+on:
+  pull_request:
+    paths:
+      - "cloud/**"
+      - ".github/workflows/cloud-foundation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile Python sources
+        shell: bash
+        run: python -m compileall -q .
+      - name: Bilingual cloud preview static tests
+        shell: bash
+        run: python -m unittest -v cloud/test_preview_static.py
+      - name: Scientific equation contract tests
+        shell: bash
+        run: python -m unittest -v cloud.test_equation_contract cloud.test_material_registry_gate cloud.test_optical_model_dispatcher cloud.test_universal_equation_protocol
+      - name: Legacy engine inventory regression tests
+        shell: bash
+        run: python -m unittest -v cloud.test_legacy_integration_inventory cloud.test_legacy_laser_photon_adapter cloud.test_core_first_university_audit cloud.test_core_registry_dataflow_audit cloud.test_core_spectral_photon_integration cloud.test_core_material_score_gate cloud.test_core_thermal_screen_gate cloud.test_core_thermal_material_handoff
+      - name: Whole-engine AST audit regression
+        shell: bash
+        run: python -m unittest -v cloud.test_full_engine_audit cloud.test_spectral_material_contract_diagnostic cloud.test_canonical_spectral_material_adapter cloud.test_source_dataset_spectral_impact cloud.test_main_spectral_handoff
+      - name: Generate full engine audit artifacts
+        shell: bash
+        run: python -m cloud.write_full_engine_audit
+      - name: Export spectral material correction verification
+        shell: bash
+        run: python -m cloud.export_spectral_material_verification
+      - name: Export source dataset spectral impact
+        shell: bash
+        run: python -m cloud.source_dataset_spectral_impact
+      - name: Upload engine audit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-audit-${{ matrix.os }}
+          path: audit-artifacts/
+          if-no-files-found: warn
+      - name: Scientific regression tests
+        shell: bash
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONUTF8: '1'
+        run: python -m unittest -v test_g23_simulation_exchange_contract test_g23_analysis_pipeline
