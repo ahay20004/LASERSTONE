@@ -306,6 +306,19 @@ class PreviewTests(unittest.TestCase):
                         "libraryOptics", "librarySolar", "libraryOpenSource"):
                 self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
 
+    def test_reference_registry_identifiers_and_conservative_status(self):
+        for ref in ("LS-REF-001", "LS-REF-002", "LS-REF-003",
+                    "LS-REF-004", "LS-REF-005"):
+            self.assertIn(ref, self.js)
+        self.assertIn('status:"doi_recorded"', self.js)
+        self.assertIn('status:"bibliographic"', self.js)
+        self.assertIn('provenance.textContent =', self.js)
+        for lang in ("en", "ar"):
+            for key in ("librarySourceId", "librarySourceStatus",
+                        "libraryBibliographic", "libraryDoiRecorded"):
+                self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
+        self.assertIn("not automated", self.messages["en"]["libraryDoiRecorded"])
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
