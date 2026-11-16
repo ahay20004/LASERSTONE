@@ -37,6 +37,16 @@ class PreviewTests(unittest.TestCase):
             raise AssertionError("Translations dictionary not found")
         cls.messages = json.loads(match.group(1))
 
+    def test_update_notices_are_dated_green_and_expire(self):
+        for marker in ('id="platform-updates"', 'data-update-id="iv-lab-20261116"',
+                       'data-update-id="csv-check-20261116"',
+                       'data-update-id="governance-20261116"'):
+            self.assertIn(marker, self.html)
+        for marker in ('unreadLifetimeMs = 7 * 24', 'openedGraceMs = 48 * 60',
+                       "localStorage.setItem(storagePrefix + id", "notice.addEventListener('toggle'",
+                       "notice.classList.toggle('is-fresh'"):
+            self.assertIn(marker, self.js)
+
     def test_photovoltaic_iv_lab_local_and_derived(self):
         for marker in ('id="scaps-iv-lab"', 'id="iv-file"', 'id="iv-demo"',
                        'id="iv-export"', 'id="iv-voc"', 'id="iv-isc"',
