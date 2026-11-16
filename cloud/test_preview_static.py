@@ -124,6 +124,40 @@ class PreviewTests(unittest.TestCase):
                         "readoutEvidence", "readoutPhysics", "readoutSolar", "readoutOwner"):
                 self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
 
+
+    def test_mission_navigation_targets_and_monitoring_integrity(self):
+        """All cockpit navigation links resolve and monitoring remains explicitly non-live."""
+        class Navigation(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.ids = []
+                self.anchors = []
+                self.monitor_cards = 0
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if "id" in attrs:
+                    self.ids.append(attrs["id"])
+                if tag == "a" and attrs.get("href", "").startswith("#"):
+                    self.anchors.append(attrs["href"][1:])
+                if tag == "article" and "mission-monitor-card" in attrs.get("class", "").split():
+                    self.monitor_cards += 1
+        nav = Navigation()
+        nav.feed(self.html)
+        self.assertEqual(len(nav.ids), len(set(nav.ids)), "Duplicate HTML IDs")
+        self.assertTrue(nav.anchors, "No navigation anchors found")
+        self.assertFalse(set(nav.anchors) - set(nav.ids),
+                         f"Broken anchors: {set(nav.anchors) - set(nav.ids)}")
+        self.assertEqual(nav.monitor_cards, 4)
+        self.assertIn('class="mission-sidebar"', self.html)
+        self.assertIn('class="mission-monitor-grid"', self.html)
+        for lang in ("en", "ar"):
+            for key in ("missionMenu", "missionDashboard", "missionProjects",
+                        "missionAgents", "missionEvidence", "missionSecurity",
+                        "missionMonitorTitle", "missionNoData"):
+                self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
+        self.assertEqual(self.messages["en"]["missionNoData"], "No live data")
+        self.assertNotRegex(self.html, r'(?i)\b(?:live|active)\s+(?:users|projects|agents)\s*:\s*\d+')
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
