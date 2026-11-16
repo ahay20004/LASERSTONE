@@ -290,3 +290,10 @@ to the public static Space.
 - `cloud/spectral_material_contract_diagnostic.py` invokes the original spectral classifier, data standardizer, and material-score label converter on three explicitly synthetic fixtures. Current outputs: `High` => standardized 100 vs material direct 40; `Medium` => 60 vs 40; `Low` => 30 vs 40. This is an interface-semantic discrepancy, not a numerical calibration claim.
 - `cloud/test_spectral_material_contract_diagnostic.py` asserts the current behavior on Windows/Linux CI. The original engines remain unchanged. The guard documents a known defect; a future deliberate canonical mapping policy and independent tests are required before resolving it.
 - Prior full inventory generated reproducible Markdown/JSON artifacts successfully on both CI operating systems. Static inventory is not proof of runtime activation or physical correctness.
+
+### Spectral material contract: adapter repair, tests and export
+
+- Explicit canonical policy is the existing `data_standardization_engine` mapping: High=100, Medium=60, Low=30. `cloud/canonical_spectral_material_adapter.py` rejects incomplete/invalid inputs, derives the label using the existing spectral engine, converts it explicitly, and passes the numeric score through the provenance-gated material scoring engine.
+- `cloud/test_canonical_spectral_material_adapter.py` tests all three labels, score arithmetic, provenance, and invalid inputs. Synthetic fixture score changes compared with current `main.py` label handoff: High +6.00, Medium +2.00, Low -1.00 points; these are **not** empirical material-ranking changes.
+- `cloud/export_spectral_material_verification.py` emits `SPECTRAL_MATERIAL_VERIFICATION.md` and `spectral_material_verification.json` alongside the complete inventory CI artifacts on Windows/Linux.
+- **Critical deployment boundary:** original `main.py` and legacy engines remain unchanged; the production analysis path is **not yet corrected**. Before deploying a main.py change, verify actual dataset effects, approve mapping semantics and run full regression. No physical validation claimed.
