@@ -32,7 +32,7 @@ jobs:
         run: python -m unittest -v cloud/test_preview_static.py
       - name: Scientific equation contract tests
         shell: bash
-        run: python -m unittest -v cloud.test_equation_contract cloud.test_material_registry_gate
+        run: python -m unittest -v cloud.test_equation_contract cloud.test_material_registry_gate cloud.test_optical_model_dispatcher
       - name: Scientific regression tests
         shell: bash
         env:
