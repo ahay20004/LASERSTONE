@@ -31,6 +31,8 @@ jobs:
           python-version: '3.12'
       - name: Compile
         run: python -m compileall -q cloud
+      - name: JavaScript syntax verification
+        run: node --check cloud/site/i18n.js
       - name: Preview and governance regression
         run: python -m unittest -v cloud.test_preview_static cloud.test_governance_risk_gate
       - name: Original G23 scientific baseline
