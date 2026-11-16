@@ -35,7 +35,7 @@ jobs:
         run: python -m unittest -v cloud.test_equation_contract cloud.test_material_registry_gate cloud.test_optical_model_dispatcher cloud.test_universal_equation_protocol
       - name: Legacy engine inventory regression tests
         shell: bash
-        run: python -m unittest -v cloud.test_legacy_integration_inventory
+        run: python -m unittest -v cloud.test_legacy_integration_inventory cloud.test_legacy_laser_photon_adapter
       - name: Scientific regression tests
         shell: bash
         env:
