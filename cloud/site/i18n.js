@@ -1,6 +1,12 @@
 /* LASERSTONE public-preview UI translations. Scientific data is never auto-translated. */
 const translations = {
   "en": {
+    "libraryCategoryLabel": "Scientific field",
+    "libraryAll": "All fields",
+    "libraryLaser": "Laser physics",
+    "libraryOptics": "Optics and materials",
+    "librarySolar": "Photovoltaics",
+    "libraryOpenSource": "Open reference",
     "libraryEyebrow": "SCIENTIFIC EXPLORER · CURATED LIBRARY",
     "libraryTitle": "Search the scientific concept library",
     "libraryIntro": "Search a small reviewed teaching glossary locally in Arabic or English. This is not a live literature search or AI answer engine.",
@@ -206,6 +212,12 @@ const translations = {
     "footer2": "Public information only · No live simulations"
   },
   "ar": {
+    "libraryCategoryLabel": "المجال العلمي",
+    "libraryAll": "جميع المجالات",
+    "libraryLaser": "فيزياء الليزر",
+    "libraryOptics": "البصريات والمواد",
+    "librarySolar": "الخلايا الشمسية",
+    "libraryOpenSource": "فتح المرجع",
     "libraryEyebrow": "المستكشف العلمي · المكتبة المنتقاة",
     "libraryTitle": "ابحث في مكتبة المفاهيم العلمية",
     "libraryIntro": "ابحث محليًا في مسرد تعليمي محدود بالعربية أو الإنجليزية. هذه ليست خدمة بحث مباشر في المنشورات ولا محرك إجابات ذكاء اصطناعي.",
@@ -559,14 +571,15 @@ if (explorerWavelength) {
 
 /* Curated local glossary: no fetch, external API, user tracking or HTML injection. */
 const libraryEntries = Object.freeze([
-  {id:0, terms:"spontaneous emission Einstein A21 radiative lifetime انبعاث تلقائي عمر إشعاعي", reference:"Siegman, Lasers (1986)"},
-  {id:1, terms:"stimulated emission Einstein B21 laser gain انبعاث محفز تضخيم ليزر", reference:"Svelto, Principles of Lasers (2010)"},
-  {id:2, terms:"photon energy wavelength frequency joule electronvolt فوتون طاقة طول موجي تردد", reference:"CODATA SI constants; BIPM SI Brochure"},
-  {id:3, terms:"optical absorption Beer Lambert coefficient intensity امتصاص بصري شدة معامل", reference:"Hecht, Optics"},
-  {id:4, terms:"population inversion gain threshold laser انقلاب سكاني عتبة كسب", reference:"Siegman, Lasers (1986)"},
-  {id:5, terms:"solar cell photovoltaic quantum efficiency EQE IQE كفاءة كمية خلية شمسية", reference:"Nelson, The Physics of Solar Cells"}
+  {id:0, category:"laser", terms:"spontaneous emission Einstein A21 radiative lifetime انبعاث تلقائي عمر إشعاعي", reference:"Siegman, Lasers (1986)"},
+  {id:1, category:"laser", terms:"stimulated emission Einstein B21 laser gain انبعاث محفز تضخيم ليزر", reference:"Svelto, Principles of Lasers (2010)", url:"https://doi.org/10.1007/978-1-4419-1302-9"},
+  {id:2, category:"optics", terms:"photon energy wavelength frequency joule electronvolt فوتون طاقة طول موجي تردد", reference:"CODATA SI constants; BIPM SI Brochure"},
+  {id:3, category:"optics", terms:"optical absorption Beer Lambert coefficient intensity امتصاص بصري شدة معامل", reference:"Hecht, Optics"},
+  {id:4, category:"laser", terms:"population inversion gain threshold laser انقلاب سكاني عتبة كسب", reference:"Siegman, Lasers (1986)"},
+  {id:5, category:"solar", terms:"solar cell photovoltaic quantum efficiency EQE IQE كفاءة كمية خلية شمسية", reference:"Nelson, The Physics of Solar Cells"}
 ]);
 const librarySearch = document.getElementById('library-search');
+const libraryCategory = document.getElementById('library-category');
 function renderKnowledgeLibrary() {
   if (!librarySearch) return;
   const lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
@@ -575,6 +588,7 @@ function renderKnowledgeLibrary() {
   const query = librarySearch.value.trim().toLocaleLowerCase();
   const results = document.getElementById('library-results');
   const matches = libraryEntries.filter(entry =>
+    (libraryCategory.value === "all" || entry.category === libraryCategory.value) &&
     (entry.terms + ' ' + translations.en['libraryTopic' + entry.id] + ' ' +
      translations.ar['libraryTopic' + entry.id] + ' ' +
      translations.en['libraryDesc' + entry.id] + ' ' +
@@ -596,11 +610,20 @@ function renderKnowledgeLibrary() {
     const source = document.createElement('small');
     source.textContent = messages.libraryReference + ': ' + entry.reference;
     article.append(title, desc, source);
+    if (entry.url) {
+      const link = document.createElement("a");
+      link.href = entry.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = messages.libraryOpenSource;
+      article.appendChild(link);
+    }
     results.appendChild(article);
   });
 }
 if (librarySearch) {
   librarySearch.addEventListener('input', renderKnowledgeLibrary);
+  libraryCategory.addEventListener('change', renderKnowledgeLibrary);
   document.getElementById('language-select').addEventListener('change', renderKnowledgeLibrary);
   renderKnowledgeLibrary();
 }
