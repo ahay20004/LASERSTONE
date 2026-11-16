@@ -319,6 +319,24 @@ class PreviewTests(unittest.TestCase):
                 self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
         self.assertIn("not automated", self.messages["en"]["libraryDoiRecorded"])
 
+    def test_university_campus_is_bilingual_and_links_to_existing_sections(self):
+        self.assertIn('id="university-campus"', self.html)
+        self.assertIn('id="campus-title"', self.html)
+        self.assertIn('class="campus-sky"', self.html)
+        self.assertEqual(self.html.count('class="campus-building"'), 7)
+        for anchor in ('#knowledge-library', '#scientific-explorer',
+                       '#research', '#mission-roadmap', '#integrity', '#cockpit'):
+            self.assertIn(f'href="{anchor}"', self.html)
+        for lang in ("en", "ar"):
+            for key in ("navCampus", "missionCampus", "campusTitle",
+                        "campusIntro", "campusSkyLabel", "campusFootnote",
+                        "campusExplore"):
+                self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
+            for i in range(1, 8):
+                self.assertTrue(self.messages[lang].get(f"campusB{i}"))
+                self.assertTrue(self.messages[lang].get(f"campusD{i}"))
+        self.assertIn("no live campus session", self.messages["en"]["campusFootnote"])
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
