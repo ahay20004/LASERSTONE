@@ -18,7 +18,7 @@
   <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
   <header class="topbar">
     <a class="brand" href="./" aria-label="LASERSTONE home"><img src="./icon.svg" alt="" width="44" height="44"><span>LASERSTONE<span class="tm">™</span><small data-i18n="brandSub">Research platform</small></span></a>
-    <nav aria-label="Primary"><a href="#cockpit" data-i18n="navCockpit">Cockpit</a><a href="#research" data-i18n="navResearch">Research</a><a href="#integrity" data-i18n="navIntegrity">Integrity</a><a href="#access" data-i18n="navAccess">Access</a></nav>
+    <nav aria-label="Primary"><a href="#cockpit" data-i18n="navCockpit">Cockpit</a><a href="#mission-roadmap" data-i18n="navRoadmap">Roadmap</a><a href="#research" data-i18n="navResearch">Research</a><a href="#integrity" data-i18n="navIntegrity">Integrity</a><a href="#access" data-i18n="navAccess">Access</a></nav>
     <div class="language"><label for="language-select" data-i18n="languageLabel">Language</label><select id="language-select" aria-label="Language"><option value="en">English</option><option value="ar">العربية</option></select></div>
   </header>
   <main id="main">
@@ -26,6 +26,7 @@
       <aside class="mission-sidebar" aria-label="Mission Control">
         <p class="mission-sidebar-heading" data-i18n="missionMenu">MISSION CONTROL</p>
         <a href="#cockpit" data-i18n="missionDashboard">◈ Dashboard</a>
+        <a href="#mission-roadmap" data-i18n="missionRoadmap">▣ Milestones & alerts</a>
         <a href="#research" data-i18n="missionProjects">◇ Research projects</a>
         <a href="#cockpit" data-i18n="missionAgents">◎ Scientific agents</a>
         <a href="#integrity" data-i18n="missionEvidence">▤ Evidence & integrity</a>
@@ -129,6 +130,46 @@
         <p class="example-warning" data-i18n="labDisclaimer">Calculated from exp(−αz) with user-selected hypothetical parameters. This does not verify the physical model, account for reflections or scattering, or represent laboratory measurements.</p>
       </section>
       <p class="cockpit-footnote" data-i18n="learningDisclaimer">Educational concept only · No data collection, engine execution, or claim of scientific validation.</p>
+    </section>
+    <section id="mission-roadmap" class="section roadmap" aria-labelledby="roadmap-title">
+      <p class="eyebrow" data-i18n="roadmapEyebrow">MISSION CONTROL · REVIEWED MILESTONES</p>
+      <h2 id="roadmap-title" data-i18n="roadmapTitle">Achievements, next tasks and attention queue</h2>
+      <p data-i18n="roadmapIntro">Static project record as of 16 November 2026, not live GitHub telemetry. Scientific tests confirm software behavior, not experimental validation.</p>
+      <div class="roadmap-metrics">
+        <div><strong>6</strong><span data-i18n="roadmapComplete">Completed foundations</span></div>
+        <div><strong>5</strong><span data-i18n="roadmapPending">Prioritized next tasks</span></div>
+        <div><strong>3</strong><span data-i18n="roadmapAlerts">Attention items</span></div>
+      </div>
+      <h3 data-i18n="roadmapDoneTitle">Verified software milestones</h3>
+      <ol class="roadmap-items">
+        <li data-i18n="roadmapDone1">Bilingual public preview and isolated interactive attenuation example</li>
+        <li data-i18n="roadmapDone2">Evidence-tagged attenuation equation contract</li>
+        <li data-i18n="roadmapDone3">Exact-wavelength material-property gate with refusal rules</li>
+        <li data-i18n="roadmapDone4">Optical regime dispatcher that refuses unsupported physics</li>
+        <li data-i18n="roadmapDone5">Universal equation input, unit, provenance and relationship gate</li>
+        <li data-i18n="roadmapDone6">Cross-platform CI tests passed at commit 8c23f72</li>
+      </ol>
+      <h3 data-i18n="roadmapNextTitle">Next execution sequence</h3>
+      <ol class="roadmap-items roadmap-priorities">
+        <li data-i18n="roadmapNext1">P0 · Audit existing physics engines and registry interfaces before integration</li>
+        <li data-i18n="roadmapNext2">P0 · Add dimension-aware unit conversions and equation-specific contracts</li>
+        <li data-i18n="roadmapNext3">P1 · Implement source-backed material adapters and conflict resolution</li>
+        <li data-i18n="roadmapNext4">P1 · Connect one real engine with independent numerical regression checks</li>
+        <li data-i18n="roadmapNext5">P2 · Add agent orchestration, reproducibility reports and experimental comparison</li>
+      </ol>
+      <div class="roadmap-alert">
+        <h3 data-i18n="roadmapAlertTitle">Attention desk · 3 open risks</h3>
+        <button type="button" id="roadmap-alert-button" aria-controls="roadmap-alert-details" aria-expanded="false" data-i18n="roadmapAlertButton">Show attention items</button>
+        <div id="roadmap-alert-details" hidden>
+          <ul>
+            <li data-i18n="roadmapRisk1">No authenticated live engine or scientific agent is connected to this preview</li>
+            <li data-i18n="roadmapRisk2">Real material properties and experimental validation datasets are not connected</li>
+            <li data-i18n="roadmapRisk3">Universal dimensional analysis and approved unit conversion are not implemented</li>
+          </ul>
+          <p data-i18n="roadmapAlertDisclaimer">This button opens a local checklist; it does not send notifications or create reminders.</p>
+        </div>
+      </div>
+      <p class="roadmap-source"><a href="https://github.com/ahay20004/LASERSTONE/actions/runs/43826260254" rel="noopener noreferrer" target="_blank" data-i18n="roadmapEvidenceLink">View verified GitHub Actions run</a></p>
     </section>
     <section id="research" class="section">
       <p class="eyebrow" data-i18n="domains">RESEARCH DOMAINS</p><h2 data-i18n="researchTitle">Designed for scientific workflows</h2>
