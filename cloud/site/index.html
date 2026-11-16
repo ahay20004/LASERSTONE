@@ -282,6 +282,31 @@
         </div>
       </div>
     </section>
+    <section id="scaps-iv-lab" class="section flight-console" aria-labelledby="scaps-iv-title">
+      <p class="eyebrow">SOLAR CELL I–V · LOCAL FILE ANALYSIS</p>
+      <h2 id="scaps-iv-title">Photovoltaic I–V inspector | محلل منحنى الخلايا الشمسية</h2>
+      <p>Inspect a two-column voltage/current CSV locally. Derived Voc, Isc, Pmax and fill factor are calculated only when a valid zero crossing and physical quadrant exist. SCAPS convergence and experimental validity are not established.</p>
+      <div class="flight-grid">
+        <div class="flight-controls">
+          <label for="iv-file">Voltage–current CSV | ملف الجهد والتيار</label>
+          <input id="iv-file" type="file" accept=".csv,text/csv" aria-describedby="iv-status">
+          <p>Required header: <code>voltage_V,current_A</code>. Current is in amperes; a positive power-generating quadrant is required. File remains in this browser.</p>
+          <button type="button" id="iv-demo">Load synthetic demonstration | مثال حسابي</button>
+          <button type="button" id="iv-export" disabled>Export analysis CSV | تصدير التحليل</button>
+        </div>
+        <div class="flight-output">
+          <div class="flight-metrics">
+            <div><small>Open-circuit voltage | Voc</small><strong id="iv-voc">—</strong></div>
+            <div><small>Short-circuit current | Isc</small><strong id="iv-isc">—</strong></div>
+            <div><small>Maximum power | Pmax</small><strong id="iv-pmax">—</strong></div>
+            <div><small>Fill factor | FF</small><strong id="iv-ff">—</strong></div>
+          </div>
+          <svg viewBox="0 0 600 210" id="iv-chart" role="img" aria-label="Voltage-current curve with calculated maximum power point"><path d="M40 15V175H580" fill="none" stroke="#7897a5" stroke-width="2"/><polyline id="iv-curve" fill="none" stroke="#087b83" stroke-width="3" points=""/></svg>
+          <p id="iv-status" role="status" aria-live="polite">READY · No data loaded. No remote upload.</p>
+          <p id="iv-provenance">Evidence: NOT ASSESSED · Input source and solver convergence unverified.</p>
+        </div>
+      </div>
+    </section>
     <section id="agent-council" class="section agent-council" aria-labelledby="agent-council-title">
       <p class="eyebrow" data-i18n="agentsEyebrow">SCIENTIFIC AGENT COUNCIL · DESIGN</p>
       <h2 id="agent-council-title" data-i18n="agentsTitle">Specialist agents with explicit evidence gates</h2>
