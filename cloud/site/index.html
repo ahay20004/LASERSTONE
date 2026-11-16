@@ -102,6 +102,24 @@
         <p data-i18n="exampleValidation">Validation path: measure transmitted intensity at known depths, fit the attenuation law, report uncertainty, and check systematic deviations. No measured data are supplied here.</p>
         <p class="example-warning" data-i18n="exampleWarning">Teaching example only · A symbolic equation is not evidence of experimental agreement or numerical validation.</p>
       </article>
+      <section class="attenuation-lab" aria-labelledby="lab-title">
+        <p class="eyebrow" data-i18n="labEyebrow">INTERACTIVE MODEL · NO MEASURED DATA</p>
+        <h3 id="lab-title" data-i18n="labTitle">Explore the exponential attenuation law</h3>
+        <p data-i18n="labIntro">Adjust a hypothetical attenuation coefficient and path length. The output is a deterministic mathematical illustration, not an experimental result.</p>
+        <div class="lab-controls">
+          <label for="lab-alpha"><span data-i18n="labAlpha">Attenuation coefficient α (cm⁻¹)</span><output id="lab-alpha-value" for="lab-alpha">0.50</output></label>
+          <input id="lab-alpha" type="range" min="0" max="2" step="0.05" value="0.5">
+          <label for="lab-depth"><span data-i18n="labDepth">Path length z (cm)</span><output id="lab-depth-value" for="lab-depth">2.0</output></label>
+          <input id="lab-depth" type="range" min="0" max="10" step="0.5" value="2">
+        </div>
+        <div class="lab-output" role="status" aria-live="polite">
+          <span data-i18n="labResult">Modelled transmitted intensity I/I₀</span>
+          <strong id="lab-ratio">0.3679</strong>
+          <span id="lab-percent">36.79%</span>
+        </div>
+        <div class="lab-track" role="img" aria-label="Illustrative relative transmitted intensity bar"><div id="lab-bar" class="lab-bar" style="width:36.79%"></div></div>
+        <p class="example-warning" data-i18n="labDisclaimer">Calculated from exp(−αz) with user-selected hypothetical parameters. This does not verify the physical model, account for reflections or scattering, or represent laboratory measurements.</p>
+      </section>
       <p class="cockpit-footnote" data-i18n="learningDisclaimer">Educational concept only · No data collection, engine execution, or claim of scientific validation.</p>
     </section>
     <section id="research" class="section">
