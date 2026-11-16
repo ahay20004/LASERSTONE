@@ -260,3 +260,11 @@ to the public static Space.
 - Validate legacy scoring weights and compare the returned result against a separately expressed weighted-sum formula. This establishes numerical implementation agreement **only**; neither the weights nor categories are scientifically calibrated by these tests.
 - `cloud/test_core_material_score_gate.py` tests synthetic valid, missing, zero, invalid, and provenance cases on Windows/Linux CI.
 - Source declarations are supplied by the caller, **not verified against a primary dataset**. Do not treat the resulting heuristic score as measured laser efficiency, proven material performance, novelty, or patentability. No university source changes or copies.
+
+### Legacy thermal heuristic — evidence gate, not physical certification
+
+- `cloud/core_thermal_screen_gate.py` invokes the **existing** `thermal_engine.evaluate_thermal_stability` after rejecting missing/extra inputs, nonfinite values, unlabelled provenance, incorrect canonical units and out-of-domain values.
+- Input conventions: quantum yield dimensionless [0,1], lifetime in ns, nonradiative rate in ns^-1, refractive index dimensionless [1,5]. These unit conventions are **assumptions to verify against primary material sources**, not a validated original engine unit contract.
+- Independent branch-by-branch threshold arithmetic is checked against the legacy function. `cloud/test_core_thermal_screen_gate.py` exercises valid, invalid, missing and boundary cases in cross-platform CI.
+- **Scientific limitation:** the output is a heuristic screening label, not a measurement of thermal stability, temperature, photobleaching, or physical thermal lifetime. The underlying weights and thresholds require calibration before any predictive claims.
+- University assets unchanged. Next: confirm CI and only then propose a documented thermal-to-material scoring handoff, without converting heuristic labels into measured evidence.
