@@ -20,7 +20,7 @@ class Markup(HTMLParser):
         attrs = dict(attrs)
         if "data-i18n" in attrs:
             self.keys.append(attrs["data-i18n"])
-        if tag == "option" and "value" in attrs:
+        if tag == "option" and "value" in attrs and attrs["value"] in ("en", "ar"):
             self.languages.append(attrs["value"])
         if tag in ("script", "link", "img"):
             self.references.extend(v for k,v in attrs.items() if k in ("src","href") and v and v.startswith("./"))
