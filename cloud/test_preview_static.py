@@ -37,6 +37,20 @@ class PreviewTests(unittest.TestCase):
             raise AssertionError("Translations dictionary not found")
         cls.messages = json.loads(match.group(1))
 
+    def test_flight_console_controls_and_automated_checks(self):
+        for marker in ('id="flight-console"', 'id="flight-alpha"',
+                       'id="flight-depth"', 'id="flight-intensity"',
+                       'id="flight-run"', 'id="flight-curve"',
+                       'id="flight-transmitted"', 'id="flight-physics-check"',
+                       'id="flight-evidence-check"', 'id="flight-simulator-check"'):
+            self.assertIn(marker, self.html)
+        for marker in ('function runFlightConsole()', 'Math.exp(-alpha * depth)',
+                       "addEventListener('input', runFlightConsole)",
+                       "addEventListener('click', runFlightConsole)",
+                       "setAttribute('points', points)", 'MODEL ONLY',
+                       'BLOCKED · Out-of-domain input'):
+            self.assertIn(marker, self.js)
+
     def test_all_internal_navigation_targets_exist(self):
         ids = set(re.findall(r'\bid="([^"]+)"', self.html))
         targets = re.findall(r'<a\b[^>]*\bhref="#([^"]+)"', self.html)
