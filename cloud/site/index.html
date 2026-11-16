@@ -18,7 +18,7 @@
   <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
   <header class="topbar">
     <a class="brand" href="./" aria-label="LASERSTONE home"><img src="./icon.svg" alt="" width="44" height="44"><span>LASERSTONE<span class="tm">™</span><small data-i18n="brandSub">Research platform</small></span></a>
-    <nav aria-label="Primary"><a href="#cockpit" data-i18n="navCockpit">Cockpit</a><a href="#mission-roadmap" data-i18n="navRoadmap">Roadmap</a><a href="#research" data-i18n="navResearch">Research</a><a href="#integrity" data-i18n="navIntegrity">Integrity</a><a href="#access" data-i18n="navAccess">Access</a></nav>
+    <nav aria-label="Primary"><a href="#cockpit" data-i18n="navCockpit">Cockpit</a><a href="#scientific-explorer" data-i18n="navExplorer">Explorer</a><a href="#mission-roadmap" data-i18n="navRoadmap">Roadmap</a><a href="#research" data-i18n="navResearch">Research</a><a href="#integrity" data-i18n="navIntegrity">Integrity</a><a href="#access" data-i18n="navAccess">Access</a></nav>
     <div class="language"><label for="language-select" data-i18n="languageLabel">Language</label><select id="language-select" aria-label="Language"><option value="en">English</option><option value="ar">العربية</option></select></div>
   </header>
   <main id="main">
@@ -26,6 +26,7 @@
       <aside class="mission-sidebar" aria-label="Mission Control">
         <p class="mission-sidebar-heading" data-i18n="missionMenu">MISSION CONTROL</p>
         <a href="#cockpit" data-i18n="missionDashboard">◈ Dashboard</a>
+        <a href="#scientific-explorer" data-i18n="missionExplorer">✧ Scientific Explorer</a>
         <a href="#mission-roadmap" data-i18n="missionRoadmap">▣ Milestones & alerts</a>
         <a href="#research" data-i18n="missionProjects">◇ Research projects</a>
         <a href="#cockpit" data-i18n="missionAgents">◎ Scientific agents</a>
@@ -170,6 +171,46 @@
         </div>
       </div>
       <p class="roadmap-source"><a href="https://github.com/ahay20004/LASERSTONE/actions/runs/43826260254" rel="noopener noreferrer" target="_blank" data-i18n="roadmapEvidenceLink">View verified GitHub Actions run</a></p>
+    </section>
+    <section id="scientific-explorer" class="section explorer" aria-labelledby="explorer-title">
+      <p class="eyebrow" data-i18n="explorerEyebrow">SCIENTIFIC EXPLORER · LESSON 01</p>
+      <h2 id="explorer-title" data-i18n="explorerTitle">Spontaneous and stimulated emission</h2>
+      <p data-i18n="explorerIntro">Explore how excited atoms emit light, why stimulated emission enables optical amplification, and how photon energy depends on wavelength.</p>
+      <div class="explorer-grid">
+        <article class="card">
+          <h3 data-i18n="explorerSpontTitle">Spontaneous emission</h3>
+          <p data-i18n="explorerSpontDesc">An excited system emits without an incident stimulating photon. For an isolated radiative channel, the rate is proportional to the excited population.</p>
+          <p class="explorer-formula">R<sub>sp</sub> = A<sub>21</sub>N<sub>2</sub></p>
+          <p data-i18n="explorerSpontUnit">A₂₁: spontaneous transition rate per excited system (s⁻¹).</p>
+        </article>
+        <article class="card">
+          <h3 data-i18n="explorerStimTitle">Stimulated emission</h3>
+          <p data-i18n="explorerStimDesc">A resonant radiation field can induce an excited system to add a photon to the stimulating optical mode.</p>
+          <p class="explorer-formula">R<sub>st</sub> = B<sub>21</sub>ρ(ν)N<sub>2</sub></p>
+          <p data-i18n="explorerStimUnit">ρ(ν): spectral radiation energy density (J m⁻³ Hz⁻¹).</p>
+        </article>
+      </div>
+      <div class="explorer-lab">
+        <h3 data-i18n="explorerCalcTitle">Photon-energy calculator</h3>
+        <p data-i18n="explorerEquation">Vacuum relation: E = hν = hc/λ. This calculates photon energy, not laser gain or emission probability.</p>
+        <label for="explorer-wavelength" data-i18n="explorerWavelength">Vacuum wavelength (nm)</label>
+        <select id="explorer-wavelength">
+          <option value="532">532 nm</option>
+          <option value="632.8" selected>632.8 nm</option>
+          <option value="1064">1064 nm</option>
+        </select>
+        <div class="explorer-results" role="status" aria-live="polite">
+          <div><span data-i18n="explorerEnergy">Photon energy</span><strong id="explorer-energy">1.959 eV</strong></div>
+          <div><span data-i18n="explorerFrequency">Frequency</span><strong id="explorer-frequency">473.76 THz</strong></div>
+          <div><span data-i18n="explorerJoules">Energy in joules</span><strong id="explorer-joules">3.139 × 10⁻¹⁹ J</strong></div>
+        </div>
+        <p data-i18n="explorerAssumptions">Assumptions: a photon in vacuum; wavelength is the vacuum wavelength; energy levels are not independently identified.</p>
+      </div>
+      <h3 data-i18n="explorerConditionTitle">Condition for net stimulated gain</h3>
+      <p class="explorer-formula">B<sub>21</sub>N<sub>2</sub> &gt; B<sub>12</sub>N<sub>1</sub></p>
+      <p data-i18n="explorerConditionDesc">In a two-level transition model, stimulated emission must exceed absorption. Cavity losses must also be overcome for laser oscillation.</p>
+      <p data-i18n="explorerEvidence">Scientific status: established textbook relations and a deterministic educational calculation; no measured populations, validated gain, or live physics engine.</p>
+      <p class="explorer-source"><span data-i18n="explorerSources">References: Einstein (1917); Siegman, Lasers (1986); Svelto, Principles of Lasers (2010).</span> <a href="https://doi.org/10.1007/978-1-4419-1302-9" rel="noopener noreferrer" target="_blank" data-i18n="explorerReferenceLink">Svelto textbook DOI</a></p>
     </section>
     <section id="research" class="section">
       <p class="eyebrow" data-i18n="domains">RESEARCH DOMAINS</p><h2 data-i18n="researchTitle">Designed for scientific workflows</h2>
