@@ -753,3 +753,44 @@ if (flightAlpha) {
   document.getElementById('flight-run').addEventListener('click', runFlightConsole);
   runFlightConsole();
 }
+
+/* User-initiated export: explicitly model-derived, with inputs and reproducible curve.
+   No network calls or private data. Invalid inputs are never exported. */
+function exportFlightCSV() {
+  const read = id => Number(document.getElementById(id).value);
+  const alpha = read('flight-alpha');
+  const depth = read('flight-depth');
+  const incident = read('flight-intensity');
+  const status = document.getElementById('flight-export-status');
+  if (![alpha, depth, incident].every(Number.isFinite) ||
+      alpha < 0 || alpha > 2 || depth < 0 || depth > 10 ||
+      incident < 0.01 || incident > 1000) {
+    status.textContent = 'BLOCKED · Invalid input. No file exported.';
+    return;
+  }
+  const lines = [
+    '# LASERSTONE flight console: DERIVED MODEL OUTPUT; NOT MEASURED',
+    '# Equation: I(z)=I0*exp(-alpha*z); homogeneous medium, constant alpha',
+    '# alpha_cm_inverse=' + alpha + '; incident_mW_cm2=' + incident +
+      '; selected_depth_cm=' + depth,
+    'depth_cm,transmission_fraction,intensity_mW_cm2,evidence_status'
+  ];
+  for (let i = 0; i <= 40; i++) {
+    const z = i / 4;
+    const fraction = Math.exp(-alpha * z);
+    lines.push([z.toFixed(2), fraction.toPrecision(12),
+      (incident * fraction).toPrecision(12), 'DERIVED_MODEL'].join(','));
+  }
+  const blob = new Blob([lines.join('\n') + '\n'], {type: 'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = 'laserstone_attenuation_model.csv';
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+  status.textContent = 'CSV exported · 41 deterministic model rows; not experimental data.';
+}
+const flightExport = document.getElementById('flight-export');
+if (flightExport) flightExport.addEventListener('click', exportFlightCSV);
