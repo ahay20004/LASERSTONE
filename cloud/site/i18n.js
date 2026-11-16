@@ -77,6 +77,10 @@ const translations = {
     "labDepth": "Path length z (cm)",
     "labResult": "Modelled transmitted intensity I/I₀",
     "labDisclaimer": "Calculated from exp(−αz) with user-selected hypothetical parameters. This does not verify the physical model, account for reflections or scattering, or represent laboratory measurements.",
+    "labWavelength": "Illustrative wavelength (nm)",
+    "labCoefficientNote": "Wavelength presets use invented teaching coefficients, not measured optical constants for a real material. Changing wavelength updates α.",
+    "labIncident": "Incident intensity I₀ (mW/cm²)",
+    "labAbsolute": "Calculated transmitted intensity",
     "missionMotto": "We dream with the imagination of scientists, build with the precision of engineers, and declare success only when supported by evidence.",
     "missionMenu": "MISSION CONTROL",
     "missionDashboard": "◈ Dashboard",
@@ -205,6 +209,10 @@ const translations = {
     "labDepth": "طول المسار z (سم)",
     "labResult": "الشدة النافذة النسبية المحسوبة I/I₀",
     "labDisclaimer": "حساب من exp(−αz) بمعلمات افتراضية يختارها المستخدم. لا يثبت صحة النموذج فيزيائيًا، ولا يعالج الانعكاس أو التشتت، ولا يمثل قياسات مختبرية.",
+    "labWavelength": "الطول الموجي التوضيحي (نانومتر)",
+    "labCoefficientNote": "تستخدم الأطوال الموجية معاملات تعليمية افتراضية، لا ثوابت بصرية مقاسة لمادة حقيقية. يؤدي تغيير الطول الموجي إلى تحديث α.",
+    "labIncident": "الشدة الساقطة I₀ (ملي واط/سم²)",
+    "labAbsolute": "الشدة النافذة المحسوبة",
     "missionMotto": "نحلم بخيال العلماء، ونبني بدقة المهندسين، ولا نعلن نجاحًا إلا بشهادة الدليل.",
     "missionMenu": "غرفة القيادة",
     "missionDashboard": "◈ لوحة القيادة",
@@ -341,11 +349,17 @@ learningNext.addEventListener('click', () => {
 /* Bounded classroom calculator: fixed ranges, no remote execution or user data. */
 const labAlpha = document.getElementById('lab-alpha');
 const labDepth = document.getElementById('lab-depth');
+const labWavelength = document.getElementById('lab-wavelength');
+const labIncident = document.getElementById('lab-incident');
+const teachingAlpha = Object.freeze({'532': 0.8, '632.8': 0.5, '1064': 0.2});
 function updateAttenuation() {
   if (!labAlpha || !labDepth) return;
   const alpha = Number(labAlpha.value);
   const depth = Number(labDepth.value);
   const ratio = Math.exp(-alpha * depth);
+  const incident = Number(labIncident.value);
+  document.getElementById('lab-incident-value').textContent = incident.toFixed(1);
+  document.getElementById('lab-absolute').textContent = (incident * ratio).toFixed(3) + ' mW/cm²';
   document.getElementById('lab-alpha-value').textContent = alpha.toFixed(2);
   document.getElementById('lab-depth-value').textContent = depth.toFixed(1);
   document.getElementById('lab-ratio').textContent = ratio.toFixed(4);
@@ -355,6 +369,11 @@ function updateAttenuation() {
 if (labAlpha && labDepth) {
   labAlpha.addEventListener('input', updateAttenuation);
   labDepth.addEventListener('input', updateAttenuation);
+  labIncident.addEventListener('input', updateAttenuation);
+  labWavelength.addEventListener('change', () => {
+    labAlpha.value = String(teachingAlpha[labWavelength.value]);
+    updateAttenuation();
+  });
 }
 applyLanguage(requested);
 updateAttenuation();
