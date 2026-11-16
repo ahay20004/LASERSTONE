@@ -46,7 +46,8 @@ class PreviewTests(unittest.TestCase):
                        "Math.abs(depth - index / 4)", "await file.text()",
                        "No analysis or upload performed", "summary.replaceChildren()"):
             self.assertIn(marker, self.js)
-        self.assertNotRegex(self.js, r'(?i)\\b(fetch|XMLHttpRequest|WebSocket|sendBeacon)\\s*\\(')
+        for forbidden in ('fetch(', 'XMLHttpRequest(', 'WebSocket(', 'sendBeacon('):
+            self.assertNotIn(forbidden, self.js)
 
     def test_flight_csv_export_is_user_initiated_and_provenance_marked(self):
         self.assertIn('id="flight-export"', self.html)
