@@ -238,3 +238,10 @@ to the public static Space.
   validation. These need separate scientific assessment.
 - Status: SOURCE_ADAPTER_COMMITTED; **do not promote to TEST_PASSED until
   GitHub Actions completes successfully**. No public API exposed.
+
+### Core registry reconciliation — static dependency gate
+
+- Added `cloud/core_registry_dataflow_audit.py` to inspect the canonical `project_registry.py` **without importing it** or running any engine. It identifies declared producer-to-consumer input links, input names with no declared producer, output names with multiple providers, and registry entries lacking same-name root modules.
+- Added `cloud/test_core_registry_dataflow_audit.py` and Windows/Linux CI inclusion. Missing providers may be external inputs, and multiple declared providers may be intentional: neither is automatically a defect.
+- The audit is a **triage tool only**: registry `ACTIVE` does not prove runtime operation, callable compatibility, scientific validity or a patentable innovation. Review each flagged item against source interfaces and actual test evidence before changing the canonical registry.
+- University remains frozen and untouched. Next: identify one core dataflow edge with matching function contracts and implement a bounded execution test.
