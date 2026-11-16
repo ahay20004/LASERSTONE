@@ -794,3 +794,56 @@ function exportFlightCSV() {
 }
 const flightExport = document.getElementById('flight-export');
 if (flightExport) flightExport.addEventListener('click', exportFlightCSV);
+
+/* CSV intake is local-only and fail-closed. It accepts the exported LASERSTONE
+   model schema, not arbitrary measured data or unverified SCAPS outputs. */
+const flightImport = document.getElementById('flight-import');
+function inspectFlightCSV(source) {
+  if (typeof source !== 'string' || source.length > 1024 * 1024) throw Error('File exceeds 1 MiB limit');
+  const lines = source.replace(/\r\n/g, '\n').trim().split('\n');
+  const comments = lines.filter(line => line.startsWith('#'));
+  const records = lines.filter(line => line && !line.startsWith('#'));
+  const schema = 'depth_cm,transmission_fraction,intensity_mW_cm2,evidence_status';
+  if (!comments.some(line => line.includes('DERIVED MODEL OUTPUT; NOT MEASURED')) ||
+      !comments.some(line => line.includes('Equation: I(z)=I0*exp(-alpha*z)')) ||
+      records.shift() !== schema || records.length !== 41) {
+    throw Error('Unsupported provenance, schema or row count');
+  }
+  let lastDepth = -1;
+  for (const [index, line] of records.entries()) {
+    const fields = line.split(',');
+    if (fields.length !== 4 || fields[3] !== 'DERIVED_MODEL') throw Error('Invalid evidence status');
+    const values = fields.slice(0, 3);
+    if (values.some(value => !value.trim() || !/^(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(value))) {
+      throw Error('Invalid numeric field');
+    }
+    const [depth, transmission, intensity] = values.map(Number);
+    if (![depth, transmission, intensity].every(Number.isFinite) ||
+        Math.abs(depth - index / 4) > 1e-8 ||
+        depth <= lastDepth || transmission < 0 || transmission > 1 ||
+        intensity < 0) throw Error('Invalid numerical bounds or depth ordering');
+    lastDepth = depth;
+  }
+  return {rows: records.length, status: 'DERIVED_MODEL', lastDepth};
+}
+if (flightImport) flightImport.addEventListener('change', async () => {
+  const status = document.getElementById('flight-import-status');
+  const summary = document.getElementById('flight-import-summary');
+  summary.replaceChildren();
+  const file = flightImport.files && flightImport.files[0];
+  if (!file) return;
+  try {
+    if (file.size > 1024 * 1024 || !file.name.toLowerCase().endsWith('.csv')) {
+      throw Error('Only CSV files up to 1 MiB are accepted');
+    }
+    const report = inspectFlightCSV(await file.text());
+    status.textContent = 'PASS · Local CSV schema, row bounds and declared provenance verified. No upload.';
+    const result = document.createElement('p');
+    result.textContent = report.rows + ' rows · ' + report.status +
+      ' · depth 0–' + report.lastDepth.toFixed(2) +
+      ' cm · source declaration checked; physical validity NOT established.';
+    summary.appendChild(result);
+  } catch (error) {
+    status.textContent = 'BLOCKED · ' + error.message + '. No analysis or upload performed.';
+  }
+});
