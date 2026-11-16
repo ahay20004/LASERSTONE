@@ -809,6 +809,17 @@ function inspectFlightCSV(source) {
       records.shift() !== schema || records.length !== 41) {
     throw Error('Unsupported provenance, schema or row count');
   }
+  const parameters = comments.find(line => line.startsWith('# alpha_cm_inverse='));
+  const match = parameters && parameters.match(/^# alpha_cm_inverse=(\\d+(?:\\.\\d+)?); incident_mW_cm2=(\\d+(?:\\.\\d+)?); selected_depth_cm=(\\d+(?:\\.\\d+)?)$/);
+  if (!match) throw Error('Missing or invalid model parameter metadata');
+  const alpha = Number(match[1]);
+  const incident = Number(match[2]);
+  const selectedDepth = Number(match[3]);
+  if (![alpha, incident, selectedDepth].every(Number.isFinite) ||
+      alpha < 0 || alpha > 2 || incident < 0.01 || incident > 1000 ||
+      selectedDepth < 0 || selectedDepth > 10) {
+    throw Error('Model parameters outside supported bounds');
+  }
   let lastDepth = -1;
   for (const [index, line] of records.entries()) {
     const fields = line.split(',');
@@ -822,6 +833,11 @@ function inspectFlightCSV(source) {
         Math.abs(depth - index / 4) > 1e-8 ||
         depth <= lastDepth || transmission < 0 || transmission > 1 ||
         intensity < 0) throw Error('Invalid numerical bounds or depth ordering');
+    const expected = Math.exp(-alpha * depth);
+    if (Math.abs(transmission - expected) > 1e-9 ||
+        Math.abs(intensity - incident * expected) > 1e-8 * Math.max(1, incident)) {
+      throw Error('Numerical values do not reproduce declared model parameters');
+    }
     lastDepth = depth;
   }
   return {rows: records.length, status: 'DERIVED_MODEL', lastDepth};
