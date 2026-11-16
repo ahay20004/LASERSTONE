@@ -253,3 +253,10 @@ to the public static Space.
 - Tests: 532, 632.8 and 1064 nm independent SI comparisons; exact legacy 750 nm boundary; refractive-index invariance of photon energy; invalid inputs. `cloud/test_core_spectral_photon_integration.py` added to Windows/Linux foundation CI.
 - Acceptance is limited to **bounded software integration and numerical agreement**. No experimental verification, material characterization, gain/cavity claims, cloud execution, or university integration.
 - Preserve originals; do not copy or modify university files. Next: CI verification, source-to-contract comparison and broader physical input evidence.
+
+### Provenance-gated material scoring — next bounded core engine
+
+- Added `cloud/core_material_score_gate.py` to call the **existing** `material_score_engine.calculate_material_score` only when all six required fields are explicitly supplied with finite bounded numeric values, named sources, and declared evidence states. Reject missing fields instead of the legacy implicit zero defaults.
+- Validate legacy scoring weights and compare the returned result against a separately expressed weighted-sum formula. This establishes numerical implementation agreement **only**; neither the weights nor categories are scientifically calibrated by these tests.
+- `cloud/test_core_material_score_gate.py` tests synthetic valid, missing, zero, invalid, and provenance cases on Windows/Linux CI.
+- Source declarations are supplied by the caller, **not verified against a primary dataset**. Do not treat the resulting heuristic score as measured laser efficiency, proven material performance, novelty, or patentability. No university source changes or copies.
