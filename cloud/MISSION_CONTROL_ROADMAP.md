@@ -5,6 +5,58 @@ Status: reviewed development snapshot; **not** live monitoring. Branch:
 successful cross-platform foundation run before this roadmap update was
 commit `8c23f72` (GitHub Actions run 43826260254).
 
+## Adopted development policy — CORE FIRST / UNIVERSITY PRESERVED (2026-11-16)
+
+**Owner decision:** Develop and validate the original LASERSTONE scientific
+project first. The scientific university is a **frozen future expansion**, not
+a parallel workstream or a condition for core acceptance. Preserve its existing
+seven-building campus, UI, code, assets, and history in their current canonical
+locations. Do not delete or silently modify them to advance the core.
+
+### Selective university-to-core reuse
+
+- Inspect university modules and assets for **specific, demonstrable** value
+  to core scientific calculations, evidence tracking, test automation, project
+  navigation, security, or performance.
+- Reuse only the **minimum necessary** code/configuration or a bounded adapter
+  in the core, with its origin path, source commit, reason, license/dependency
+  review, interface contract, and regression tests documented. Keep the
+  university original **unchanged and in place**. Prefer referencing an existing
+  shared scientific module over creating a second independent engine or dataset.
+- Do not clone the entire university, its database, its session state, or its
+  architecture into the core. If a genuinely reusable component requires a
+  shared owner, propose and test a single canonical shared module, then update
+  references without duplicating scientific logic.
+- Core integration must remain independently runnable **without** the campus
+  UI or university-specific imports. Any copy is a deliberate, traceable
+  exception, not permission to fork the scientific truth.
+- Record each extraction in a transfer register with fields:
+  university source path / revision; core destination; functionality;
+  scientific benefit; dependencies and rights; tests; owner approval;
+  status. Reject items that add only visual complexity or unverified claims.
+
+### Core acceptance and future university package
+
+1. Reconcile and verify scientific engines, project registry, local Windows
+   dashboard, numerical baselines, data provenance, simulation interfaces,
+   and explicit unsupported cases.
+2. Prepare an invention-disclosure inventory and seek qualified patent advice
+   **before any further public technical disclosure**; existing public
+   commits/previews require novelty and disclosure review. No patentability
+   or grant is implied.
+3. Require independent reproducible tests, documented limitations, security
+   gates, and owner sign-off before marking the **core** release accepted.
+4. Only after core acceptance and IP/disclosure review, unfreeze the university
+   as **one separately tested integration package**, retaining its original
+   canonical sources and adding explicit compatibility/rollback tests.
+5. Until that milestone, university changes are restricted to critical
+   preservation/security fixes explicitly approved by the owner; no campus
+   expansion, new decorative UI, or independent university release.
+
+**Priority order:** CORE scientific validity → core integration and stability
+→ invention/IP review → core acceptance → future university integration.
+Public static preview success does not certify the core or the university.
+
 ## Verified achievements
 
 1. Bilingual public static preview and bounded hypothetical attenuation UI.
