@@ -279,6 +279,20 @@ class PreviewTests(unittest.TestCase):
                 self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
         self.assertIn("no measured populations", self.messages["en"]["explorerEvidence"])
 
+    def test_curated_library_search_is_bilingual_local_and_safe(self):
+        self.assertIn('id="knowledge-library"', self.html)
+        self.assertIn('id="library-search" type="search"', self.html)
+        self.assertIn('id="library-results"', self.html)
+        self.assertIn("const libraryEntries = Object.freeze([", self.js)
+        self.assertIn("results.replaceChildren()", self.js)
+        self.assertIn("title.textContent =", self.js)
+        self.assertIn("librarySearch.addEventListener('input', renderKnowledgeLibrary)", self.js)
+        for lang in ("en", "ar"):
+            for key in ("libraryTitle", "librarySearchLabel", "libraryEmpty",
+                        "libraryDisclaimer", "libraryTopic0", "libraryDesc5"):
+                self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
+        self.assertIn("not a live literature search", self.messages["en"]["libraryIntro"])
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
