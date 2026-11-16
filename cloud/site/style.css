@@ -52,3 +52,5 @@ footer{background:#030c1c;border-top:1px solid #126da7;color:#a7cee2}
 @media(max-width:1200px){.mission-monitor-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:800px){.mission-shell{display:block}.mission-sidebar{position:static;min-height:0;display:flex;flex-direction:row;flex-wrap:wrap;gap:6px;padding:12px 18px;border-inline-end:0;border-bottom:1px solid #247cc0}.mission-sidebar-heading,.mission-sidebar-note{width:100%;margin:0}.mission-sidebar a{font-size:12px;padding:8px 10px}.mission-content .hero{padding-top:55px}}
 @media(max-width:480px){.mission-monitor-grid{grid-template-columns:1fr}.mission-monitor-card p{min-height:0}}
+
+.mission-motto{position:relative;max-width:840px;margin:26px auto 12px;padding:15px 22px;border-inline-start:3px solid #6ceaff;border-radius:10px;background:linear-gradient(100deg,#0c3a6388,#0b1d3b88);color:#e3faff;font-size:clamp(15px,1.65vw,19px);font-weight:650;line-height:1.8;text-align:start;box-shadow:0 0 25px #08bbff22}
