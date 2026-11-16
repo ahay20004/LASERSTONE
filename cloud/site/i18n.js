@@ -863,3 +863,114 @@ if (flightImport) flightImport.addEventListener('change', async () => {
     status.textContent = 'BLOCKED · ' + error.message + '. No analysis or upload performed.';
   }
 });
+
+
+/* Local photovoltaic IV analysis. The accepted schema is deliberately narrow:
+   voltage_V,current_A with positive generating current. No SCAPS-specific
+   format or physical validation is implied. */
+const ivFile = document.getElementById('iv-file');
+let ivLast = null;
+function parseIV(text) {
+  if (typeof text !== 'string' || text.length > 1024 * 1024) throw Error('CSV exceeds 1 MiB');
+  const lines = text.replace(/\r\n/g, '\n').trim().split('\n').filter(x => x.trim());
+  if (lines.shift().trim() !== 'voltage_V,current_A') throw Error('Expected voltage_V,current_A header');
+  if (lines.length < 3 || lines.length > 5000) throw Error('Require 3–5000 data rows');
+  const rows = lines.map(line => {
+    const fields = line.split(',');
+    if (fields.length !== 2 || fields.some(v => !/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(v.trim()))) throw Error('Invalid numeric CSV row');
+    const pair = fields.map(Number);
+    if (!pair.every(Number.isFinite)) throw Error('Non-finite current or voltage');
+    return pair;
+  });
+  for (let i = 1; i < rows.length; i++) {
+    if (rows[i][0] <= rows[i-1][0]) throw Error('Voltage must be strictly increasing');
+  }
+  if (rows[0][0] > 0 || rows[rows.length-1][0] <= 0) throw Error('Data must bracket V=0');
+  const crossings = [];
+  for (let i = 1; i < rows.length; i++) {
+    if (rows[i-1][1] > 0 && rows[i][1] <= 0) crossings.push(i);
+  }
+  if (crossings.length !== 1) throw Error('Require exactly one positive-to-nonpositive current crossing');
+  const zeroIndex = rows.findIndex(row => row[0] === 0);
+  const interpolate = (a, b, target, coordinate) => {
+    const other = 1-coordinate;
+    const fraction = (target-a[coordinate])/(b[coordinate]-a[coordinate]);
+    return a[other] + fraction*(b[other]-a[other]);
+  };
+  let isc;
+  if (zeroIndex >= 0) isc = rows[zeroIndex][1];
+  else {
+    const k = rows.findIndex(row => row[0] > 0);
+    isc = interpolate(rows[k-1], rows[k], 0, 0);
+  }
+  const k = crossings[0];
+  const voc = rows[k][1] === 0 ? rows[k][0] : interpolate(rows[k-1], rows[k], 0, 1);
+  if (!(isc > 0 && voc > 0)) throw Error('No positive photovoltaic Voc and Isc');
+  if (rows.some(([v, i]) => v >= 0 && v < voc && i < 0)) throw Error('Invalid current sign in generating quadrant');
+  const candidates = rows.filter(([v, i]) => v >= 0 && v <= voc && i >= 0)
+    .map(([v, i]) => ({v, i, p:v*i}));
+  if (!candidates.length) throw Error('No sampled power-generating point');
+  const mpp = candidates.reduce((best, p) => p.p > best.p ? p : best);
+  const ff = mpp.p / (voc*isc);
+  if (!(ff > 0 && ff <= 1.000001)) throw Error('Fill factor outside physical bounds');
+  return {rows, isc, voc, mpp, ff};
+}
+function showIV(result, source) {
+  ivLast = {result, source};
+  const put = (id, value) => { document.getElementById(id).textContent = value; };
+  put('iv-voc', result.voc.toPrecision(5) + ' V');
+  put('iv-isc', result.isc.toPrecision(5) + ' A');
+  put('iv-pmax', result.mpp.p.toPrecision(5) + ' W');
+  put('iv-ff', (result.ff*100).toFixed(2) + '%');
+  const vmin = result.rows[0][0], vmax = result.rows[result.rows.length-1][0];
+  const currents = result.rows.map(x => x[1]);
+  const imin = Math.min(0,...currents), imax = Math.max(...currents);
+  const span = Math.max(1e-12, imax-imin);
+  document.getElementById('iv-curve').setAttribute('points', result.rows.map(([v,i]) =>
+    (40+540*(v-vmin)/(vmax-vmin)).toFixed(2)+','+(175-155*(i-imin)/span).toFixed(2)).join(' '));
+  put('iv-status', 'CALCULATED · '+result.rows.length+' rows; linear zero-crossing interpolation; sampled Pmax.');
+  put('iv-provenance', 'Evidence: '+source+' · Derived metrics only. Convergence, measurement calibration and uncertainty NOT verified.');
+  document.getElementById('iv-export').disabled = false;
+}
+if (ivFile) {
+  ivFile.addEventListener('change', async () => {
+    ivLast = null;
+    document.getElementById('iv-export').disabled = true;
+    const file = ivFile.files && ivFile.files[0];
+    if (!file) return;
+    try {
+      if (!file.name.toLowerCase().endsWith('.csv') || file.size > 1024*1024) throw Error('CSV only, maximum 1 MiB');
+      showIV(parseIV(await file.text()), 'USER_SUPPLIED_UNVERIFIED');
+    } catch (e) {
+      document.getElementById('iv-status').textContent = 'BLOCKED · '+e.message;
+      document.getElementById('iv-provenance').textContent = 'Evidence: NOT ASSESSED';
+      document.getElementById('iv-curve').setAttribute('points', '');
+      for (const id of ['iv-voc','iv-isc','iv-pmax','iv-ff']) document.getElementById(id).textContent = '—';
+    }
+  });
+  document.getElementById('iv-demo').addEventListener('click', () => {
+    const demo = 'voltage_V,current_A\n'+Array.from({length: 13}, (_, k) => {
+      const v = k*0.05;
+      return v.toFixed(2)+','+(0.3*(1-Math.pow(v/0.6,4))).toFixed(9);
+    }).join('\n');
+    showIV(parseIV(demo), 'SYNTHETIC_DEMONSTRATION');
+  });
+  document.getElementById('iv-export').addEventListener('click', () => {
+    if (!ivLast) return;
+    const {result,source} = ivLast;
+    const csv = [
+      '# LASERSTONE DERIVED IV ANALYSIS; SOURCE='+source+'; NOT PHYSICALLY VALIDATED',
+      'metric,value,unit,evidence_status',
+      'Voc,'+result.voc+',V,DERIVED',
+      'Isc,'+result.isc+',A,DERIVED',
+      'Pmax,'+result.mpp.p+',W,DERIVED',
+      'Vmp,'+result.mpp.v+',V,DERIVED',
+      'Imp,'+result.mpp.i+',A,DERIVED',
+      'FF,'+result.ff+',fraction,DERIVED'
+    ].join('\n')+'\n';
+    const url = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+    const a = document.createElement('a');
+    a.href=url; a.download='laserstone_iv_derived_analysis.csv';
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  });
+}
