@@ -38,8 +38,8 @@ class PreviewTests(unittest.TestCase):
         cls.messages = json.loads(match.group(1))
 
     def test_all_internal_navigation_targets_exist(self):
-        ids = set(re.findall(r'\\bid="([^"]+)"', self.html))
-        targets = re.findall(r'<a\\b[^>]*\\bhref="#([^"]+)"', self.html)
+        ids = set(re.findall(r'\bid="([^"]+)"', self.html))
+        targets = re.findall(r'<a\b[^>]*\bhref="#([^"]+)"', self.html)
         self.assertTrue(targets)
         for target in targets:
             self.assertIn(target, ids, f"Broken internal icon/navigation link: #{target}")
