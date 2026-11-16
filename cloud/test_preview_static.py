@@ -173,7 +173,7 @@ class PreviewTests(unittest.TestCase):
 
     def test_learning_path_is_bilingual_accessible_and_non_operational(self):
         self.assertIn('id="learning-path"', self.html)
-        self.assertEqual(self.html.count('class="learning-step'), 5)
+        self.assertEqual(len(re.findall(r'<button[^>]*class="learning-step(?: is-current)?"', self.html)), 5)
         for index in range(5):
             self.assertIn(f'data-step="{index}"', self.html)
             for lang in ("en", "ar"):
