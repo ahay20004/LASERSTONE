@@ -48,3 +48,56 @@ constants, engine convergence or experimental agreement.
   scheduled checks or user account data.
 - Update this document, bilingual dashboard and tests together when a
   milestone changes; verify CI before marking it completed.
+
+## Unified legacy restoration protocol — 2026-11-16
+
+**Single authoritative platform:** keep the existing repository, project
+registry, local Scientific University city and project dashboard. The public
+Scientific Explorer is a separate access surface, not a second science engine.
+
+**Evidence inspected:** root repository listing includes 63 root Python
+files with engine-like/helper suffixes; `project_registry.py` declares
+32 registry keys. Neither number is a count of validated independent engines.
+The legacy `README_CITY.md` documents the seven-building local university
+plaza, 16 project dashboard gateway buttons, shared `main.prepare_runtime()`
+session and G23 local launch/test procedures. These are local architecture
+claims requiring fresh end-to-end verification before release.
+
+**Parallel lanes and gates:**
+
+1. **Inventory / traceability:** run
+   `python -m cloud.legacy_integration_inventory` (read-only JSON to stdout).
+   Review registry mismatches, duplicate concepts, missing modules and AST
+   parse errors. Do not import legacy engines during inventory.
+2. **Physics / registry:** verify input/output contracts, source and
+   evidence states, numerical regression and actual dependency edges. Test
+   each callable independently before composing execution graphs.
+3. **University / project UI:** preserve the existing university plaza,
+   project dashboard, shared session and local navigation. Perform actual
+   Windows GUI smoke tests; do not replace the university with the public
+   landing page.
+4. **External tools:** distinguish SCAPS executable discovery, explicit
+   GUI invocation, saved I–V import, solver execution and physical
+   validation. MATLAB synthetic exchange is not a real engine adapter.
+   COMSOL/Zemax/Lumerical supported envelope IDs are not evidence of
+   installed or licensed applications.
+5. **Cloud / AI:** publish only reviewed educational/static content until
+   authenticated backend, authorization, audit, provenance and explicit
+   user approval exist. AI agents may propose changes, never silently
+   rewrite the master, deploy private data or certify physical results.
+
+**Promotion gates:** DISCOVERED → SOURCE_REVIEWED → CONTRACT_TESTED →
+INTEGRATION_TESTED → PHYSICS_BENCHMARKED → LOCAL_UI_VERIFIED →
+CLOUD_SERVICE_APPROVED. Each transition requires a dated evidence link,
+test artifact, platform/OS, assumptions and reviewer sign-off. Never
+infer a higher gate from a lower one.
+
+**Open work:** reconcile the user's historical ~57 integrated/tested
+engines with repository file and registry counts using actual archived
+reports; verify all local GUI and simulator runs; build one isolated
+backend adapter; refresh Mission Control only from auditable evidence.
+The static public preview remains non-executing.
+
+**No duplicate master:** this document is the current integration roadmap;
+the original project modules and `project_registry.py` remain the
+authoritative sources for code and declared engine interfaces.
