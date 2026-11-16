@@ -997,8 +997,11 @@ if (ivFile) {
       const released = Date.parse(notice.dataset.released);
       const opened = readOpened(notice.dataset.updateId);
       const validRelease = Number.isFinite(released) && released <= now;
-      const fresh = validRelease && now < released + unreadLifetimeMs &&
-        (opened === null || (Number.isFinite(opened) && opened >= released && now < opened + openedGraceMs));
+      const withinAnnouncement = validRelease && now < released + unreadLifetimeMs;
+      const openedDuringAnnouncement = Number.isFinite(opened) && opened !== null &&
+        opened >= released && opened < released + unreadLifetimeMs;
+      const fresh = (opened === null && withinAnnouncement) ||
+        (openedDuringAnnouncement && now < opened + openedGraceMs);
       notice.classList.toggle('is-fresh', fresh);
       const tag = notice.querySelector('.update-new');
       if (tag) tag.setAttribute('aria-hidden', fresh ? 'false' : 'true');
@@ -1006,7 +1009,9 @@ if (ivFile) {
   }
   for (const notice of notices) {
     notice.addEventListener('toggle', () => {
-      if (notice.open && readOpened(notice.dataset.updateId) === null) {
+      if (notice.open && readOpened(notice.dataset.updateId) === null &&
+          Number.isFinite(Date.parse(notice.dataset.released)) &&
+          Date.now() < Date.parse(notice.dataset.released) + unreadLifetimeMs) {
         markOpened(notice.dataset.updateId, Date.now());
       }
       refresh();
