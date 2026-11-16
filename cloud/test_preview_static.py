@@ -190,6 +190,17 @@ class PreviewTests(unittest.TestCase):
         self.assertIn("updateLearning(document.documentElement.lang)", self.js)
         self.assertIn("No data collection", self.messages["en"]["learningDisclaimer"])
 
+
+    def test_physics_example_has_model_limits_and_no_fabricated_results(self):
+        self.assertIn('class="learning-example"', self.html)
+        self.assertIn("I(z) = I₀ exp(−αz)", self.html)
+        for lang in ("en", "ar"):
+            for key in ("exampleTitle", "exampleVariables", "exampleAssumptions",
+                        "exampleValidation", "exampleWarning"):
+                self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
+        self.assertIn("No measured data", self.messages["en"]["exampleValidation"])
+        self.assertIn("لا تُعرض هنا بيانات مقاسة", self.messages["ar"]["exampleValidation"])
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
