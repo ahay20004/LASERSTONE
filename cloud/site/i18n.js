@@ -37,6 +37,22 @@ const translations = {
     "gateIntegrityQuote": "We refine our language without weakening our evidence.",
     "gateIntegrityMeaning": "Clear explanation never replaces the limits of what data establish.",
     "gatesAttribution": "LASERSTONE™ original editorial wording · Concept preview",
+    "learningEyebrow": "SCIENTIFIC LEARNING PATH · INTERACTIVE PREVIEW",
+    "learningTitle": "From curiosity to evidence",
+    "learningIntro": "Explore five steps of scientific reasoning. This is an educational navigation demonstration, not a running experiment or simulation.",
+    "learningStep0": "Observe",
+    "learningStep1": "Understand",
+    "learningStep2": "Formulate",
+    "learningStep3": "Test",
+    "learningStep4": "Validate",
+    "learningDesc0": "What phenomenon do we want to understand? Describe the observation before explaining it.",
+    "learningDesc1": "What concepts help explain the phenomenon? Separate established knowledge from hypotheses.",
+    "learningDesc2": "Which equation or model represents it? State variables, units and assumptions.",
+    "learningDesc3": "How would we compare model predictions with observations? Specify controls and uncertainty.",
+    "learningDesc4": "What evidence supports the conclusion? Check reproducibility, limitations and independent tests.",
+    "learningPrev": "Previous",
+    "learningNext": "Next",
+    "learningDisclaimer": "Educational concept only · No data collection, engine execution, or claim of scientific validation.",
     "missionMotto": "We dream with the imagination of scientists, build with the precision of engineers, and declare success only when supported by evidence.",
     "missionMenu": "MISSION CONTROL",
     "missionDashboard": "◈ Dashboard",
@@ -125,6 +141,22 @@ const translations = {
     "gateIntegrityQuote": "نُحسن صياغة البيان، دون أن نُضعف سلطان البرهان؛ ونقرّب العلم إلى الأذهان، دون أن نُفرّط في دقة الميزان.",
     "gateIntegrityMeaning": "وضوح الشرح لا يتجاوز حدود ما تثبته البيانات.",
     "gatesAttribution": "صياغات تحريرية أصلية لمنصة LASERSTONE™ · معاينة تصميمية",
+    "learningEyebrow": "المسار العلمي للفهم والتحقق · معاينة تفاعلية",
+    "learningTitle": "من فضول السؤال إلى قوة الدليل",
+    "learningIntro": "استكشف خمس مراحل للتفكير العلمي. هذا عرض تعليمي للتنقل، وليس تجربة أو محاكاة قيد التشغيل.",
+    "learningStep0": "تأمّل",
+    "learningStep1": "افهم",
+    "learningStep2": "صُغ",
+    "learningStep3": "اختبر",
+    "learningStep4": "تحقّق",
+    "learningDesc0": "ما الظاهرة التي نريد فهمها؟ صِف المشاهدة قبل تفسيرها.",
+    "learningDesc1": "ما المفاهيم التي تفسّر الظاهرة؟ ميّز المعرفة الراسخة من الفرضيات.",
+    "learningDesc2": "أي معادلة أو نموذج يصف الظاهرة؟ حدّد المتغيرات والوحدات والافتراضات.",
+    "learningDesc3": "كيف نقارن تنبؤ النموذج بالمشاهدات؟ حدّد الضوابط وعدم اليقين.",
+    "learningDesc4": "ما الدليل الذي يسند الاستنتاج؟ افحص قابلية إعادة الإنتاج والحدود والاختبارات المستقلة.",
+    "learningPrev": "السابق",
+    "learningNext": "التالي",
+    "learningDisclaimer": "تصور تعليمي فقط · لا جمع بيانات أو تشغيل محركات أو ادعاء بتحقق علمي.",
     "missionMotto": "نحلم بخيال العلماء، ونبني بدقة المهندسين، ولا نعلن نجاحًا إلا بشهادة الدليل.",
     "missionMenu": "غرفة القيادة",
     "missionDashboard": "◈ لوحة القيادة",
@@ -195,6 +227,7 @@ function applyLanguage(lang) {
   select.value = chosen;
   document.title = 'LASERSTONE | ' + messages.brandSub;
   updateReadout(chosen);
+  updateLearning(chosen);
   try { localStorage.setItem('laserstone-language', chosen); } catch (_) { /* storage unavailable */ }
 }
 select.addEventListener('change', () => applyLanguage(select.value));
@@ -221,5 +254,38 @@ cockpitButtons.forEach(button => {
     });
     updateReadout(document.documentElement.lang);
   });
+});
+/* Educational interaction only; no network, personal data or physics engines. */
+const learningButtons = Array.from(document.querySelectorAll('.learning-step'));
+const learningReadout = document.getElementById('learning-readout');
+const learningCount = document.getElementById('learning-count');
+const learningPrev = document.getElementById('learning-prev');
+const learningNext = document.getElementById('learning-next');
+let learningIndex = 0;
+function updateLearning(lang) {
+  if (!learningReadout) return;
+  const messages = translations[lang] || translations.en;
+  learningReadout.querySelector('strong').textContent = messages['learningStep' + learningIndex];
+  learningReadout.querySelector('p').textContent = messages['learningDesc' + learningIndex];
+  learningButtons.forEach((button, index) => {
+    const active = index === learningIndex;
+    button.setAttribute('aria-pressed', String(active));
+    button.classList.toggle('is-current', active);
+  });
+  learningCount.textContent = (learningIndex + 1) + ' / ' + learningButtons.length;
+  learningPrev.disabled = learningIndex === 0;
+  learningNext.disabled = learningIndex === learningButtons.length - 1;
+}
+learningButtons.forEach((button, index) => button.addEventListener('click', () => {
+  learningIndex = index;
+  updateLearning(document.documentElement.lang);
+}));
+learningPrev.addEventListener('click', () => {
+  learningIndex = Math.max(0, learningIndex - 1);
+  updateLearning(document.documentElement.lang);
+});
+learningNext.addEventListener('click', () => {
+  learningIndex = Math.min(learningButtons.length - 1, learningIndex + 1);
+  updateLearning(document.documentElement.lang);
 });
 applyLanguage(requested);
