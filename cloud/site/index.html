@@ -75,6 +75,24 @@
       </div>
       <p class="gates-attribution" data-i18n="gatesAttribution">LASERSTONE™ original editorial wording · Concept preview</p>
     </section>
+    <section id="learning-path" class="section learning-path" aria-labelledby="learning-title">
+      <p class="eyebrow" data-i18n="learningEyebrow">SCIENTIFIC LEARNING PATH · INTERACTIVE PREVIEW</p>
+      <h2 id="learning-title" data-i18n="learningTitle">From curiosity to evidence</h2>
+      <p data-i18n="learningIntro">Explore five steps of scientific reasoning. This is an educational navigation demonstration, not a running experiment or simulation.</p>
+      <div class="learning-steps" role="group" aria-label="Learning stages">
+        <button type="button" class="learning-step is-current" data-step="0" aria-pressed="true" aria-controls="learning-readout" data-i18n="learningStep0">Observe</button>
+        <button type="button" class="learning-step" data-step="1" aria-pressed="false" aria-controls="learning-readout" data-i18n="learningStep1">Understand</button>
+        <button type="button" class="learning-step" data-step="2" aria-pressed="false" aria-controls="learning-readout" data-i18n="learningStep2">Formulate</button>
+        <button type="button" class="learning-step" data-step="3" aria-pressed="false" aria-controls="learning-readout" data-i18n="learningStep3">Test</button>
+        <button type="button" class="learning-step" data-step="4" aria-pressed="false" aria-controls="learning-readout" data-i18n="learningStep4">Validate</button>
+      </div>
+      <div id="learning-readout" class="learning-readout" role="status" aria-live="polite">
+        <strong data-i18n="learningStep0">Observe</strong>
+        <p data-i18n="learningDesc0">What phenomenon do we want to understand? Describe the observation before explaining it.</p>
+      </div>
+      <div class="learning-actions"><button type="button" id="learning-prev" disabled data-i18n="learningPrev">Previous</button><span id="learning-count" aria-live="polite">1 / 5</span><button type="button" id="learning-next" data-i18n="learningNext">Next</button></div>
+      <p class="cockpit-footnote" data-i18n="learningDisclaimer">Educational concept only · No data collection, engine execution, or claim of scientific validation.</p>
+    </section>
     <section id="research" class="section">
       <p class="eyebrow" data-i18n="domains">RESEARCH DOMAINS</p><h2 data-i18n="researchTitle">Designed for scientific workflows</h2>
       <div class="cards">
