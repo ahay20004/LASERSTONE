@@ -163,3 +163,19 @@ to the public static Space.
    promotion requires a real registry reconciliation report, cross-platform
    test results, local Windows campus checks and one independently benchmarked
    engine adapter.
+
+## First legacy engine integration pilot — pending CI evidence
+
+- Adapter: `cloud/legacy_laser_photon_adapter.py`; original owner
+  `laser_physics_engine.calculate_laser_physics` remains unchanged.
+- Test: `cloud/test_legacy_laser_photon_adapter.py`, included in the
+  cross-platform Cloud foundation workflow.
+- Bounded scope: photon frequency and energy only, 100–100000 nm and
+  refractive index 1–5; three benchmark wavelengths 532, 632.8 and
+  1064 nm. Independent benchmark uses exact SI constants; legacy uses
+  rounded constants; maximum permitted relative discrepancy 0.1%.
+- Excluded: cavity length, free spectral range, gain, real material
+  validity, external solvers, GUI, live cloud service and experimental
+  validation. These need separate scientific assessment.
+- Status: SOURCE_ADAPTER_COMMITTED; **do not promote to TEST_PASSED until
+  GitHub Actions completes successfully**. No public API exposed.
