@@ -11,7 +11,7 @@ class MainSpectralHandoffTests(unittest.TestCase):
         compared = 0
         for source in plants:
             with self.subTest(plant=source.get("name")):
-                result = analyze_plant(source)
+                result = analyze_plant(source, canonical_spectral_handoff=True)
                 if result.get("analysis_status") != "COMPLETE_HEURISTIC_ANALYSIS":
                     continue
                 compared += 1
