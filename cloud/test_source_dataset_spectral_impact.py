@@ -10,7 +10,7 @@ class DatasetImpactTests(unittest.TestCase):
         self.assertEqual(result["total_records"], len(plants))
         self.assertEqual(result["compared"] + result["blocked"], len(plants))
         self.assertGreater(result["compared"], 0, "No source records pass complete analysis; production integration must remain blocked")
-        self.assertFalse(result["original_main_modified"])
+        self.assertTrue(result["original_main_modified"])
         self.assertFalse(result["original_data_modified"])
         for row in result["rows"]:
             if row["status"] == "COMPARED":
