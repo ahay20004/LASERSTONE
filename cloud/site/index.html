@@ -250,6 +250,32 @@
       <p data-i18n="explorerEvidence">Scientific status: established textbook relations and a deterministic educational calculation; no measured populations, validated gain, or live physics engine.</p>
       <p class="explorer-source"><span data-i18n="explorerSources">References: Einstein (1917); Siegman, Lasers (1986); Svelto, Principles of Lasers (2010).</span> <a href="https://doi.org/10.1007/978-1-4419-1302-9" rel="noopener noreferrer" target="_blank" data-i18n="explorerReferenceLink">Svelto textbook DOI</a></p>
     </section>
+    <section id="flight-console" class="section flight-console" aria-labelledby="flight-title">
+      <p class="eyebrow">LASERSTONE · INTERACTIVE FLIGHT CONSOLE · LOCAL MODEL</p>
+      <h2 id="flight-title">Scientific flight console | قمرة التشغيل العلمي</h2>
+      <p>Working browser-side scientific model and automated evidence checks. No remote agents, private datasets or backend simulation are connected. | نموذج علمي تفاعلي يعمل داخل المتصفح مع فحوص آلية، دون اتصال بمحركات الخادم أو بيانات خاصة.</p>
+      <div class="flight-grid">
+        <div class="flight-controls">
+          <label for="flight-alpha">Absorption coefficient α | معامل الامتصاص (cm⁻¹)</label>
+          <input id="flight-alpha" type="range" min="0" max="2" step="0.05" value="0.5">
+          <output id="flight-alpha-readout" for="flight-alpha">0.50 cm⁻¹</output>
+          <label for="flight-depth">Propagation depth z | عمق الانتشار (cm)</label>
+          <input id="flight-depth" type="range" min="0" max="10" step="0.25" value="3">
+          <output id="flight-depth-readout" for="flight-depth">3.00 cm</output>
+          <label for="flight-intensity">Incident intensity I₀ | الشدة الابتدائية (mW/cm²)</label>
+          <input id="flight-intensity" type="number" min="0.01" max="1000" step="0.1" value="10">
+          <button type="button" id="flight-run">Run scientific checks | تشغيل الفحوص</button>
+        </div>
+        <div class="flight-output" role="status" aria-live="polite">
+          <div class="flight-metrics"><div><small>Transmitted intensity | الشدة النافذة</small><strong id="flight-transmitted">—</strong></div><div><small>Transmission | النفاذية</small><strong id="flight-transmission">—</strong></div></div>
+          <svg id="flight-chart" viewBox="0 0 600 210" role="img" aria-label="Calculated Beer Lambert attenuation curve"><path d="M40 15V175H580" fill="none" stroke="#7897a5" stroke-width="2"/><polyline id="flight-curve" fill="none" stroke="#087b83" stroke-width="4" points=""/></svg>
+          <p id="flight-physics-check">Physics reviewer: awaiting input</p>
+          <p id="flight-evidence-check">Evidence auditor: awaiting input</p>
+          <p id="flight-simulator-check">Simulation reviewer: awaiting input</p>
+          <p id="flight-status">READY · Deterministic teaching model, not an experimental result.</p>
+        </div>
+      </div>
+    </section>
     <section id="agent-council" class="section agent-council" aria-labelledby="agent-council-title">
       <p class="eyebrow" data-i18n="agentsEyebrow">SCIENTIFIC AGENT COUNCIL · DESIGN</p>
       <h2 id="agent-council-title" data-i18n="agentsTitle">Specialist agents with explicit evidence gates</h2>
