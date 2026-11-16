@@ -982,37 +982,51 @@ if (ivFile) {
   const openedGraceMs = 48 * 60 * 60 * 1000;
   const notices = Array.from(document.querySelectorAll('.update-notice[data-update-id][data-released]'));
   const storagePrefix = 'laserstone-update-opened:';
+  let expiryTimer = null;
   function readOpened(id) {
     try {
       const value = localStorage.getItem(storagePrefix + id);
-      return value === null ? null : Number(value);
+      if (value === null) return null;
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : null;
     } catch (_) { return null; }
   }
   function markOpened(id, when) {
     try { localStorage.setItem(storagePrefix + id, String(when)); } catch (_) { /* private mode: ephemeral */ }
   }
   function refresh() {
+    if (expiryTimer !== null) clearTimeout(expiryTimer);
+    expiryTimer = null;
     const now = Date.now();
+    let nextBoundary = Infinity;
     for (const notice of notices) {
       const released = Date.parse(notice.dataset.released);
       const opened = readOpened(notice.dataset.updateId);
       const validRelease = Number.isFinite(released) && released <= now;
-      const withinAnnouncement = validRelease && now < released + unreadLifetimeMs;
-      const openedDuringAnnouncement = Number.isFinite(opened) && opened !== null &&
-        opened >= released && opened < released + unreadLifetimeMs;
+      const announcementEnd = released + unreadLifetimeMs;
+      const withinAnnouncement = validRelease && now < announcementEnd;
+      const openedDuringAnnouncement = opened !== null && validRelease &&
+        opened >= released && opened < announcementEnd && opened <= now;
+      const expiry = openedDuringAnnouncement ? opened + openedGraceMs : announcementEnd;
       const fresh = (opened === null && withinAnnouncement) ||
-        (openedDuringAnnouncement && now < opened + openedGraceMs);
+        (openedDuringAnnouncement && now < expiry);
       notice.classList.toggle('is-fresh', fresh);
       const tag = notice.querySelector('.update-new');
       if (tag) tag.setAttribute('aria-hidden', fresh ? 'false' : 'true');
+      if (fresh && expiry > now) nextBoundary = Math.min(nextBoundary, expiry);
+      if (Number.isFinite(released) && released > now) nextBoundary = Math.min(nextBoundary, released);
+    }
+    if (Number.isFinite(nextBoundary)) {
+      expiryTimer = setTimeout(refresh, Math.max(1, Math.min(nextBoundary - now + 1, 2147483647)));
     }
   }
   for (const notice of notices) {
     notice.addEventListener('toggle', () => {
+      const released = Date.parse(notice.dataset.released);
+      const now = Date.now();
       if (notice.open && readOpened(notice.dataset.updateId) === null &&
-          Number.isFinite(Date.parse(notice.dataset.released)) &&
-          Date.now() < Date.parse(notice.dataset.released) + unreadLifetimeMs) {
-        markOpened(notice.dataset.updateId, Date.now());
+          Number.isFinite(released) && now >= released && now < released + unreadLifetimeMs) {
+        markOpened(notice.dataset.updateId, now);
       }
       refresh();
     });
