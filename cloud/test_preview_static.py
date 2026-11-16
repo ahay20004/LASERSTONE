@@ -45,7 +45,7 @@ class PreviewTests(unittest.TestCase):
         for marker in ('unreadLifetimeMs = 7 * 24', 'openedGraceMs = 48 * 60',
                        "localStorage.setItem(storagePrefix + id", "notice.addEventListener('toggle'",
                        "notice.classList.toggle('is-fresh'", "openedDuringAnnouncement",
-                       "now < opened + openedGraceMs"):
+                       "now < expiry"):
             self.assertIn(marker, self.js)
 
     def test_photovoltaic_iv_lab_local_and_derived(self):
