@@ -50,7 +50,7 @@ def main():
         "CI outcome must be checked independently before approval.",
         "",
         f"Comparison: {comparison}",
-        f"Risk: {risk[\'risk_level\']} — owner review required",
+        f"Risk: {risk["risk_level"]} — owner review required",
         "Risk is path-based; scientific and security validation are separate.",
         "",
         "## Changed files in review scope",
