@@ -229,6 +229,20 @@ class PreviewTests(unittest.TestCase):
         self.assertIn("hypothetical", self.messages["en"]["labDisclaimer"])
         self.assertIn("افتراضية", self.messages["ar"]["labDisclaimer"])
 
+
+    def test_wavelength_controls_are_illustrative_not_material_data(self):
+        self.assertIn('id="lab-wavelength"', self.html)
+        self.assertIn('id="lab-incident" type="range"', self.html)
+        self.assertIn('id="lab-absolute"', self.html)
+        self.assertIn("Object.freeze({'532': 0.8, '632.8': 0.5, '1064': 0.2})", self.js)
+        self.assertIn("incident * ratio", self.js)
+        self.assertIn("labWavelength.addEventListener('change'", self.js)
+        for lang in ("en", "ar"):
+            for key in ("labWavelength", "labCoefficientNote", "labIncident", "labAbsolute"):
+                self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
+        self.assertIn("invented teaching coefficients", self.messages["en"]["labCoefficientNote"])
+        self.assertIn("افتراضية", self.messages["ar"]["labCoefficientNote"])
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
