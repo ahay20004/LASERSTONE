@@ -58,6 +58,8 @@ jobs:
           python -m unittest -v test_g23_analysis_pipeline test_g23_simulation_exchange_contract cloud.test_governance_risk_gate
       - name: Stage only approved static files
         run: python cloud/huggingface/prepare_space.py --output /tmp/laserstone-hf-preview
+      - name: Audit exact staged public payload
+        run: python cloud/huggingface/audit_public_payload.py /tmp/laserstone-hf-preview
       - name: Verify isolated deployment allowlist
         run: |
           python - <<'PY'
