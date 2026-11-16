@@ -158,6 +158,18 @@ class PreviewTests(unittest.TestCase):
         self.assertEqual(self.messages["en"]["missionNoData"], "No live data")
         self.assertNotRegex(self.html, r'(?i)\b(?:live|active)\s+(?:users|projects|agents)\s*:\s*\d+')
 
+
+    def test_scientific_entrance_maxims_are_bilingual_and_attributed(self):
+        self.assertIn('id="scientific-gates"', self.html)
+        self.assertEqual(self.html.count('class="gate-card"'), 3)
+        for lang in ("en", "ar"):
+            for key in ("gatesTitle", "gatesIntro", "gatesAttribution",
+                        "gatePhysicsQuote", "gateEngineeringQuote", "gateIntegrityQuote"):
+                self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
+        self.assertIn("original", self.messages["en"]["gatesAttribution"].lower())
+        self.assertIn("أصلية", self.messages["ar"]["gatesAttribution"])
+        self.assertIn("البرهان", self.messages["ar"]["gateIntegrityQuote"])
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
