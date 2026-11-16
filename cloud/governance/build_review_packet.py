@@ -5,7 +5,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
-from cloud.governance.risk_gate import classify, changed_since_base
+from risk_gate import classify, changed_since_base
 
 def git(*args):
     return subprocess.check_output(["git", *args], text=True, encoding="utf-8", errors="replace").strip()
