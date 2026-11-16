@@ -35,6 +35,13 @@ locations. Do not delete or silently modify them to advance the core.
   scientific benefit; dependencies and rights; tests; owner approval;
   status. Reject items that add only visual complexity or unverified claims.
 
+### First implementation of selective-reuse audit
+
+- Added `cloud/core_first_university_audit.py`: read-only AST/source inspection of `city/*.py`, with candidate signals and explicit refusal to certify runtime, scientific validation, or transfers.
+- Added `cloud/test_core_first_university_audit.py`: synthetic non-execution, non-mutation and invalid-source regression tests; included in Windows/Linux foundation workflow.
+- **No university files copied or changed.** No transfers approved. This is a prioritization instrument, not a claim that a university engine has been integrated.
+- Next: review candidate source code and actual core interfaces, then propose only narrowly scoped transfers with owner approval and evidence.
+
 ### Core acceptance and future university package
 
 1. Reconcile and verify scientific engines, project registry, local Windows
