@@ -27,6 +27,9 @@ jobs:
       - name: Create dated development ledger and owner decision packet
         shell: bash
         run: python cloud/governance/build_review_packet.py
+      - name: Classify change risk for owner review
+        shell: bash
+        run: python cloud/governance/risk_gate.py
       - name: Validate static preview
         shell: bash
         run: python -m unittest -v cloud/test_preview_static.py
