@@ -99,7 +99,7 @@ from code_quality_guard import run_code_quality_guard
 
 
 
-def analyze_plant(plant):
+def analyze_plant(plant, *, canonical_spectral_handoff=False):
     """Analyze a detached record; numeric gates do not certify physical validity."""
     import copy
     import math
@@ -196,11 +196,12 @@ def analyze_plant(plant):
         plant['laser_efficiency_score'] = evaluate_laser_efficiency(plant, plant['gain_score'], plant['q_factor_score'], plant['beam_quality_score'], plant['thermal_score'])
         require_score('laser_efficiency_score')
         plant['laser_efficiency_class'] = classify_laser_efficiency(plant['laser_efficiency_score'])
-        # Canonical spectral handoff: preserve label for presentation and downstream
-        # consumers; pass its already validated numeric counterpart only to the
-        # legacy material scoring engine. No original engine formula is changed.
+        # Opt-in canonical handoff only: frozen legacy default is unchanged.
+        # The numeric score is used solely when explicitly requested; original
+        # scientific engines and label presentation remain unchanged.
         material_inputs = dict(plant)
-        material_inputs['spectral_quality'] = plant['spectral_quality_score']
+        if canonical_spectral_handoff:
+            material_inputs['spectral_quality'] = plant['spectral_quality_score']
         plant['material_score'] = calculate_material_score(material_inputs)
         require_score('material_score')
         plant['material_class'] = classify_material_score(plant['material_score'])
