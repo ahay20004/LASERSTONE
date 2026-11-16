@@ -77,3 +77,8 @@ footer{background:#030c1c;border-top:1px solid #126da7;color:#a7cee2}
 .learning-actions button:disabled{opacity:.45;cursor:not-allowed}.learning-actions button:not(:disabled):hover{background:#17628a}
 #learning-count{font-variant-numeric:tabular-nums;color:#b9e8fa}
 @media(max-width:650px){.learning-steps{grid-template-columns:repeat(3,minmax(0,1fr))}.learning-step{font-size:13px}}
+
+.learning-example{margin-top:25px;padding:24px;border:1px solid #3d9fd4;border-radius:16px;background:linear-gradient(140deg,#082744,#0a1c37);color:#deeff9}
+.learning-example h3{color:#f1fcff}.learning-example p{line-height:1.8}
+.example-equation{direction:ltr;text-align:center;font-size:clamp(23px,3vw,36px);font-family:Georgia,serif;color:#84efff;padding:18px 10px;margin:16px 0;border-block:1px solid #3b8fb566;letter-spacing:.02em}
+.example-warning{border-inline-start:3px solid #f0c674;padding:10px 14px;background:#e2a83a14;color:#ffe5a7}
