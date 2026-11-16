@@ -37,5 +37,7 @@ jobs:
         run: python -m unittest -v test_g23_simulation_exchange_contract test_g23_analysis_pipeline
       - name: Prepare isolated public payload
         run: python cloud/huggingface/prepare_space.py --output staged-preview
+      - name: Scan staged public payload for sensitive content
+        run: python cloud/huggingface/audit_public_payload.py staged-preview
       - name: Assert exact public allowlist
         run: python -c "from pathlib import Path; p=Path('staged-preview'); assert {x.name for x in p.iterdir()}=={'README.md','index.html','style.css','i18n.js','icon.svg','manifest.webmanifest'}"
