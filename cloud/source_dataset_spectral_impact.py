@@ -32,10 +32,14 @@ def assess_dataset():
             rows.append({"name": name, "status": "BLOCKED_SPECTRAL_CONTRACT",
                          "label": label})
             continue
-        historical = analyzed["material_score"]
+        historical_inputs = copy.deepcopy(analyzed)
+        historical_inputs["spectral_quality"] = label
+        historical = calculate_material_score(historical_inputs)
+        corrected = analyzed["material_score"]
         proposed = copy.deepcopy(analyzed)
         proposed["spectral_quality"] = CANONICAL[label]
-        corrected = calculate_material_score(proposed)
+        if calculate_material_score(proposed) != corrected:
+            raise AssertionError("main pipeline does not match canonical spectral score")
         rows.append({
             "name": name, "status": "COMPARED",
             "spectral_label": label, "canonical_spectral_score": CANONICAL[label],
@@ -60,14 +64,14 @@ def assess_dataset():
         "compared": len(compared),
         "blocked": len(rows) - len(compared),
         "rows": rows,
-        "original_main_modified": False,
+        "original_main_modified": True,
         "original_data_modified": False,
         "physical_validation": False,
         "limitations": [
             "Only successfully analyzed records are ranked; blocked records never receive inferred scores",
             "Rank positions are within compared subset only",
             "Main analysis and source data may contain heuristic assumptions",
-            "The production main.py spectral handoff remains unchanged",
+            "Production main.py now passes the existing numeric spectral_quality_score to material scoring",
         ],
     }
 
@@ -96,7 +100,7 @@ def main():
                          f"{row['delta']:+.2f} | {row['old_rank_among_compared']} | "
                          f"{row['new_rank_among_compared']} |")
     lines += ["", "This is an impact assessment of existing heuristic records, not experimental validation.",
-              "The original dataset, scientific engines and main.py are unchanged.", ""]
+              "The original dataset and scientific engines are unchanged; main.py spectral handoff is corrected.", ""]
     (dest / "SOURCE_DATASET_SPECTRAL_IMPACT.md").write_text(
         "\n".join(lines), encoding="utf-8")
     print(json.dumps({"total_records": result["total_records"], "compared": result["compared"],
