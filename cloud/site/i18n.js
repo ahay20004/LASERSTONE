@@ -1,6 +1,29 @@
 /* LASERSTONE public-preview UI translations. Scientific data is never auto-translated. */
 const translations = {
   "en": {
+    "navExplorer": "Explorer",
+    "missionExplorer": "✧ Scientific Explorer",
+    "explorerEyebrow": "SCIENTIFIC EXPLORER · LESSON 01",
+    "explorerTitle": "Spontaneous and stimulated emission",
+    "explorerIntro": "Explore how excited atoms emit light, why stimulated emission enables optical amplification, and how photon energy depends on wavelength.",
+    "explorerSpontTitle": "Spontaneous emission",
+    "explorerSpontDesc": "An excited system emits without an incident stimulating photon. For an isolated radiative channel, the rate is proportional to the excited population.",
+    "explorerSpontUnit": "A₂₁: spontaneous transition rate per excited system (s⁻¹).",
+    "explorerStimTitle": "Stimulated emission",
+    "explorerStimDesc": "A resonant radiation field can induce an excited system to add a photon to the stimulating optical mode.",
+    "explorerStimUnit": "ρ(ν): spectral radiation energy density (J m⁻³ Hz⁻¹).",
+    "explorerCalcTitle": "Photon-energy calculator",
+    "explorerEquation": "Vacuum relation: E = hν = hc/λ. This calculates photon energy, not laser gain or emission probability.",
+    "explorerWavelength": "Vacuum wavelength (nm)",
+    "explorerEnergy": "Photon energy",
+    "explorerFrequency": "Frequency",
+    "explorerJoules": "Energy in joules",
+    "explorerAssumptions": "Assumptions: a photon in vacuum; wavelength is the vacuum wavelength; energy levels are not independently identified.",
+    "explorerConditionTitle": "Condition for net stimulated gain",
+    "explorerConditionDesc": "In a two-level transition model, stimulated emission must exceed absorption. Cavity losses must also be overcome for laser oscillation.",
+    "explorerEvidence": "Scientific status: established textbook relations and a deterministic educational calculation; no measured populations, validated gain, or live physics engine.",
+    "explorerSources": "References: Einstein (1917); Siegman, Lasers (1986); Svelto, Principles of Lasers (2010).",
+    "explorerReferenceLink": "Svelto textbook DOI",
     "navRoadmap": "Roadmap",
     "missionRoadmap": "▣ Milestones & alerts",
     "roadmapEyebrow": "MISSION CONTROL · REVIEWED MILESTONES",
@@ -162,6 +185,29 @@ const translations = {
     "footer2": "Public information only · No live simulations"
   },
   "ar": {
+    "navExplorer": "المستكشف",
+    "missionExplorer": "✧ المستكشف العلمي",
+    "explorerEyebrow": "المستكشف العلمي · الدرس الأول",
+    "explorerTitle": "الانبعاث التلقائي والانبعاث المحفَّز",
+    "explorerIntro": "تعرّف كيف تصدر الذرات المثارة الضوء، ولماذا يتيح الانبعاث المحفَّز التضخيم البصري، وكيف ترتبط طاقة الفوتون بطوله الموجي.",
+    "explorerSpontTitle": "الانبعاث التلقائي",
+    "explorerSpontDesc": "يصدر النظام المثار فوتونًا دون الحاجة إلى فوتون وارد محفّز. في قناة إشعاعية منفردة يتناسب معدل الانتقال مع عدد الأنظمة المثارة.",
+    "explorerSpontUnit": "A₂₁: معدل الانتقال التلقائي لكل نظام مثار (s⁻¹).",
+    "explorerStimTitle": "الانبعاث المحفَّز",
+    "explorerStimDesc": "يمكن للمجال الإشعاعي الرنيني تحفيز نظام مثار لإضافة فوتون إلى النمط البصري المحفِّز.",
+    "explorerStimUnit": "ρ(ν): كثافة الطاقة الإشعاعية الطيفية (J m⁻³ Hz⁻¹).",
+    "explorerCalcTitle": "حاسبة طاقة الفوتون",
+    "explorerEquation": "في الفراغ: E = hν = hc/λ. تحسب هذه الأداة طاقة الفوتون، لا كسب الليزر أو احتمال الانبعاث.",
+    "explorerWavelength": "الطول الموجي في الفراغ (nm)",
+    "explorerEnergy": "طاقة الفوتون",
+    "explorerFrequency": "التردد",
+    "explorerJoules": "الطاقة بالجول",
+    "explorerAssumptions": "الافتراضات: فوتون في الفراغ، والطول الموجي هو طول الفراغ، ولم تُحدد مستويات الطاقة مستقلة عن الحساب.",
+    "explorerConditionTitle": "شرط الكسب المحفَّز الصافي",
+    "explorerConditionDesc": "في نموذج انتقال ذي مستويين يجب أن يتجاوز الانبعاث المحفَّز الامتصاص. ولتحقيق التذبذب الليزري يجب أيضًا تجاوز خسائر التجويف.",
+    "explorerEvidence": "الحالة العلمية: علاقات مقررة في المراجع وحساب تعليمي حتمي؛ دون قياسات للسكان أو كسب معتمد أو محرك فيزيائي حي.",
+    "explorerSources": "المراجع: أينشتاين (1917)؛ سيغمان، Lasers (1986)؛ سفيلتو، Principles of Lasers (2010).",
+    "explorerReferenceLink": "رابط DOI لكتاب سفيلتو",
     "navRoadmap": "خارطة الطريق",
     "missionRoadmap": "▣ الإنجازات والتنبيهات",
     "roadmapEyebrow": "منصة القيادة · مراحل موثقة",
@@ -447,4 +493,24 @@ if (roadmapAlertButton && roadmapAlertDetails) {
     const language = document.documentElement.lang === 'ar' ? 'ar' : 'en';
     roadmapAlertButton.textContent = translations[language][expanded ? 'roadmapAlertButton' : 'roadmapAlertHide'];
   });
+}
+
+/* Educational photon energy: exact SI constants, no network or engine calls. */
+const explorerWavelength = document.getElementById('explorer-wavelength');
+function updatePhotonEnergy() {
+  if (!explorerWavelength) return;
+  const wavelengthNm = Number(explorerWavelength.value);
+  if (![532, 632.8, 1064].includes(wavelengthNm)) return;
+  const h = 6.62607015e-34;
+  const c = 299792458;
+  const electronVoltJ = 1.602176634e-19;
+  const frequency = c / (wavelengthNm * 1e-9);
+  const energyJ = h * frequency;
+  document.getElementById('explorer-energy').textContent = (energyJ / electronVoltJ).toFixed(3) + ' eV';
+  document.getElementById('explorer-frequency').textContent = (frequency / 1e12).toFixed(2) + ' THz';
+  document.getElementById('explorer-joules').textContent = energyJ.toExponential(3) + ' J';
+}
+if (explorerWavelength) {
+  explorerWavelength.addEventListener('change', updatePhotonEnergy);
+  updatePhotonEnergy();
 }
