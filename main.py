@@ -196,7 +196,12 @@ def analyze_plant(plant):
         plant['laser_efficiency_score'] = evaluate_laser_efficiency(plant, plant['gain_score'], plant['q_factor_score'], plant['beam_quality_score'], plant['thermal_score'])
         require_score('laser_efficiency_score')
         plant['laser_efficiency_class'] = classify_laser_efficiency(plant['laser_efficiency_score'])
-        plant['material_score'] = calculate_material_score(plant)
+        # Canonical spectral handoff: preserve label for presentation and downstream
+        # consumers; pass its already validated numeric counterpart only to the
+        # legacy material scoring engine. No original engine formula is changed.
+        material_inputs = dict(plant)
+        material_inputs['spectral_quality'] = plant['spectral_quality_score']
+        plant['material_score'] = calculate_material_score(material_inputs)
         require_score('material_score')
         plant['material_class'] = classify_material_score(plant['material_score'])
         stage = "LRI_AND_CONSISTENCY"
