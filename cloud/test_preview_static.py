@@ -260,6 +260,25 @@ class PreviewTests(unittest.TestCase):
                 self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
         self.assertTrue((SITE.parent / "MISSION_CONTROL_ROADMAP.md").is_file())
 
+
+    def test_explorer_lesson_is_bilingual_and_photon_energy_is_bounded(self):
+        self.assertIn('id="scientific-explorer"', self.html)
+        self.assertIn('id="explorer-wavelength"', self.html)
+        self.assertIn('id="explorer-energy"', self.html)
+        self.assertIn('id="explorer-frequency"', self.html)
+        self.assertIn('id="explorer-joules"', self.html)
+        self.assertIn("const h = 6.62607015e-34", self.js)
+        self.assertIn("const c = 299792458", self.js)
+        self.assertIn("const electronVoltJ = 1.602176634e-19", self.js)
+        self.assertIn("[532, 632.8, 1064].includes(wavelengthNm)", self.js)
+        self.assertIn("explorerWavelength.addEventListener('change', updatePhotonEnergy)", self.js)
+        for lang in ("en", "ar"):
+            for key in ("navExplorer", "explorerTitle", "explorerSpontDesc",
+                        "explorerStimDesc", "explorerEquation", "explorerEvidence",
+                        "explorerSources", "explorerAssumptions"):
+                self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
+        self.assertIn("no measured populations", self.messages["en"]["explorerEvidence"])
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
