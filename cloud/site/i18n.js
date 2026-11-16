@@ -706,3 +706,50 @@ if (librarySearch) {
   document.getElementById('language-select').addEventListener('change', renderKnowledgeLibrary);
   renderKnowledgeLibrary();
 }
+
+/* Flight console: deterministic local Beer-Lambert solver and independent review gates.
+   These are browser-side rule checks, NOT remotely running AI agents. */
+const flightAlpha = document.getElementById('flight-alpha');
+function runFlightConsole() {
+  if (!flightAlpha) return;
+  const alpha = Number(flightAlpha.value);
+  const depth = Number(document.getElementById('flight-depth').value);
+  const incident = Number(document.getElementById('flight-intensity').value);
+  const valid = [alpha, depth, incident].every(Number.isFinite) &&
+    alpha >= 0 && alpha <= 2 && depth >= 0 && depth <= 10 &&
+    incident >= 0.01 && incident <= 1000;
+  const set = (id, value) => { document.getElementById(id).textContent = value; };
+  set('flight-alpha-readout', alpha.toFixed(2) + ' cm⁻¹');
+  set('flight-depth-readout', depth.toFixed(2) + ' cm');
+  if (!valid) {
+    set('flight-transmitted', 'BLOCKED');
+    set('flight-transmission', '—');
+    set('flight-physics-check', 'Physics reviewer: BLOCKED · Out-of-domain input');
+    set('flight-evidence-check', 'Evidence auditor: BLOCKED · Invalid input');
+    set('flight-simulator-check', 'Simulation reviewer: BLOCKED · No calculation');
+    set('flight-status', 'BLOCKED · Enter finite values within the indicated bounds.');
+    document.getElementById('flight-curve').setAttribute('points', '');
+    return;
+  }
+  const transmission = Math.exp(-alpha * depth);
+  const transmitted = incident * transmission;
+  set('flight-transmitted', transmitted.toFixed(4) + ' mW/cm²');
+  set('flight-transmission', (100 * transmission).toFixed(2) + '%');
+  const points = Array.from({length: 61}, (_, i) => {
+    const x = i / 6;
+    return (40 + 54 * x).toFixed(1) + ',' +
+      (175 - 155 * Math.exp(-alpha * x)).toFixed(1);
+  }).join(' ');
+  document.getElementById('flight-curve').setAttribute('points', points);
+  set('flight-physics-check', 'Physics reviewer: PASS · I(z) = I₀ exp(−αz); α ≥ 0');
+  set('flight-evidence-check', 'Evidence auditor: MODEL ONLY · No measured evidence supplied');
+  set('flight-simulator-check', 'Simulation reviewer: PASS · Finite, bounded deterministic calculation');
+  set('flight-status', 'CALCULATED · Local teaching model; no remote engine or experimental validation.');
+}
+if (flightAlpha) {
+  for (const id of ['flight-alpha', 'flight-depth', 'flight-intensity']) {
+    document.getElementById(id).addEventListener('input', runFlightConsole);
+  }
+  document.getElementById('flight-run').addEventListener('click', runFlightConsole);
+  runFlightConsole();
+}
