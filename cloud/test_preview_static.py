@@ -214,6 +214,21 @@ class PreviewTests(unittest.TestCase):
         self.assertIn("dI/dz", self.messages["en"]["exampleStageDetail2"])
         self.assertIn("عدم اليقين", self.messages["ar"]["exampleStageDetail3"])
 
+
+    def test_attenuation_lab_is_bounded_bilingual_and_explicitly_hypothetical(self):
+        self.assertIn('class="attenuation-lab"', self.html)
+        self.assertIn('id="lab-alpha" type="range" min="0" max="2" step="0.05" value="0.5"', self.html)
+        self.assertIn('id="lab-depth" type="range" min="0" max="10" step="0.5" value="2"', self.html)
+        self.assertIn("Math.exp(-alpha * depth)", self.js)
+        self.assertIn("labAlpha.addEventListener('input', updateAttenuation)", self.js)
+        self.assertIn("labDepth.addEventListener('input', updateAttenuation)", self.js)
+        for lang in ("en", "ar"):
+            for key in ("labEyebrow", "labTitle", "labIntro", "labAlpha",
+                        "labDepth", "labResult", "labDisclaimer"):
+                self.assertTrue(self.messages[lang].get(key), f"{lang}: missing {key}")
+        self.assertIn("hypothetical", self.messages["en"]["labDisclaimer"])
+        self.assertIn("افتراضية", self.messages["ar"]["labDisclaimer"])
+
     def test_no_private_login_claims(self):
         self.assertNotIn('type="password"', self.html)
         self.assertNotIn("<form", self.html.lower())
