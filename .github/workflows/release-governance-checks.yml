@@ -37,6 +37,12 @@ jobs:
         run: python -m unittest -v cloud.test_preview_static cloud.test_governance_risk_gate
       - name: Original G23 scientific baseline
         run: python -m unittest -v test_g23_simulation_exchange_contract test_g23_analysis_pipeline
+      - name: Install browser smoke dependencies
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Real browser smoke test
+        run: python cloud/test_browser_smoke.py
       - name: Prepare isolated public payload
         run: python cloud/huggingface/prepare_space.py --output staged-preview
       - name: Scan staged public payload for sensitive content
