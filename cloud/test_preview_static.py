@@ -37,6 +37,19 @@ class PreviewTests(unittest.TestCase):
             raise AssertionError("Translations dictionary not found")
         cls.messages = json.loads(match.group(1))
 
+    def test_photovoltaic_iv_lab_local_and_derived(self):
+        for marker in ('id="scaps-iv-lab"', 'id="iv-file"', 'id="iv-demo"',
+                       'id="iv-export"', 'id="iv-voc"', 'id="iv-isc"',
+                       'id="iv-pmax"', 'id="iv-ff"', 'id="iv-curve"'):
+            self.assertIn(marker, self.html)
+        for marker in ("function parseIV(text)", "voltage_V,current_A",
+                       "Voltage must be strictly increasing",
+                       "exactly one positive-to-nonpositive current crossing",
+                       "mpp.p / (voc*isc)", "USER_SUPPLIED_UNVERIFIED",
+                       "SYNTHETIC_DEMONSTRATION", "NOT PHYSICALLY VALIDATED",
+                       "laserstone_iv_derived_analysis.csv"):
+            self.assertIn(marker, self.js)
+
     def test_local_csv_import_fail_closed(self):
         for marker in ('id="flight-import"', 'id="flight-import-status"',
                        'id="flight-import-summary"', 'accept=".csv,text/csv"'):
