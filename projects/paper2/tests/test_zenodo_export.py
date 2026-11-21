@@ -48,5 +48,23 @@ class ExportSafetyTests(unittest.TestCase):
         })
         self.assertIn("Missing original input", status["error"])
 
+    def test_stale_zip_removed_on_blocked_rerun(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            out = root / "out"
+            out.mkdir()
+            stale = out / "PaperII_Zenodo_VERIFIED.zip"
+            stale.write_bytes(b"obsolete export")
+            manifest = root / "manifest.json"
+            manifest.write_text(json.dumps({"rights_reviewed": False}), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(EXPORTER), "--manifest", str(manifest), "--out", str(out)],
+                capture_output=True, text=True, timeout=30
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse(stale.exists())
+            status = json.loads((out / "zenodo_export_status.json").read_text(encoding="utf-8"))
+            self.assertEqual(status["status"], "BLOCKED")
+
 if __name__ == "__main__":
     unittest.main()
