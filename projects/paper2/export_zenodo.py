@@ -91,6 +91,44 @@ def main():
             if current[key] != previous.get(key):
                 fail("Original G4 report differs from recomputation: " + key)
         report["checks"]["g4_recomputed"] = "PASS"
+        # Manuscript-consistency gate: values must be transcribed from the
+        # submitted master, not inferred from synthetic tests or fitted later.
+        reference_name = m.get("manuscript_reference")
+        if not reference_name:
+            fail("Submitted-manuscript reference JSON is required")
+        reference_path = Path(reference_name).resolve()
+        if not reference_path.is_file():
+            fail("Submitted-manuscript reference JSON not found")
+        reference = json.loads(reference_path.read_text(encoding="utf-8"))
+        if reference.get("source") != "submitted_methodsx_master":
+            fail("Reference must explicitly identify submitted MethodsX master")
+        if reference.get("input_sha256") != {k: digest(v) for k, v in source_files.items()}:
+            fail("Manuscript reference not tied to exact source bytes")
+        metrics = reference.get("metrics")
+        if not isinstance(metrics, dict) or set(metrics) != {"nrmse_minmax", "pearson_r", "peak_a_nm", "peak_b_nm"}:
+            fail("Manuscript reference must specify all four canonical metrics")
+        ref_run = next(r for r in current["runs"] if r["step_nm"] == 1.0)
+        actual = {
+            "nrmse_minmax": ref_run["nrmse_minmax"],
+            "pearson_r": ref_run["pearson_r"],
+            "peak_a_nm": current["original_sampled_peaks"]["a_nm"],
+            "peak_b_nm": current["original_sampled_peaks"]["b_nm"],
+        }
+        for name, observed in actual.items():
+            entry = metrics[name]
+            if not isinstance(entry, dict) or type(entry.get("decimals")) is not int or not (0 <= entry["decimals"] <= 12):
+                fail("Invalid manuscript precision specification: " + name)
+            try:
+                published = float(entry["value"])
+            except (ValueError, TypeError, KeyError):
+                fail("Missing manuscript value: " + name)
+            # Explicit rounding convention; no tolerance chosen after seeing results.
+            from decimal import Decimal, ROUND_HALF_UP
+            places = Decimal(1).scaleb(-entry["decimals"])
+            rounded = float(Decimal(str(observed)).quantize(places, rounding=ROUND_HALF_UP))
+            if rounded != published:
+                fail("Submitted manuscript mismatch: " + name + " expected " + str(published) + " recomputed " + str(rounded))
+        report["checks"]["submitted_manuscript_consistency"] = "PASS"
         # The publication gate also requires shift tests and an explicit external rights audit.
         shift = m.get("shift_test_report")
         if not shift:
@@ -116,6 +154,7 @@ def main():
                 shutil.copy2(p, root / "analysis" / (str(idx) + "_" + p.name))
             shutil.copy2(g4, root / "reports" / "g4_report.json")
             shutil.copy2(shift_path, root / "reports" / "shift_test_report.json")
+            shutil.copy2(reference_path, root / "reports" / "submitted_manuscript_reference.json")
             (root / "manifest.json").write_text(json.dumps(m, indent=2), encoding="utf-8")
             (root / "README.txt").write_text("LASERSTONE Paper II source-verified export. Consult manifest and reports. Absorption agreement does not establish gain or lasing.\n", encoding="utf-8")
             package = out / "PaperII_Zenodo_VERIFIED.zip"
