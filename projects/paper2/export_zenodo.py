@@ -100,6 +100,8 @@ def main():
         if not reference_path.is_file():
             fail("Submitted-manuscript reference JSON not found")
         reference = json.loads(reference_path.read_text(encoding="utf-8"))
+        if reference.get("manuscript_sha256") != "c0d23bb499b38b80accbe86e744d1c9204ecf2a8b795b5cb6632ab93355e3f08":
+            fail("Manuscript reference is not tied to the user-confirmed submitted DOCX")
         if reference.get("source") != "submitted_methodsx_master":
             fail("Reference must explicitly identify submitted MethodsX master")
         if reference.get("input_sha256") != {k: digest(v) for k, v in source_files.items()}:
@@ -111,8 +113,8 @@ def main():
         actual = {
             "nrmse_minmax": ref_run["nrmse_minmax"],
             "pearson_r": ref_run["pearson_r"],
-            "peak_a_nm": current["original_sampled_peaks"]["a_nm"],
-            "peak_b_nm": current["original_sampled_peaks"]["b_nm"],
+            "peak_a_nm": ref_run["grid_peak_a_nm"],
+            "peak_b_nm": ref_run["grid_peak_b_nm"],
         }
         for name, observed in actual.items():
             entry = metrics[name]
