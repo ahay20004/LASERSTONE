@@ -1,0 +1,26 @@
+{
+  "source": "submitted_methodsx_master",
+  "manuscript_filename": "Manuscript - Copy.docx",
+  "manuscript_sha256": "c0d23bb499b38b80accbe86e744d1c9204ecf2a8b795b5cb6632ab93355e3f08",
+  "input_sha256": null,
+  "metrics": {
+    "nrmse_minmax": {
+      "value": "0.022919199",
+      "decimals": 9
+    },
+    "pearson_r": {
+      "value": "0.997673959",
+      "decimals": 9
+    },
+    "peak_a_nm": {
+      "value": "429.72",
+      "decimals": 2
+    },
+    "peak_b_nm": {
+      "value": "431.72",
+      "decimals": 2
+    }
+  },
+  "grid_step_nm": 1,
+  "notes": "Values transcribed from user-confirmed submitted manuscript. input_sha256 deliberately null until verified against original source bytes; export must remain BLOCKED."
+}
