@@ -33,6 +33,10 @@ def main():
     out = Path(args.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
     report_path = out / "zenodo_export_status.json"
+    # Never leave a previously generated ZIP looking valid after a blocked rerun.
+    previous_zip = out / "PaperII_Zenodo_VERIFIED.zip"
+    if previous_zip.exists():
+        previous_zip.unlink()
     report = {"status": "BLOCKED", "package": None, "checks": {}}
     try:
         m = json.loads(manifest_path.read_text(encoding="utf-8"))
