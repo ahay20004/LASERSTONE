@@ -1,0 +1,69 @@
+name: Paper II Zenodo code-only archive
+
+on:
+  push:
+    branches:
+      - automation/paper2-zenodo-export-gate
+    paths:
+      - '.github/workflows/paper2-zenodo-archive.yml'
+      - 'projects/paper2/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Build auditable Paper II-only archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, pathlib, shutil, zipfile
+          root = pathlib.Path('projects/paper2')
+          assert (root/'LICENSE').is_file(), 'Missing scoped license'
+          stage = pathlib.Path('zenodo-stage')
+          target = stage/'paper2'
+          excluded = {'__pycache__','.pytest_cache','.DS_Store'}
+          for p in sorted(root.rglob('*')):
+              if not p.is_file() or any(x in excluded for x in p.parts) or p.suffix in {'.pyc','.pyo'}:
+                  continue
+              dest = target/p.relative_to(root)
+              dest.parent.mkdir(parents=True,exist_ok=True)
+              shutil.copyfile(p,dest)
+          commit = __import__('os').environ['GITHUB_SHA']
+          (stage/'ARCHIVE_SCOPE.txt').write_text(
+              'LASERSTONE Paper II code-only archival snapshot\n'
+              'Source: https://github.com/ahay20004/LASERSTONE\n'
+              f'Immutable source commit: {commit}\n'
+              'Scope: projects/paper2 only. MIT applies only to authorized original code.\n'
+              'No original PhotochemCAD spectra; synthetic CI is not raw-data verification.\n'
+              'Absorption-only evidence does not establish optical gain or lasing.\n',encoding='utf-8')
+          lines=[]
+          for p in sorted(stage.rglob('*')):
+              if p.is_file():
+                  lines.append(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.relative_to(stage).as_posix()}")
+          (stage/'SHA256SUMS.txt').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+          out=pathlib.Path('LASERSTONE_PaperII_Code_'+commit[:12]+'.zip')
+          with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED,compresslevel=9) as z:
+              for p in sorted(stage.rglob('*')):
+                  if p.is_file(): z.write(p,p.relative_to(stage).as_posix())
+          with zipfile.ZipFile(out) as z:
+              assert z.testzip() is None
+              assert 'paper2/LICENSE' in z.namelist()
+              assert 'SHA256SUMS.txt' in z.namelist()
+              assert all(not n.startswith(('private/','manuscript/')) for n in z.namelist())
+          print('READY:',out)
+          print('SHA256:',hashlib.sha256(out.read_bytes()).hexdigest())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LASERSTONE-PaperII-Zenodo-code-only
+          path: LASERSTONE_PaperII_Code_*.zip
+          if-no-files-found: error
+          retention-days: 30
