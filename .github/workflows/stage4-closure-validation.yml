@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - integration/stage4-closure-validation
+      - main
     paths:
       - 'projects/paper2/**'
       - '.github/workflows/stage4-closure-validation.yml'
