@@ -30,7 +30,7 @@ def main():
     html_path = out / "index.html"
     html = html_path.read_text(encoding="utf-8")
     html, count = re.subn(
-        r'<section id="university-campus"\b.*?</section>',
+        r'<section id="university-campus"[^>]*>.*?</section>',
         "", html, count=1, flags=re.DOTALL,
     )
     if count != 1:
