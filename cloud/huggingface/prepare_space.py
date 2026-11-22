@@ -36,6 +36,8 @@ def main():
     if count != 1:
         parser.error("Expected exactly one university section; refusing release")
     html = re.sub(r'<a\s+href="#university-campus"[^>]*>.*?</a>', "", html)
+    # Shared agent cards must not inherit private campus identifiers.
+    html = html.replace('class="campus-building"', 'class="agent-role-card"')
     html_path.write_text(html, encoding="utf-8")
 
     js_path = out / "i18n.js"
@@ -57,10 +59,14 @@ def main():
     css = css[:css.index(start_marker)] + css[css.index(end_marker):]
     css = css.replace(".research-link:hover,.campus-building a:hover", ".research-link:hover")
     css = css.replace(".research-link:focus-visible,.campus-building a:focus-visible", ".research-link:focus-visible")
+    css += ("\n.agent-role-card{padding:22px;border:1px solid #cbdfe7;"
+            "background:#f0f8fa;border-radius:16px;margin-bottom:12px}"
+            "\n.agent-role-card h3{margin:8px 0}"
+            "\n.agent-role-card p{margin:0 0 12px;color:#526c7c;font-size:14px}")
     css_path.write_text(css, encoding="utf-8")
 
     private_markers = {
-        "index.html": ("university-campus", "navCampus", "missionCampus", "campus-building"),
+        "index.html": ("university-campus", "navCampus", "missionCampus", "campusB1"),
         "i18n.js": ("navCampus", "missionCampus", "campusTitle", "campusB1", "campusD7"),
         "style.css": (".campus-sky", ".campus-building", ".campus-section"),
     }
