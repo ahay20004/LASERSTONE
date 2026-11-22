@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 
 STEPS = (0.5, 1.0, 2.0)
+MAX_GRID_POINTS = 1_000_000
 THRESHOLDS = {
     "interpolation_nrmse_relative_range": 0.02,
     "interpolation_pearson_absolute_range": 0.0001,
@@ -45,12 +46,24 @@ def load(path):
     return arr, hashlib.sha256(raw).hexdigest()
 
 def compute(a, b):
+    # Direct callers must meet the same basic domain contract as file loading.
+    for label, arr in (("a", a), ("b", b)):
+        if not isinstance(arr, np.ndarray) or arr.ndim != 2 or arr.shape[1] != 2 or len(arr) < 5:
+            raise ValueError(f"{label}: expected >=5 wavelength-signal pairs")
+        if not np.all(np.isfinite(arr)):
+            raise ValueError(f"{label}: non-finite input")
+        if np.any(arr[:, 0] <= 0) or np.any(np.diff(arr[:, 0]) <= 0):
+            raise ValueError(f"{label}: wavelength coordinates must increase strictly")
+        if np.ptp(arr[:, 1]) <= 0:
+            raise ValueError(f"{label}: constant signal")
     lo = max(a[0, 0], b[0, 0])
     hi = min(a[-1, 0], b[-1, 0])
     if hi - lo < 10:
         raise ValueError("Insufficient spectral overlap")
     runs = []
     for step in STEPS:
+        if not np.isfinite((hi - lo) / step) or (hi - lo) / step > MAX_GRID_POINTS - 1:
+            raise ValueError("Interpolation grid exceeds safe size")
         grid = np.arange(lo, hi + 1e-10, step)
         if len(grid) < 6:
             raise ValueError("Insufficient interpolation grid")
@@ -58,6 +71,12 @@ def compute(a, b):
         vb = np.interp(grid, b[:, 0], b[:, 1])
         if np.ptp(va) <= 0 or np.ptp(vb) <= 0:
             raise ValueError("Constant spectrum on overlap")
+        # Pearson is undefined for numerically constant centered signals.
+        for signal in (va, vb):
+            centered = signal - np.mean(signal)
+            scale = max(float(np.max(np.abs(signal))), 1.0)
+            if np.linalg.norm(centered) <= np.finfo(float).eps * scale * np.sqrt(len(signal)) * 32:
+                raise ValueError("Pearson correlation numerically undefined for near-constant signal")
         if va.max() <= 0 or vb.max() <= 0:
             raise ValueError("Peak normalization requires positive maxima")
         na = (va - va.min()) / np.ptp(va)
@@ -71,6 +90,8 @@ def compute(a, b):
             "grid_peak_a_nm": float(grid[np.argmax(va)]),
             "grid_peak_b_nm": float(grid[np.argmax(vb)]),
         })
+    if not all(np.isfinite(r[k]) for r in runs for k in ("nrmse_minmax", "nrmse_peak", "pearson_r")):
+        raise ValueError("Non-finite comparison metric")
     ref = runs[1]
     vals = [r["nrmse_minmax"] for r in runs]
     correlations = [r["pearson_r"] for r in runs]
