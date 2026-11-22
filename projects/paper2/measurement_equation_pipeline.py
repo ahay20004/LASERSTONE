@@ -35,13 +35,13 @@ def evaluate(records, regime):
     checks = {}
     for role, expected in ROLE_QUANTITY.items():
         record = records[role]
+        if not isinstance(record, dict) or record.get("quantity") != expected:
+            raise ValueError(f"{role}: expected quantity {expected}")
         result = validate(record)
         checks[role] = result
         if result["status"] != "RECORD_ACCEPTED_FOR_REVIEW":
             return {"status": "BLOCKED_INTAKE", "role": role, "checks": checks,
                     "result": None, "claims_authorized": []}
-        if record["quantity"] != expected:
-            raise ValueError(f"{role}: expected quantity {expected}")
         if record["uncertainty_type"] != "standard":
             raise ValueError("Solver only accepts standard uncertainty, not expanded uncertainty")
     sample_ids = {r["sample_id"] for r in records.values()}
