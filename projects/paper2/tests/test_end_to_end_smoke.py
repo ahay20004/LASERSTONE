@@ -49,10 +49,16 @@ class EndToEndSmokeTests(unittest.TestCase):
                 "normalized_rmse": 0.0, "normalized_pearson_r": 1.0,
                 "peak_a_overlap_nm": 430., "peak_b_overlap_nm": 430.,
                 "delta_peak_overlap_nm": 0.0}
-            metric_path = root / "metric.json"
-            metric_path.write_text(json.dumps(metric))
-            run("gate_g5.py", "--first", metric_path, "--second", metric_path,
-                "--out", reports / "g5")
+            # Two distinct synthetic report files with distinct declared execution
+            # IDs test the strict CLI path. This is NOT independent computation.
+            metric_first = root / "metric_first.json"
+            metric_second = root / "metric_second.json"
+            metric_first.write_text(json.dumps({**metric, "execution_id": "synthetic-A"}))
+            metric_second.write_text(json.dumps({**metric, "execution_id": "synthetic-B"}))
+            run("gate_g5.py", "--first", metric_first, "--second", metric_second,
+                "--require-distinct-runs", "--out", reports / "g5")
+            g5_report = json.loads((reports / "g5" / "g5_report.json").read_text())
+            self.assertEqual(g5_report["run_separation"], "DISTINCT_DECLARED")
             register = [{
                 "claim_id": "SYN-1", "claim_text": "Synthetic shapes compared",
                 "evidence_type": "derived", "source_id": "synthetic-a.txt",
