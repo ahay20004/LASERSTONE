@@ -51,6 +51,7 @@ def build_report(proposal, dimensions=None, limit_case=None,
             report["audit_results"][name] = {
                 "input_sha256": _sha(input_spec), "result": result,
             }
+    report["checks"].setdefault("parameter_sensitivity", "NOT_RUN")
     report["audit_sha256"] = _sha(report["audit_results"])
     report["summary"] = {
         "executed": len(report["audit_results"]),
