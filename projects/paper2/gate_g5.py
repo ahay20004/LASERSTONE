@@ -6,18 +6,24 @@ experimental replication or physical accuracy.
 import argparse
 import json
 import math
+import hashlib
 from pathlib import Path
 
 METRICS = ("normalized_rmse", "normalized_pearson_r",
            "peak_a_overlap_nm", "peak_b_overlap_nm", "delta_peak_overlap_nm")
 IDENTITY = ("sha256_a", "sha256_b", "grid_step_nm", "overlap_nm")
 
-def evaluate(first, second, abs_tol=1e-10):
+def evaluate(first, second, abs_tol=1e-10, require_distinct_runs=False):
     if not isinstance(first, dict) or not isinstance(second, dict):
         raise ValueError("Reports must be JSON objects")
     if not math.isfinite(abs_tol) or abs_tol < 0:
         raise ValueError("abs_tol must be finite and nonnegative")
     errors = []
+    run_a, run_b = first.get("execution_id"), second.get("execution_id")
+    distinct_declared = (isinstance(run_a, str) and bool(run_a.strip()) and
+                         isinstance(run_b, str) and bool(run_b.strip()) and run_a != run_b)
+    if require_distinct_runs and not distinct_declared:
+        errors.append("Distinct nonempty execution_id values required for strict run separation")
     for field in IDENTITY:
         if field not in first or field not in second:
             errors.append(f"{field}: missing from one or both reports")
@@ -36,19 +42,30 @@ def evaluate(first, second, abs_tol=1e-10):
         "checked_metrics": list(METRICS),
         "checked_identity": list(IDENTITY),
         "errors": errors,
+        "run_separation": "DISTINCT_DECLARED" if distinct_declared else "NOT_ESTABLISHED",
+        "caveat_execution": "Distinct execution IDs are declarations, not independently authenticated execution evidence.",
         "caveat": "Computational reproducibility does not prove independent experimental replication or scientific validity."
     }
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--first", required=True)
+    parser.add_argument("--require-distinct-runs", action="store_true",
+                        help="Require distinct declared execution IDs (not independent proof)")
     parser.add_argument("--second", required=True)
     parser.add_argument("--abs-tol", type=float, default=1e-10)
     parser.add_argument("--out", default="output/g5_gate")
     args = parser.parse_args()
     first = json.loads(Path(args.first).read_text(encoding="utf-8"))
     second = json.loads(Path(args.second).read_text(encoding="utf-8"))
-    result = evaluate(first, second, args.abs_tol)
+    result = evaluate(first, second, args.abs_tol, args.require_distinct_runs)
+    first_path, second_path = Path(args.first).resolve(), Path(args.second).resolve()
+    result["report_sha256"] = {
+        "first": hashlib.sha256(Path(args.first).read_bytes()).hexdigest(),
+        "second": hashlib.sha256(Path(args.second).read_bytes()).hexdigest()}
+    if args.require_distinct_runs and first_path == second_path:
+        result["errors"].append("Same report file supplied twice")
+        result["status"] = "FAIL"
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     (out / "g5_report.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
