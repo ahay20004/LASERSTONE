@@ -50,12 +50,13 @@ def main():
     css = css_path.read_text(encoding="utf-8")
     # University CSS consists of ordinary flat selector blocks. Fail closed
     # if the expected shape changes; never publish an unreviewed CSS variant.
-    css = re.sub(r'/\* University campus:.*?\*/', "", css, flags=re.DOTALL)
-    css = re.sub(
-        r'([^{}]+)\{([^{}]*)\}',
-        lambda m: "" if re.search(r'\.campus-[\w-]+', m.group(1)) else m.group(0),
-        css,
-    )
+    start_marker = "/* University campus:"
+    end_marker = "/* Clear, keyboard-accessible active navigation"
+    if css.count(start_marker) != 1 or css.count(end_marker) != 1:
+        parser.error("University CSS boundary changed; refusing release")
+    css = css[:css.index(start_marker)] + css[css.index(end_marker):]
+    css = css.replace(".research-link:hover,.campus-building a:hover", ".research-link:hover")
+    css = css.replace(".research-link:focus-visible,.campus-building a:focus-visible", ".research-link:focus-visible")
     css_path.write_text(css, encoding="utf-8")
 
     private_markers = {
