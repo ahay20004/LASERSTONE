@@ -71,7 +71,7 @@ class EndToEndSmokeTests(unittest.TestCase):
                        "evidence_register_version": "synthetic"}
             dossier_path = root / "dossier.json"
             dossier_path.write_text(json.dumps(dossier))
-            run("gate_g7.py", "--dossier", dossier_path, "--out", reports / "g7",
+            run("gate_g7.py", "--dossier", dossier_path, "--reports-dir", reports, "--out", reports / "g7",
                 success=False)
             run("research_hub_status.py", "--reports", reports,
                 "--out", root / "hub.json")
