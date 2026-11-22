@@ -20,6 +20,27 @@ class G4Tests(unittest.TestCase):
         self.assertEqual(report["original_sampled_peaks"]["a_nm"],
                          report["original_sampled_peaks"]["b_nm"])
 
+    def test_nonfinite_direct_input_rejected(self):
+        x = np.arange(350., 711., 2.)
+        a = np.column_stack((x, np.exp(-((x - 430.) / 25.) ** 2)))
+        a[10, 1] = np.nan
+        with self.assertRaises(ValueError):
+            g4.compute(a, a.copy())
+
+    def test_unsorted_direct_input_rejected(self):
+        x = np.arange(350., 711., 2.)
+        a = np.column_stack((x, np.exp(-((x - 430.) / 25.) ** 2)))
+        a[[1, 2]] = a[[2, 1]]
+        with self.assertRaises(ValueError):
+            g4.compute(a, a.copy())
+
+    def test_numerically_constant_pearson_rejected(self):
+        x = np.arange(350., 711., 2.)
+        y = 1.0 + 1e-15 * np.arange(len(x))
+        a = np.column_stack((x, y))
+        with self.assertRaisesRegex(ValueError, "Pearson correlation"):
+            g4.compute(a, a.copy())
+
     def test_overlap_rejected(self):
         x = np.arange(350.0, 400.0, 2.0)
         a = np.column_stack((x, np.sin(x / 10)))
