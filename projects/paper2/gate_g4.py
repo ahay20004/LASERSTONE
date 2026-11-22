@@ -75,7 +75,7 @@ def compute(a, b):
         for signal in (va, vb):
             centered = signal - np.mean(signal)
             scale = max(float(np.max(np.abs(signal))), 1.0)
-            if np.linalg.norm(centered) <= np.finfo(float).eps * scale * np.sqrt(len(signal)) * 32:
+            if np.linalg.norm(centered) <= np.finfo(float).eps * scale * np.sqrt(len(signal)) * 256:
                 raise ValueError("Pearson correlation numerically undefined for near-constant signal")
         if va.max() <= 0 or vb.max() <= 0:
             raise ValueError("Peak normalization requires positive maxima")
