@@ -17,6 +17,22 @@ def report():
 class ReproducibilityTests(unittest.TestCase):
     def test_identical_reports_pass(self):
         self.assertEqual(g5.evaluate(report(), report())["status"], "PASS")
+    def test_legacy_agreement_does_not_establish_run_separation(self):
+        result = g5.evaluate(report(), report())
+        self.assertEqual(result["status"], "PASS")
+        self.assertEqual(result["run_separation"], "NOT_ESTABLISHED")
+    def test_strict_rejects_missing_execution_ids(self):
+        self.assertEqual(g5.evaluate(report(), report(), require_distinct_runs=True)["status"], "FAIL")
+    def test_strict_accepts_distinct_declared_execution_ids(self):
+        a, b = report(), report()
+        a["execution_id"], b["execution_id"] = "synthetic-run-1", "synthetic-run-2"
+        result = g5.evaluate(a, b, require_distinct_runs=True)
+        self.assertEqual(result["status"], "PASS")
+        self.assertEqual(result["run_separation"], "DISTINCT_DECLARED")
+    def test_strict_rejects_same_declared_execution_id(self):
+        a, b = report(), report()
+        a["execution_id"] = b["execution_id"] = "same"
+        self.assertEqual(g5.evaluate(a, b, require_distinct_runs=True)["status"], "FAIL")
     def test_changed_input_hash_fails(self):
         altered = report()
         altered["sha256_a"] = "c"*64
