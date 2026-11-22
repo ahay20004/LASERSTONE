@@ -10,7 +10,7 @@ class PublicPayloadAuditTests(unittest.TestCase):
     def test_sensitive_payloads_are_blocked(self):
         samples = {
             "credential assignment": 'HF_TOKEN = "not-a-real-token-value"',
-            "local Windows path": r"C:\\Users\\Example\\Documents\\file.txt",
+            "local Windows path": r"C:\Users\Example\Documents\file.txt",
             "local POSIX home": "/home/example/private/file.txt",
             "external executable script": '<script src="https://example.org/remote.js"></script>',
             "embedded iframe": '<iframe src="about:blank"></iframe>',
