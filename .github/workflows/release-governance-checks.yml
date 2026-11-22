@@ -7,6 +7,7 @@ on:
       - "cloud/governance/**"
       - "cloud/test_preview_static.py"
       - "cloud/test_governance_risk_gate.py"
+      - "cloud/test_public_payload_audit.py"
       - ".github/workflows/**"
   push:
     branches: [cloud/release-governance-isolated]
@@ -34,7 +35,7 @@ jobs:
       - name: JavaScript syntax verification
         run: node --check cloud/site/i18n.js
       - name: Preview and governance regression
-        run: python -m unittest -v cloud.test_preview_static cloud.test_governance_risk_gate
+        run: python -m unittest -v cloud.test_preview_static cloud.test_governance_risk_gate cloud.test_public_payload_audit
       - name: Original G23 scientific baseline
         run: python -m unittest -v test_g23_simulation_exchange_contract test_g23_analysis_pipeline
       - name: Install browser smoke dependencies
