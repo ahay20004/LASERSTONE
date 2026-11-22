@@ -6,12 +6,13 @@ import re
 ALLOWED = frozenset({"README.md", "index.html", "style.css", "i18n.js", "icon.svg", "manifest.webmanifest"})
 DANGEROUS = (
     ("private key", re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----", re.I)),
-    ("credential assignment", re.compile(r"(?i)\\b(?:HF_TOKEN|GITHUB_TOKEN|AWS_SECRET_ACCESS_KEY|PRIVATE_API_KEY)\\s*[:=]\\s*['\\\"][^'\\\"]{8,}")),
-    ("local Windows path", re.compile(r"(?i)[A-Z]:\\\\(?:Users|Documents and Settings)\\\\")),
-    ("local POSIX home", re.compile(r"(?i)/(?:home|Users)/[^/\\s'\"<>]+/")),
-    ("external executable script", re.compile(r"(?is)<script\\b[^>]*\\bsrc\\s*=\\s*['\\\"]https?://")),
-    ("embedded iframe", re.compile(r"(?is)<iframe\\b")),
+    ("credential assignment", re.compile(r"""(?i)\b(?:HF_TOKEN|GITHUB_TOKEN|AWS_SECRET_ACCESS_KEY|PRIVATE_API_KEY)\s*[:=]\s*['"][^'"]{8,}""")),
+    ("local Windows path", re.compile(r"(?i)[A-Z]:\\(?:Users|Documents and Settings)\\")),
+    ("local POSIX home", re.compile(r"""(?i)/(?:home|Users)/[^/\s'"<>]+/""")),
+    ("external executable script", re.compile(r"""(?is)<script\b[^>]*\bsrc\s*=\s*['"]https?://""")),
+    ("embedded iframe", re.compile(r"(?is)<iframe\b")),
 )
+
 def inspect(folder):
     folder = Path(folder)
     if not folder.is_dir():
