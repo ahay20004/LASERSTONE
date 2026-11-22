@@ -30,19 +30,19 @@ def main():
     html_path = out / "index.html"
     html = html_path.read_text(encoding="utf-8")
     html, count = re.subn(
-        r'<section id="university-campus"\\b.*?</section>',
+        r'<section id="university-campus"\b.*?</section>',
         "", html, count=1, flags=re.DOTALL,
     )
     if count != 1:
         parser.error("Expected exactly one university section; refusing release")
-    html = re.sub(r'<a\\s+href="#university-campus"[^>]*>.*?</a>', "", html)
+    html = re.sub(r'<a\s+href="#university-campus"[^>]*>.*?</a>', "", html)
     html_path.write_text(html, encoding="utf-8")
 
     js_path = out / "i18n.js"
     js = js_path.read_text(encoding="utf-8")
     js = "".join(
         line for line in js.splitlines(keepends=True)
-        if not re.match(r'\\s*"(?:navCampus|missionCampus|campus[A-Za-z0-9]+)"\\s*:', line)
+        if not re.match(r'\s*"(?:navCampus|missionCampus|campus[A-Za-z0-9]+)"\s*:', line)
     )
     js_path.write_text(js, encoding="utf-8")
 
@@ -50,10 +50,10 @@ def main():
     css = css_path.read_text(encoding="utf-8")
     # University CSS consists of ordinary flat selector blocks. Fail closed
     # if the expected shape changes; never publish an unreviewed CSS variant.
-    css = re.sub(r'/\\* University campus:.*?\\*/', "", css, flags=re.DOTALL)
+    css = re.sub(r'/\* University campus:.*?\*/', "", css, flags=re.DOTALL)
     css = re.sub(
-        r'([^{}]+)\\{([^{}]*)\\}',
-        lambda m: "" if re.search(r'\\.campus-[\\w-]+', m.group(1)) else m.group(0),
+        r'([^{}]+)\{([^{}]*)\}',
+        lambda m: "" if re.search(r'\.campus-[\w-]+', m.group(1)) else m.group(0),
         css,
     )
     css_path.write_text(css, encoding="utf-8")
