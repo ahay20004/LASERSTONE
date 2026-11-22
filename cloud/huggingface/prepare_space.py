@@ -19,6 +19,24 @@ def main():
         parser.error("Choose a separate staging directory.")
     if out.exists() and any(out.iterdir()):
         parser.error("Output directory must be empty to avoid overwriting other work.")
+    # Fail closed: the university remains owner-only and must not ship publicly.
+    private_markers = {
+        "index.html": ("university-campus", "navCampus", "missionCampus", "campus-building"),
+        "i18n.js": ("navCampus", "missionCampus", "campusTitle", "campusB1", "campusD7"),
+        "style.css": (".campus-sky", ".campus-building", ".campus-section"),
+    }
+    leaks = [
+        f"{name}: {marker}"
+        for name, markers in private_markers.items()
+        for marker in markers
+        if marker in (SITE / name).read_text(encoding="utf-8")
+    ]
+    if leaks:
+        parser.error(
+            "Owner-only university content detected in public preview; "
+            "release blocked until a separate public-safe bundle is reviewed. "
+            + "; ".join(leaks)
+        )
     out.mkdir(parents=True, exist_ok=True)
     for name in ASSETS:
         source = SITE / name
