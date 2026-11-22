@@ -9,6 +9,7 @@ from pathlib import Path
 
 QUANTITIES = {
     "wavelength": {"dimension": "length", "units": {"nm": 1e-9, "um": 1e-6, "m": 1.0}, "positive": True},
+    "absorption_coefficient": {"dimension": "inverse_length", "units": {"1/m": 1.0, "1/cm": 100.0}, "positive": False},
     "frequency": {"dimension": "inverse_time", "units": {"Hz": 1.0, "THz": 1e12}, "positive": True},
     "optical_power": {"dimension": "power", "units": {"W": 1.0, "mW": 1e-3}, "positive": False},
     "pulse_duration": {"dimension": "time", "units": {"s": 1.0, "ns": 1e-9, "fs": 1e-15}, "positive": True},
@@ -43,7 +44,7 @@ def validate(record):
     if definition and isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value):
         if definition["positive"] and value <= 0:
             problems.append("quantity requires positive value")
-        elif quantity == "optical_power" and value < 0:
+        elif quantity in ("optical_power", "absorption_coefficient") and value < 0:
             problems.append("optical power cannot be negative")
     if record.get("uncertainty_type") not in ("standard", "expanded"):
         problems.append("uncertainty_type must be standard or expanded")
@@ -63,7 +64,7 @@ def validate(record):
         normalized = {"value_si": value * definition["units"][unit],
                       "uncertainty_si": uncertainty * definition["units"][unit],
                       "dimension": definition["dimension"],
-                      "si_unit": {"length": "m", "inverse_time": "Hz", "power": "W",
+                      "si_unit": {"length": "m", "inverse_time": "Hz", "inverse_length": "1/m", "power": "W",
                                   "time": "s", "temperature": "K"}[definition["dimension"]]}
     return {
         "gate": "MEASUREMENT_INTAKE", "status": "RECORD_ACCEPTED_FOR_REVIEW" if accepted else "REJECTED",
