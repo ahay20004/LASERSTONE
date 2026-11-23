@@ -4,18 +4,22 @@ on:
     paths:
       - 'agent_council.py'
       - 'agent_consultation.py'
+      - 'agent_review_provenance.py'
       - 'agent_local_inventory.py'
       - 'run_agent_inventory_windows.bat'
       - 'tests/test_agent_council.py'
       - 'tests/test_agent_consultation.py'
+      - 'tests/test_agent_review_provenance.py'
       - 'tests/test_agent_local_inventory.py'
       - '.github/workflows/agent-council.yml'
   pull_request:
     paths:
       - 'agent_council.py'
       - 'agent_consultation.py'
+      - 'agent_review_provenance.py'
       - 'tests/test_agent_council.py'
       - 'tests/test_agent_consultation.py'
+      - 'tests/test_agent_review_provenance.py'
       - '.github/workflows/agent-council.yml'
   workflow_dispatch:
 permissions:
