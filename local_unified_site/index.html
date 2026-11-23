@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="LASERSTONE — scientific laser, photonics and solar modelling research platform. Public preview with private research access under development.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="LASERSTONE | Scientific Research Platform">
+  <meta property="og:description" content="Explore transparent laser, photonics and photovoltaic modelling. Research workspaces are invitation-only.">
+  <meta name="theme-color" content="#102b47">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./style.css">
+  <title>LASERSTONE | Scientific Research Platform</title>
+  <script src="./i18n.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="LASERSTONE home"><img src="./icon.svg" alt="" width="44" height="44"><span>LASERSTONE<span class="tm">™</span><small data-i18n="brandSub">Research platform</small></span></a>
+    <nav aria-label="Primary"><a href="#cockpit" data-i18n="navCockpit">Cockpit</a><a href="#university-campus" data-i18n="navCampus">University</a><a href="#scientific-explorer" data-i18n="navExplorer">Explorer</a><a href="#mission-roadmap" data-i18n="navRoadmap">Roadmap</a><a href="#research" data-i18n="navResearch">Research</a><a href="#integrity" data-i18n="navIntegrity">Integrity</a><a href="#access" data-i18n="navAccess">Access</a></nav>
+    <div class="language"><label for="language-select" data-i18n="languageLabel">Language</label><select id="language-select" aria-label="Language"><option value="en">English</option><option value="ar">العربية</option></select></div>
+  </header>
+  <main id="main">
+    <div class="mission-shell">
+      <aside class="mission-sidebar" aria-label="Mission Control">
+        <p class="mission-sidebar-heading" data-i18n="missionMenu">MISSION CONTROL</p>
+        <a href="#cockpit" data-i18n="missionDashboard">◈ Dashboard</a>
+        <a href="#university-campus" data-i18n="missionCampus">♜ Scientific University</a>
+        <a href="#scientific-explorer" data-i18n="missionExplorer">✧ Scientific Explorer</a>
+        <a href="#mission-roadmap" data-i18n="missionRoadmap">▣ Milestones & alerts</a>
+        <a href="#research" data-i18n="missionProjects">◇ Research projects</a>
+        <a href="#agent-council" data-i18n="missionAgents">◎ Scientific agents</a>
+        <a href="#integrity" data-i18n="missionEvidence">▤ Evidence & integrity</a>
+        <a href="#access" data-i18n="missionSecurity">⬡ Security & access</a>
+        <p class="mission-sidebar-note" data-i18n="missionMenuNote">Navigation preview · no private workspaces connected</p>
+      </aside>
+      <div class="mission-content">
+    <section class="hero">
+      <p class="eyebrow" data-i18n="preview">PUBLIC PREVIEW · UNDER DEVELOPMENT</p>
+      <h1><span data-i18n="hero1">Scientific modelling with</span> <em data-i18n="hero2">traceable evidence.</em></h1>
+      <p class="lead" data-i18n="lead">LASERSTONE connects laser physics, photonics, materials and photovoltaic research through transparent computational workflows. This preview contains no private research data or live simulation service.</p>
+      <div class="actions"><a class="primary" href="#research" data-i18n="explore">Explore research areas</a><a class="secondary" href="#access" data-i18n="researchAccess">Research access</a></div>
+      <blockquote class="mission-motto" data-i18n="missionMotto">We dream with the imagination of scientists, build with the precision of engineers, and declare success only when supported by evidence.</blockquote>
+      <p class="note" data-i18n="note">Scientific status: platform development. No experimental or numerical validation is implied by this preview.</p>
+    </section>
+    <section id="cockpit" class="section cockpit" aria-labelledby="cockpit-title">
+      <p class="eyebrow" data-i18n="cockpitEyebrow">SCIENTIFIC COCKPIT · PREVIEW</p>
+      <h2 id="cockpit-title" data-i18n="cockpitTitle">A transparent research control center</h2>
+      <p class="cockpit-intro" data-i18n="cockpitIntro">A conceptual view of the platform's research workflow. The indicators below describe interface readiness, not live engine health, experimental results, or simulation output.</p>
+      <div class="cockpit-grid">
+        <article class="cockpit-panel"><span class="panel-symbol" aria-hidden="true">01</span><h3 data-i18n="cockpitEvidenceTitle">Evidence registry</h3><p data-i18n="cockpitEvidenceDesc">Planned traceability from source and parameters to interpretation.</p><span class="status" data-i18n="statusPlanned">Concept preview</span><button type="button" class="cockpit-switch" data-panel="evidence" aria-pressed="false" aria-controls="cockpit-readout"><span class="lamp" aria-hidden="true"></span><span data-i18n="selectPanel">Select panel</span></button></article>
+        <article class="cockpit-panel"><span class="panel-symbol" aria-hidden="true">02</span><h3 data-i18n="cockpitPhysicsTitle">Physics engines</h3><p data-i18n="cockpitPhysicsDesc">Private scientific calculations are not connected to this site.</p><span class="status" data-i18n="statusDisconnected">Not connected</span><button type="button" class="cockpit-switch" data-panel="physics" aria-pressed="false" aria-controls="cockpit-readout"><span class="lamp" aria-hidden="true"></span><span data-i18n="selectPanel">Select panel</span></button></article>
+        <article class="cockpit-panel"><span class="panel-symbol" aria-hidden="true">03</span><h3 data-i18n="cockpitSolarTitle">Solar simulation</h3><p data-i18n="cockpitSolarDesc">SCAPS result import and validation remain outside the public preview.</p><span class="status" data-i18n="statusDisconnected">Not connected</span><button type="button" class="cockpit-switch" data-panel="solar" aria-pressed="false" aria-controls="cockpit-readout"><span class="lamp" aria-hidden="true"></span><span data-i18n="selectPanel">Select panel</span></button></article>
+        <article class="cockpit-panel"><span class="panel-symbol" aria-hidden="true">04</span><h3 data-i18n="cockpitAccessTitle">Owner workspace</h3><p data-i18n="cockpitAccessDesc">Restricted access awaits verified authentication and authorization.</p><span class="status" data-i18n="statusRestricted">Not enabled</span><button type="button" class="cockpit-switch" data-panel="owner" aria-pressed="false" aria-controls="cockpit-readout"><span class="lamp" aria-hidden="true"></span><span data-i18n="selectPanel">Select panel</span></button></article>
+      </div>
+      <div id="cockpit-readout" class="cockpit-readout" role="status" aria-live="polite"><strong data-i18n="readoutIdle">No panel selected</strong><p data-i18n="readoutIdleDesc">Choose a panel to inspect its preview status. No scientific engine will start.</p></div>
+      <p class="cockpit-footnote" data-i18n="cockpitFootnote">Illustrative interface only · No live telemetry, private data, or authenticated sessions.</p>
+    </section>
+    <section class="mission-monitor section" aria-label="Mission monitoring preview">
+      <p class="eyebrow" data-i18n="missionMonitorEyebrow">MONITORING PANELS · DESIGN PREVIEW</p>
+      <h2 data-i18n="missionMonitorTitle">Research mission overview</h2>
+      <div class="mission-monitor-grid">
+        <article class="mission-monitor-card"><span class="monitor-icon" aria-hidden="true">◇</span><h3 data-i18n="missionProjectsTitle">Research projects</h3><p data-i18n="missionProjectsDesc">Project metrics await a verified data source.</p><span class="status" data-i18n="missionNoData">No live data</span></article>
+        <article class="mission-monitor-card"><span class="monitor-icon" aria-hidden="true">◎</span><h3 data-i18n="missionAgentsTitle">Scientific agents</h3><p data-i18n="missionAgentsDesc">Agent status requires authenticated telemetry.</p><span class="status" data-i18n="missionNoData">No live data</span></article>
+        <article class="mission-monitor-card"><span class="monitor-icon" aria-hidden="true">⚑</span><h3 data-i18n="missionAlertsTitle">Alerts and reviews</h3><p data-i18n="missionAlertsDesc">No private alerts or researcher messages are displayed.</p><span class="status" data-i18n="missionNoData">No live data</span></article>
+        <article class="mission-monitor-card"><span class="monitor-icon" aria-hidden="true">▥</span><h3 data-i18n="missionProgressTitle">Validation progress</h3><p data-i18n="missionProgressDesc">No percentage is shown without an audited measurement.</p><span class="status" data-i18n="missionNoData">No live data</span></article>
+      </div>
+    </section>
+    <section id="scientific-gates" class="section science-gates" aria-labelledby="gates-title">
+      <p class="eyebrow" data-i18n="gatesEyebrow">SCIENTIFIC ENTRANCES · ORIGINAL MAXIMS</p>
+      <h2 id="gates-title" data-i18n="gatesTitle">A guiding principle at every entrance</h2>
+      <p data-i18n="gatesIntro">Original LASERSTONE editorial maxims: teaching prompts, not quotations attributed to historical scientists or evidence of scientific validation.</p>
+      <div class="gates-grid">
+        <article class="gate-card"><span class="gate-symbol" aria-hidden="true">◈</span><h3 data-i18n="gatePhysicsTitle">Physics & laser science</h3><blockquote data-i18n="gatePhysicsQuote">Let imagination open the question, and measurement determine the answer.</blockquote><p data-i18n="gatePhysicsMeaning">Distinguish hypothesis, measurement and model assumptions.</p></article>
+        <article class="gate-card"><span class="gate-symbol" aria-hidden="true">⌁</span><h3 data-i18n="gateEngineeringTitle">Engineering & simulation</h3><blockquote data-i18n="gateEngineeringQuote">A simulation guides design; validation earns trust.</blockquote><p data-i18n="gateEngineeringMeaning">Report parameters, numerical stability and independent checks.</p></article>
+        <article class="gate-card"><span class="gate-symbol" aria-hidden="true">✧</span><h3 data-i18n="gateIntegrityTitle">Scientific integrity</h3><blockquote data-i18n="gateIntegrityQuote">We refine our language without weakening our evidence.</blockquote><p data-i18n="gateIntegrityMeaning">Clear explanation never replaces the limits of what data establish.</p></article>
+      </div>
+      <p class="gates-attribution" data-i18n="gatesAttribution">LASERSTONE™ original editorial wording · Concept preview</p>
+    </section>
+    <section id="learning-path" class="section learning-path" aria-labelledby="learning-title">
+      <p class="eyebrow" data-i18n="learningEyebrow">SCIENTIFIC LEARNING PATH · INTERACTIVE PREVIEW</p>
+      <h2 id="learning-title" data-i18n="learningTitle">From curiosity to evidence</h2>
+      <p data-i18n="learningIntro">Explore five steps of scientific reasoning. This is an educational navigation demonstration, not a running experiment or simulation.</p>
+      <div class="learning-steps" role="group" aria-label="Learning stages">
+        <button type="button" class="learning-step is-current" data-step="0" aria-pressed="true" aria-controls="learning-readout" data-i18n="learningStep0">Observe</button>
+        <button type="button" class="learning-step" data-step="1" aria-pressed="false" aria-controls="learning-readout" data-i18n="learningStep1">Understand</button>
+        <button type="button" class="learning-step" data-step="2" aria-pressed="false" aria-controls="learning-readout" data-i18n="learningStep2">Formulate</button>
+        <button type="button" class="learning-step" data-step="3" aria-pressed="false" aria-controls="learning-readout" data-i18n="learningStep3">Test</button>
+        <button type="button" class="learning-step" data-step="4" aria-pressed="false" aria-controls="learning-readout" data-i18n="learningStep4">Validate</button>
+      </div>
+      <div id="learning-readout" class="learning-readout" role="status" aria-live="polite">
+        <strong data-i18n="learningStep0">Observe</strong>
+        <p data-i18n="learningDesc0">What phenomenon do we want to understand? Describe the observation before explaining it.</p>
+      </div>
+      <div class="learning-actions"><button type="button" id="learning-prev" disabled data-i18n="learningPrev">Previous</button><span id="learning-count" aria-live="polite">1 / 5</span><button type="button" id="learning-next" data-i18n="learningNext">Next</button></div>
+      <article class="learning-example" aria-labelledby="example-title">
+        <p class="eyebrow" data-i18n="exampleEyebrow">WORKED PHYSICS EXAMPLE · SYMBOLIC</p>
+        <h3 id="example-title" data-i18n="exampleTitle">Light attenuation in a uniform absorbing medium</h3>
+        <div class="example-stage" aria-live="polite" aria-atomic="true"><strong id="example-stage-title" data-i18n="exampleStageTitle0">1 · Observe the phenomenon</strong><p id="example-stage-detail" data-i18n="exampleStageDetail0">Compare incident and transmitted intensity qualitatively; do not infer a coefficient without measurements.</p></div>
+        <p data-i18n="exampleObservation">Observation: transmitted intensity can decrease with propagation distance in an absorbing medium.</p>
+        <div class="example-equation" role="img" aria-label="I of z equals I zero times exponential of minus alpha z">I(z) = I₀ exp(−αz)</div>
+        <p data-i18n="exampleVariables">I₀: incident intensity at z = 0; I(z): intensity at depth z; α: attenuation coefficient (inverse length).</p>
+        <p data-i18n="exampleAssumptions">Model conditions: a homogeneous medium, constant α, and a single exponential attenuation law; reflection, scattering and complex geometry require additional treatment.</p>
+        <p data-i18n="exampleValidation">Validation path: measure transmitted intensity at known depths, fit the attenuation law, report uncertainty, and check systematic deviations. No measured data are supplied here.</p>
+        <p class="example-warning" data-i18n="exampleWarning">Teaching example only · A symbolic equation is not evidence of experimental agreement or numerical validation.</p>
+      </article>
+      <section class="attenuation-lab" aria-labelledby="lab-title">
+        <p class="eyebrow" data-i18n="labEyebrow">INTERACTIVE MODEL · NO MEASURED DATA</p>
+        <h3 id="lab-title" data-i18n="labTitle">Explore the exponential attenuation law</h3>
+        <p data-i18n="labIntro">Adjust a hypothetical attenuation coefficient and path length. The output is a deterministic mathematical illustration, not an experimental result.</p>
+        <div class="lab-controls">
+          <label for="lab-wavelength"><span data-i18n="labWavelength">Illustrative wavelength (nm)</span></label>
+          <select id="lab-wavelength" aria-describedby="lab-coefficient-note">
+            <option value="532">532 nm</option><option value="632.8" selected>632.8 nm</option><option value="1064">1064 nm</option>
+          </select>
+          <p id="lab-coefficient-note" data-i18n="labCoefficientNote">Wavelength presets use invented teaching coefficients, not measured optical constants for a real material. Changing wavelength updates α.</p>
+          <label for="lab-incident"><span data-i18n="labIncident">Incident intensity I₀ (mW/cm²)</span><output id="lab-incident-value" for="lab-incident">10.0</output></label>
+          <input id="lab-incident" type="range" min="1" max="20" step="0.5" value="10">
+          <label for="lab-alpha"><span data-i18n="labAlpha">Attenuation coefficient α (cm⁻¹)</span><output id="lab-alpha-value" for="lab-alpha">0.50</output></label>
+          <input id="lab-alpha" type="range" min="0" max="2" step="0.05" value="0.5">
+          <label for="lab-depth"><span data-i18n="labDepth">Path length z (cm)</span><output id="lab-depth-value" for="lab-depth">2.0</output></label>
+          <input id="lab-depth" type="range" min="0" max="10" step="0.5" value="2">
+        </div>
+        <div class="lab-output" role="status" aria-live="polite">
+          <span data-i18n="labResult">Modelled transmitted intensity I/I₀</span>
+          <strong id="lab-ratio">0.3679</strong>
+          <span id="lab-percent">36.79%</span>
+          <span data-i18n="labAbsolute">Calculated transmitted intensity</span><strong id="lab-absolute">3.679 mW/cm²</strong>
+        </div>
+        <div class="lab-track" role="img" aria-label="Illustrative relative transmitted intensity bar"><div id="lab-bar" class="lab-bar" style="width:36.79%"></div></div>
+        <p class="example-warning" data-i18n="labDisclaimer">Calculated from exp(−αz) with user-selected hypothetical parameters. This does not verify the physical model, account for reflections or scattering, or represent laboratory measurements.</p>
+      </section>
+      <p class="cockpit-footnote" data-i18n="learningDisclaimer">Educational concept only · No data collection, engine execution, or claim of scientific validation.</p>
+    </section>
+    <section id="mission-roadmap" class="section roadmap" aria-labelledby="roadmap-title">
+      <p class="eyebrow" data-i18n="roadmapEyebrow">MISSION CONTROL · REVIEWED MILESTONES</p>
+      <h2 id="roadmap-title" data-i18n="roadmapTitle">Achievements, next tasks and attention queue</h2>
+      <p data-i18n="roadmapIntro">Static project record as of 16 November 2026, not live GitHub telemetry. Scientific tests confirm software behavior, not experimental validation.</p>
+      <div class="roadmap-metrics">
+        <div><strong>6</strong><span data-i18n="roadmapComplete">Completed foundations</span></div>
+        <div><strong>5</strong><span data-i18n="roadmapPending">Prioritized next tasks</span></div>
+        <div><strong>3</strong><span data-i18n="roadmapAlerts">Attention items</span></div>
+      </div>
+      <h3 data-i18n="roadmapDoneTitle">Verified software milestones</h3>
+      <ol class="roadmap-items">
+        <li data-i18n="roadmapDone1">Bilingual public preview and isolated interactive attenuation example</li>
+        <li data-i18n="roadmapDone2">Evidence-tagged attenuation equation contract</li>
+        <li data-i18n="roadmapDone3">Exact-wavelength material-property gate with refusal rules</li>
+        <li data-i18n="roadmapDone4">Optical regime dispatcher that refuses unsupported physics</li>
+        <li data-i18n="roadmapDone5">Universal equation input, unit, provenance and relationship gate</li>
+        <li data-i18n="roadmapDone6">Cross-platform CI tests passed at commit 8c23f72</li>
+      </ol>
+      <h3 data-i18n="roadmapNextTitle">Next execution sequence</h3>
+      <ol class="roadmap-items roadmap-priorities">
+        <li data-i18n="roadmapNext1">P0 · Audit existing physics engines and registry interfaces before integration</li>
+        <li data-i18n="roadmapNext2">P0 · Add dimension-aware unit conversions and equation-specific contracts</li>
+        <li data-i18n="roadmapNext3">P1 · Implement source-backed material adapters and conflict resolution</li>
+        <li data-i18n="roadmapNext4">P1 · Connect one real engine with independent numerical regression checks</li>
+        <li data-i18n="roadmapNext5">P2 · Add agent orchestration, reproducibility reports and experimental comparison</li>
+      </ol>
+      <div class="roadmap-alert">
+        <h3 data-i18n="roadmapAlertTitle">Attention desk · 3 open risks</h3>
+        <button type="button" id="roadmap-alert-button" aria-controls="roadmap-alert-details" aria-expanded="false" data-i18n="roadmapAlertButton">Show attention items</button>
+        <div id="roadmap-alert-details" hidden>
+          <ul>
+            <li data-i18n="roadmapRisk1">No authenticated live engine or scientific agent is connected to this preview</li>
+            <li data-i18n="roadmapRisk2">Real material properties and experimental validation datasets are not connected</li>
+            <li data-i18n="roadmapRisk3">Universal dimensional analysis and approved unit conversion are not implemented</li>
+          </ul>
+          <p data-i18n="roadmapAlertDisclaimer">This button opens a local checklist; it does not send notifications or create reminders.</p>
+        </div>
+      </div>
+      <p class="roadmap-source"><a href="https://github.com/ahay20004/LASERSTONE/actions/runs/43826260254" rel="noopener noreferrer" target="_blank" data-i18n="roadmapEvidenceLink">View verified GitHub Actions run</a></p>
+    </section>
+    <section id="university-campus" class="section campus-section" aria-labelledby="campus-title">
+      <p class="eyebrow" data-i18n="campusEyebrow">LASERSTONE INTERNATIONAL SCIENTIFIC UNIVERSITY</p>
+      <h2 id="campus-title" data-i18n="campusTitle">One university, seven scientific buildings, one research core</h2>
+      <p class="campus-lead" data-i18n="campusIntro">Walk through the scientific campus: its halls and laboratories connect conceptually to the existing local university and project. This public view is an architectural guide, not a live remote desktop.</p>
+      <div class="campus-sky" role="img" aria-label="Stylized scientific university campus with a central dome, teaching halls, research buildings and gardens">
+        <div class="campus-orbit orbit-one"></div><div class="campus-orbit orbit-two"></div>
+        <div class="campus-stars" aria-hidden="true">✦ · ✧ · ✦</div>
+        <div class="campus-dome" aria-hidden="true"><div class="campus-spire"></div><div class="campus-roof"></div><div class="campus-facade"><span></span><span></span><span></span><span></span><span></span></div><div class="campus-steps"></div></div>
+        <div class="campus-side campus-side-left" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="campus-side campus-side-right" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="campus-path" aria-hidden="true"></div>
+        <div class="campus-garden" aria-hidden="true">✿　♣　✿　♣　✿　♣　✿</div>
+        <p class="campus-sky-label" data-i18n="campusSkyLabel">A campus for knowledge, evidence and discovery</p>
+      </div>
+      <div class="campus-grid">
+        <article class="campus-building"><span>01 · ◈</span><h3 data-i18n="campusB1">Knowledge Wing</h3><p data-i18n="campusD1">Teaching concepts, references and the scientific library.</p><a href="#knowledge-library" data-i18n="campusExplore">Explore section</a></article>
+        <article class="campus-building"><span>02 · ⚛</span><h3 data-i18n="campusB2">Physics Wing</h3><p data-i18n="campusD2">Laser and optical physics, equations and bounded examples.</p><a href="#scientific-explorer" data-i18n="campusExplore">Explore section</a></article>
+        <article class="campus-building"><span>03 · ⌁</span><h3 data-i18n="campusB3">Research Laboratories</h3><p data-i18n="campusD3">SCAPS and MATLAB integration tracked separately from validated results.</p><a href="#research" data-i18n="campusExplore">Explore section</a></article>
+        <article class="campus-building"><span>04 · ◇</span><h3 data-i18n="campusB4">Intelligence Wing</h3><p data-i18n="campusD4">Decision engines and future permissioned AI council.</p><a href="#mission-roadmap" data-i18n="campusExplore">Explore section</a></article>
+        <article class="campus-building"><span>05 · ⬡</span><h3 data-i18n="campusB5">Expert House</h3><p data-i18n="campusD5">Expert assessment and traceable scientific interpretation.</p><a href="#integrity" data-i18n="campusExplore">Explore section</a></article>
+        <article class="campus-building"><span>06 · ▣</span><h3 data-i18n="campusB6">Platform Wing</h3><p data-i18n="campusD6">Shared scientific project core, registry and integration gateway.</p><a href="#cockpit" data-i18n="campusExplore">Explore section</a></article>
+        <article class="campus-building"><span>07 · ✧</span><h3 data-i18n="campusB7">Discovery Hall</h3><p data-i18n="campusD7">Research domains, reproducibility and future discoveries.</p><a href="#research" data-i18n="campusExplore">Explore section</a></article>
+      </div>
+      <p class="campus-footnote" data-i18n="campusFootnote">Campus illustration and navigation are public educational previews. The existing seven-building university runs locally in Python/Tk; no live campus session, simulator or AI agent is connected here.</p>
+    </section>
+    <section id="knowledge-library" class="section knowledge-library" aria-labelledby="library-title">
+      <p class="eyebrow" data-i18n="libraryEyebrow">SCIENTIFIC EXPLORER · CURATED LIBRARY</p>
+      <h2 id="library-title" data-i18n="libraryTitle">Search the scientific concept library</h2>
+      <p data-i18n="libraryIntro">Search a small reviewed teaching glossary locally in Arabic or English. This is not a live literature search or AI answer engine.</p>
+      <label for="library-search" data-i18n="librarySearchLabel">Search scientific concepts</label>
+      <input id="library-search" type="search" maxlength="120" autocomplete="off" data-i18n-placeholder="librarySearchPlaceholder" placeholder="Try: laser, photon, absorption">
+      <label for="library-category" data-i18n="libraryCategoryLabel">Scientific field</label>
+      <select id="library-category"><option value="all" data-i18n="libraryAll">All fields</option><option value="laser" data-i18n="libraryLaser">Laser physics</option><option value="optics" data-i18n="libraryOptics">Optics and materials</option><option value="solar" data-i18n="librarySolar">Photovoltaics</option></select>
+      <p id="library-count" role="status" aria-live="polite"></p>
+      <div id="library-results" class="library-results"></div>
+      <p data-i18n="libraryDisclaimer">Educational summaries only. The references are starting points, not automatically verified evidence for individual research claims. No external queries or personal data are transmitted.</p>
+    </section>
+    <section id="scientific-explorer" class="section explorer" aria-labelledby="explorer-title">
+      <p class="eyebrow" data-i18n="explorerEyebrow">SCIENTIFIC EXPLORER · LESSON 01</p>
+      <h2 id="explorer-title" data-i18n="explorerTitle">Spontaneous and stimulated emission</h2>
+      <p data-i18n="explorerIntro">Explore how excited atoms emit light, why stimulated emission enables optical amplification, and how photon energy depends on wavelength.</p>
+      <div class="explorer-grid">
+        <article class="card">
+          <h3 data-i18n="explorerSpontTitle">Spontaneous emission</h3>
+          <p data-i18n="explorerSpontDesc">An excited system emits without an incident stimulating photon. For an isolated radiative channel, the rate is proportional to the excited population.</p>
+          <p class="explorer-formula">R<sub>sp</sub> = A<sub>21</sub>N<sub>2</sub></p>
+          <p data-i18n="explorerSpontUnit">A₂₁: spontaneous transition rate per excited system (s⁻¹).</p>
+        </article>
+        <article class="card">
+          <h3 data-i18n="explorerStimTitle">Stimulated emission</h3>
+          <p data-i18n="explorerStimDesc">A resonant radiation field can induce an excited system to add a photon to the stimulating optical mode.</p>
+          <p class="explorer-formula">R<sub>st</sub> = B<sub>21</sub>ρ(ν)N<sub>2</sub></p>
+          <p data-i18n="explorerStimUnit">ρ(ν): spectral radiation energy density (J m⁻³ Hz⁻¹).</p>
+        </article>
+      </div>
+      <div class="explorer-lab">
+        <h3 data-i18n="explorerCalcTitle">Photon-energy calculator</h3>
+        <p data-i18n="explorerEquation">Vacuum relation: E = hν = hc/λ. This calculates photon energy, not laser gain or emission probability.</p>
+        <label for="explorer-wavelength" data-i18n="explorerWavelength">Vacuum wavelength (nm)</label>
+        <select id="explorer-wavelength">
+          <option value="532">532 nm</option>
+          <option value="632.8" selected>632.8 nm</option>
+          <option value="1064">1064 nm</option>
+        </select>
+        <div class="explorer-results" role="status" aria-live="polite">
+          <div><span data-i18n="explorerEnergy">Photon energy</span><strong id="explorer-energy">1.959 eV</strong></div>
+          <div><span data-i18n="explorerFrequency">Frequency</span><strong id="explorer-frequency">473.76 THz</strong></div>
+          <div><span data-i18n="explorerJoules">Energy in joules</span><strong id="explorer-joules">3.139 × 10⁻¹⁹ J</strong></div>
+        </div>
+        <p data-i18n="explorerAssumptions">Assumptions: a photon in vacuum; wavelength is the vacuum wavelength; energy levels are not independently identified.</p>
+      </div>
+      <h3 data-i18n="explorerConditionTitle">Condition for net stimulated gain</h3>
+      <p class="explorer-formula">B<sub>21</sub>N<sub>2</sub> &gt; B<sub>12</sub>N<sub>1</sub></p>
+      <p data-i18n="explorerConditionDesc">In a two-level transition model, stimulated emission must exceed absorption. Cavity losses must also be overcome for laser oscillation.</p>
+      <p data-i18n="explorerEvidence">Scientific status: established textbook relations and a deterministic educational calculation; no measured populations, validated gain, or live physics engine.</p>
+      <p class="explorer-source"><span data-i18n="explorerSources">References: Einstein (1917); Siegman, Lasers (1986); Svelto, Principles of Lasers (2010).</span> <a href="https://doi.org/10.1007/978-1-4419-1302-9" rel="noopener noreferrer" target="_blank" data-i18n="explorerReferenceLink">Svelto textbook DOI</a></p>
+    </section>
+    <section id="flight-console" class="section flight-console" aria-labelledby="flight-title">
+      <p class="eyebrow">LASERSTONE · INTERACTIVE FLIGHT CONSOLE · LOCAL MODEL</p>
+      <h2 id="flight-title">Scientific flight console | قمرة التشغيل العلمي</h2>
+      <p>Working browser-side scientific model and automated evidence checks. No remote agents, private datasets or backend simulation are connected. | نموذج علمي تفاعلي يعمل داخل المتصفح مع فحوص آلية، دون اتصال بمحركات الخادم أو بيانات خاصة.</p>
+      <div class="flight-grid">
+        <div class="flight-controls">
+          <label for="flight-alpha">Absorption coefficient α | معامل الامتصاص (cm⁻¹)</label>
+          <input id="flight-alpha" type="range" min="0" max="2" step="0.05" value="0.5">
+          <output id="flight-alpha-readout" for="flight-alpha">0.50 cm⁻¹</output>
+          <label for="flight-depth">Propagation depth z | عمق الانتشار (cm)</label>
+          <input id="flight-depth" type="range" min="0" max="10" step="0.25" value="3">
+          <output id="flight-depth-readout" for="flight-depth">3.00 cm</output>
+          <label for="flight-intensity">Incident intensity I₀ | الشدة الابتدائية (mW/cm²)</label>
+          <input id="flight-intensity" type="number" min="0.01" max="1000" step="0.1" value="10">
+          <button type="button" id="flight-run">Run scientific checks | تشغيل الفحوص</button>
+          <button type="button" id="flight-export">Export CSV | تصدير النتائج</button>
+          <label for="flight-import">Inspect CSV locally | فحص ملف CSV محليًا</label>
+          <input id="flight-import" type="file" accept=".csv,text/csv" aria-describedby="flight-import-status">
+        </div>
+        <div class="flight-output" role="status" aria-live="polite">
+          <div class="flight-metrics"><div><small>Transmitted intensity | الشدة النافذة</small><strong id="flight-transmitted">—</strong></div><div><small>Transmission | النفاذية</small><strong id="flight-transmission">—</strong></div></div>
+          <svg id="flight-chart" viewBox="0 0 600 210" role="img" aria-label="Calculated Beer Lambert attenuation curve"><path d="M40 15V175H580" fill="none" stroke="#7897a5" stroke-width="2"/><polyline id="flight-curve" fill="none" stroke="#087b83" stroke-width="4" points=""/></svg>
+          <p id="flight-physics-check">Physics reviewer: awaiting input</p>
+          <p id="flight-evidence-check">Evidence auditor: awaiting input</p>
+          <p id="flight-simulator-check">Simulation reviewer: awaiting input</p>
+          <p id="flight-status">READY · Deterministic teaching model, not an experimental result.</p>
+          <p id="flight-export-status" aria-live="polite">CSV export contains model-derived values only, never experimental measurements.</p>
+          <p id="flight-import-status" role="status" aria-live="polite">Choose a LASERSTONE model CSV to validate its schema and provenance locally. No upload.</p>
+          <div id="flight-import-summary" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+    <section id="platform-updates" class="section" aria-labelledby="updates-heading">
+      <p class="eyebrow">PLATFORM RELEASE NOTES · تحديثات المنصة</p>
+      <h2 id="updates-heading">What's new | ما الجديد؟</h2>
+      <p>New updates are highlighted green until you open them, then return to the normal design after 48 hours. Unopened notices expire after 7 days. This browser remembers opened notices locally; it is not an authenticated account-wide read receipt.</p>
+      <div class="update-feed">
+        <details class="update-notice" data-update-id="iv-lab-20261116" data-released="2026-11-16T19:00:00Z">
+          <summary>Photovoltaic I–V analysis | محلل الخلايا الشمسية <span class="update-new">NEW · جديد</span></summary>
+          <p>Local CSV analysis of voltage and current, derived Voc, Isc, Pmax and FF; demonstration curve and export. No solver convergence validation.</p>
+          <a href="#scaps-iv-lab">Open I–V laboratory | فتح المختبر</a>
+        </details>
+        <details class="update-notice" data-update-id="csv-check-20261116" data-released="2026-11-16T19:00:00Z">
+          <summary>CSV provenance and numerical checks | تدقيق بيانات CSV <span class="update-new">NEW · جديد</span></summary>
+          <p>Local validation of exported Beer–Lambert model CSV against its declared parameters; not measured data verification.</p>
+          <a href="#cockpit">Open cockpit | فتح القمرة</a>
+        </details>
+        <details class="update-notice" data-update-id="governance-20261116" data-released="2026-11-16T19:00:00Z">
+          <summary>Dated development ledger and owner review | سجل التطوير والاعتماد <span class="update-new">NEW · جديد</span></summary>
+          <p>GitHub cloud workflows generate dated review packets and risk triage. Owner approval is required before new public deployments. Secure in-cockpit approvals are not yet available.</p>
+          <a href="https://github.com/ahay20004/LASERSTONE/actions" rel="noopener noreferrer" target="_blank">Review GitHub runs | عرض السجل</a>
+        </details>
+      </div>
+    </section>
+    <section id="scaps-iv-lab" class="section flight-console" aria-labelledby="scaps-iv-title">
+      <p class="eyebrow">SOLAR CELL I–V · LOCAL FILE ANALYSIS</p>
+      <h2 id="scaps-iv-title">Photovoltaic I–V inspector | محلل منحنى الخلايا الشمسية</h2>
+      <p>Inspect a two-column voltage/current CSV locally. Derived Voc, Isc, Pmax and fill factor are calculated only when a valid zero crossing and physical quadrant exist. SCAPS convergence and experimental validity are not established.</p>
+      <div class="flight-grid">
+        <div class="flight-controls">
+          <label for="iv-file">Voltage–current CSV | ملف الجهد والتيار</label>
+          <input id="iv-file" type="file" accept=".csv,text/csv" aria-describedby="iv-status">
+          <p>Required header: <code>voltage_V,current_A</code>. Current is in amperes; a positive power-generating quadrant is required. File remains in this browser.</p>
+          <button type="button" id="iv-demo">Load synthetic demonstration | مثال حسابي</button>
+          <button type="button" id="iv-export" disabled>Export analysis CSV | تصدير التحليل</button>
+        </div>
+        <div class="flight-output">
+          <div class="flight-metrics">
+            <div><small>Open-circuit voltage | Voc</small><strong id="iv-voc">—</strong></div>
+            <div><small>Short-circuit current | Isc</small><strong id="iv-isc">—</strong></div>
+            <div><small>Maximum power | Pmax</small><strong id="iv-pmax">—</strong></div>
+            <div><small>Fill factor | FF</small><strong id="iv-ff">—</strong></div>
+          </div>
+          <svg viewBox="0 0 600 210" id="iv-chart" role="img" aria-label="Voltage-current curve with calculated maximum power point"><path d="M40 15V175H580" fill="none" stroke="#7897a5" stroke-width="2"/><polyline id="iv-curve" fill="none" stroke="#087b83" stroke-width="3" points=""/></svg>
+          <p id="iv-status" role="status" aria-live="polite">READY · No data loaded. No remote upload.</p>
+          <p id="iv-provenance">Evidence: NOT ASSESSED · Input source and solver convergence unverified.</p>
+        </div>
+      </div>
+    </section>
+    <section id="agent-council" class="section agent-council" aria-labelledby="agent-council-title">
+      <p class="eyebrow" data-i18n="agentsEyebrow">SCIENTIFIC AGENT COUNCIL · DESIGN</p>
+      <h2 id="agent-council-title" data-i18n="agentsTitle">Specialist agents with explicit evidence gates</h2>
+      <p data-i18n="agentsIntro">The council is an integration design, not a running autonomous service. Explore each role's existing destination; execution remains disabled until a secure backend and owner approval exist.</p>
+      <div class="campus-grid">
+        <article class="campus-building"><span aria-hidden="true">⚛</span><h3 data-i18n="agentsPhysics">Physics reviewer</h3><p data-i18n="agentsPhysicsDesc">Equation scope, numerical comparison and assumptions.</p><a href="#scientific-explorer" data-i18n="campusExplore">Explore section</a></article>
+        <article class="campus-building"><span aria-hidden="true">▣</span><h3 data-i18n="agentsEvidence">Evidence auditor</h3><p data-i18n="agentsEvidenceDesc">Source provenance and validation boundaries.</p><a href="#integrity" data-i18n="campusExplore">Explore section</a></article>
+        <article class="campus-building"><span aria-hidden="true">⌁</span><h3 data-i18n="agentsSimulator">Simulation reviewer</h3><p data-i18n="agentsSimulatorDesc">Solver, input contracts and reproducibility checks.</p><a href="#research" data-i18n="campusExplore">Explore section</a></article>
+        <article class="campus-building"><span aria-hidden="true">◈</span><h3 data-i18n="agentsCoordinator">Research coordinator</h3><p data-i18n="agentsCoordinatorDesc">Priorities, conflicts and owner decisions.</p><a href="#mission-roadmap" data-i18n="campusExplore">Explore section</a></article>
+      </div>
+      <p class="campus-footnote" data-i18n="agentsFootnote">Role links are active navigation; agent execution, private-data access and automated publication are not enabled.</p>
+    </section>
+    <section id="research" class="section">
+      <p class="eyebrow" data-i18n="domains">RESEARCH DOMAINS</p><h2 data-i18n="researchTitle">Designed for scientific workflows</h2>
+      <div class="cards">
+        <article class="card"><span class="glyph" aria-hidden="true">◈</span><h3 data-i18n="laserTitle">Laser & photonics</h3><p data-i18n="laserDesc">Modelling, spectral analysis, efficiency and evidence-aware interpretation.</p><a class="research-link" href="#scientific-explorer" data-i18n="campusExplore">Explore section</a></article>
+        <article class="card"><span class="glyph" aria-hidden="true">☼</span><h3 data-i18n="solarTitle">Photovoltaic modelling</h3><p data-i18n="solarDesc">Solar-cell simulation result inspection with explicit model and source provenance.</p><a class="research-link" href="#mission-roadmap" data-i18n="campusExplore">Explore section</a></article>
+        <article class="card"><span class="glyph" aria-hidden="true">⌁</span><h3 data-i18n="analyticsTitle">Research analytics</h3><p data-i18n="analyticsDesc">Transparent plots and reports separating measurements, simulations and predictions.</p><a class="research-link" href="#integrity" data-i18n="campusExplore">Explore section</a></article>
+      </div>
+    </section>
+    <section id="integrity" class="section band">
+      <p class="eyebrow" data-i18n="integrity">SCIENTIFIC INTEGRITY</p><h2 data-i18n="integrityTitle">Evidence before claims</h2>
+      <p data-i18n="integrityDesc">Results must identify their source and status: MEASURED, DERIVED, SIMULATED or PREDICTED. Parsing a SCAPS I–V export does not establish solver convergence or physical validation.</p>
+    </section>
+    <section id="access" class="section access">
+      <p class="eyebrow" data-i18n="collaboration">CONTROLLED COLLABORATION</p><h2 data-i18n="accessTitle">Research spaces are invitation-only</h2>
+      <p data-i18n="accessDesc">Private projects, datasets and compute services are not available on this public preview. Researcher registration and owner approval will be introduced only after authentication, authorization and audit checks are implemented.</p>
+      <div class="notice" role="status" data-i18n="notice">Private login is not enabled yet. No account details are collected on this page.</div>
+    </section>
+      </div>
+    </div>
+  </main>
+  <footer><span data-i18n="footer1">© LASERSTONE™ · Research platform preview</span><span data-i18n="footer2">Public information only · No live simulations</span></footer>
+</body>
+</html>
