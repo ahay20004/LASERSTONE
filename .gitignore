@@ -26,3 +26,6 @@ Desktop.ini
 # Workstation-only acceptance and agent inventory reports
 laserstone_windows_acceptance.json
 agent_council_local_inventory.json
+
+# Generated local-only scientific view
+laserstone_local_scientific_view.html
