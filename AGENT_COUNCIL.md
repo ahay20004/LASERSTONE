@@ -29,3 +29,9 @@ Convene using `python agent_council.py convene --task task.json --record council
 
 ## Tests
 `python -m unittest discover -s tests -p test_agent_council.py -v` runs only council unit tests. Passing them does not validate physical models, real agent collaboration, or local Windows deployment.
+
+## AC-03 / AC-04 implementation checkpoint
+- `agent_consultation.py` implements a second specialist response round, preserving unresolved disagreement and guest input. It processes supplied records; it does **not** call autonomous agents.
+- `agent_review_provenance.py` compares a submitted review digest with a receipt from an explicitly supplied trusted-run registry. `RUN_LINKED` means **only** that the payload matches the supplied run record; it is not proof of independent agent identity, genuine multi-agent execution, or scientific validity.
+- Never accept a trusted-run registry from the same untrusted reviewer as evidence of independent provenance.
+- Next prerequisite: implement a verified runner adapter with independently controlled execution receipts and authorization boundaries. Then inspect actual Windows/Codex configuration and run a real council session before declaring operational readiness.
