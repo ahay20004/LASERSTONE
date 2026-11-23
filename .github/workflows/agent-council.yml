@@ -11,6 +11,10 @@ on:
       - 'laserstone_windows_acceptance.py'
       - 'local_scientific_bridge.py'
       - 'local_scientific_view.py'
+      - 'local_unified_view.py'
+      - 'local_unified_site/**'
+      - 'tests/test_local_unified_view.py'
+      - 'run_laserstone_unified_windows.bat'
       - 'tests/test_local_scientific_view.py'
       - 'tests/test_local_scientific_bridge.py'
       - 'physics_consistency_engine.py'
@@ -59,5 +63,7 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_local_scientific_bridge.py' -v
       - name: Test local scientific view
         run: python -m unittest discover -s tests -p 'test_local_scientific_view.py' -v
+      - name: Test original unified local UI
+        run: python -m unittest discover -s tests -p 'test_local_unified_view.py' -v
       - name: Test Windows acceptance collector (mocked)
         run: python -m unittest discover -s tests -p 'test_windows_acceptance.py' -v
