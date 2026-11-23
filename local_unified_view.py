@@ -63,7 +63,7 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
     marker = '<div class="mission-content">'
     if html.count(marker) != 1:
         raise ValueError("Original shared page shell not found")
-    html = html.replace(marker, marker + "\\n" + welcome, 1)
+    html = html.replace(marker, marker + "\n" + welcome, 1)
     # Synchronize with the existing language selector without modifying original assets.
     lang_script = """document.addEventListener('DOMContentLoaded', () => {
   const selector = document.getElementById('language-select');
@@ -78,7 +78,7 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
 });
 """
     (TARGET / "welcome-language.js").write_text(lang_script, encoding="utf-8")
-    html = html.replace("</head>", '<script src="./welcome-language.js" defer></script>\\n</head>', 1)
+    html = html.replace("</head>", '<script src="./welcome-language.js" defer></script>\n</head>', 1)
     # The original preview remains unchanged. This local output forbids outbound connections.
     html = html.replace("<head>", '<head>\n<meta http-equiv="Content-Security-Policy" content="connect-src \'none\'; form-action \'none\'; object-src \'none\'; base-uri \'self\'">', 1)
     result = TARGET / "index.html"
