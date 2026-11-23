@@ -72,9 +72,12 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
 <filter id="ls-glow"><feGaussianBlur stdDeviation="5"/></filter>
 </defs>
 <g fill="none" stroke="#436e8d" stroke-width="1.5" opacity=".55"><path d="M65 224H713"/><path d="M110 43H670"/></g>
-<path class="pump" d="M390 12V105" stroke="#ffcc65" stroke-width="17" opacity=".24" filter="url(#ls-glow)"/>
-<path class="pump" d="M390 12V105" stroke="#ffd479" stroke-width="5" stroke-dasharray="9 5"/>
-<path d="M382 94L390 107 398 94" fill="none" stroke="#ffd479" stroke-width="3"/>
+<path class="pump laser-pump" d="M360 15V105" stroke="#ff5252" stroke-width="4" stroke-dasharray="10 7" opacity="0.8"/><path class="pump laser-pump" d="M360 15V105" stroke="#ff5252" stroke-width="15" opacity=".16" filter="url(#ls-glow)"/>
+<path class="pump laser-pump" d="M375 15V105" stroke="#ff5252" stroke-width="4" stroke-dasharray="10 7" opacity="0.8"/><path class="pump laser-pump" d="M375 15V105" stroke="#ff5252" stroke-width="15" opacity=".16" filter="url(#ls-glow)"/>
+<path class="pump laser-pump" d="M390 15V105" stroke="#ff5252" stroke-width="6" stroke-dasharray="10 7" opacity="1"/><path class="pump laser-pump" d="M390 15V105" stroke="#ff5252" stroke-width="15" opacity=".16" filter="url(#ls-glow)"/>
+<path class="pump laser-pump" d="M405 15V105" stroke="#ff5252" stroke-width="4" stroke-dasharray="10 7" opacity="0.8"/><path class="pump laser-pump" d="M405 15V105" stroke="#ff5252" stroke-width="15" opacity=".16" filter="url(#ls-glow)"/>
+<path class="pump laser-pump" d="M420 15V105" stroke="#ff5252" stroke-width="4" stroke-dasharray="10 7" opacity="0.8"/><path class="pump laser-pump" d="M420 15V105" stroke="#ff5252" stroke-width="15" opacity=".16" filter="url(#ls-glow)"/>
+<path id="ls-pump-arrow" class="laser-pump" d="M382 94L390 107 398 94" fill="none" stroke="#ff5252" stroke-width="3"/>
 <path id="ls-hr-mirror" class="laser-mirror" d="M150 105V212" fill="none" stroke="#8fe8f8" stroke-width="12" stroke-linecap="round"/>
 <path id="ls-oc-mirror" class="laser-mirror" d="M626 105V212" fill="none" stroke="#8fe8f8" stroke-width="12" stroke-opacity=".7" stroke-linecap="round"/>
 <path class="beam" d="M159 159H617" stroke="#5cf8f4" stroke-width="18" opacity=".3" filter="url(#ls-glow)"/>
@@ -90,8 +93,8 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
 </svg>
 <p class="resonator-status" data-welcome-lang="en" lang="en" aria-live="off"><span id="ls-cavity-en">Plane–plane resonator</span> · <span id="ls-color-en">Red</span> · Artistic spectrum cycle</p>
 <p class="resonator-status" data-welcome-lang="ar" lang="ar" dir="rtl" hidden><span id="ls-cavity-ar">مرنان مستوٍ–مستوٍ</span> · <span id="ls-color-ar">أحمر</span> · دورة ألوان فنية</p>
-<p class="scene-caption" data-welcome-lang="en" lang="en">Conceptual illustration · Not a live optical simulation</p>
-<p class="scene-caption" data-welcome-lang="ar" lang="ar" dir="rtl" hidden>رسم توضيحي لمبدأ عمل الليزر · ليس محاكاة بصرية تشغيلية</p>
+<p class="scene-caption" data-welcome-lang="en" lang="en">Decorative synchronized pump/output colors · Not a live optical simulation</p>
+<p class="scene-caption" data-welcome-lang="ar" lang="ar" dir="rtl" hidden>تزامن لوني جمالي بين الضخ والخرج · ليس محاكاة بصرية تشغيلية</p>
 <div data-welcome-lang="en" lang="en" dir="ltr">
 <h2 id="laserstone-welcome-title">Welcome to LASERSTONE™</h2>
 <p>Where physics meets innovation, and research advances through evidence, responsible simulation and scientific integrity.</p>
@@ -156,7 +159,7 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
     const color = spectrum[frame % spectrum.length];
     if (hr) hr.setAttribute('d', mode.hr);
     if (oc) oc.setAttribute('d', mode.oc);
-    for (const node of document.querySelectorAll('.laser-output')) node.setAttribute('stroke', color[0]);
+    for (const node of document.querySelectorAll('.laser-output, .laser-pump')) node.setAttribute('stroke', color[0]);
     const arrow = document.getElementById('ls-output-arrow');
     if (arrow) arrow.setAttribute('stroke', color[0]);
     for (const [id,value] of [['ls-cavity-en',mode.en],['ls-cavity-ar',mode.ar],['ls-color-en',color[1]],['ls-color-ar',color[2]]]) {
