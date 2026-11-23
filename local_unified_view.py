@@ -48,6 +48,9 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
 #laserstone-welcome p{max-width:760px;margin:12px auto;line-height:1.8}
 #laserstone-welcome .laser-scene{display:block;width:100%;max-width:780px;height:auto;margin:8px auto 0;overflow:visible}
 #laserstone-welcome .beam{animation:laser-pulse 3.6s ease-in-out infinite;transform-origin:center}
+#laserstone-welcome .laser-mirror{transition:stroke .8s ease,fill .8s ease}
+#laserstone-welcome .laser-output{transition:stroke 1s ease}
+#laserstone-welcome .resonator-status{color:#b8e8f2;font-size:.88rem}
 #laserstone-welcome .pump{animation:laser-pulse 2.6s ease-in-out infinite}
 #laserstone-welcome .gain{animation:laser-glow 3s ease-in-out infinite}
 #laserstone-welcome .welcome-founder{border-top:1px solid #3c7088;padding-top:14px;color:#bceff1}
@@ -72,19 +75,21 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
 <path class="pump" d="M390 12V105" stroke="#ffcc65" stroke-width="17" opacity=".24" filter="url(#ls-glow)"/>
 <path class="pump" d="M390 12V105" stroke="#ffd479" stroke-width="5" stroke-dasharray="9 5"/>
 <path d="M382 94L390 107 398 94" fill="none" stroke="#ffd479" stroke-width="3"/>
-<rect x="142" y="105" width="17" height="107" rx="7" fill="#8fe8f8" stroke="#e4ffff" stroke-width="2"/>
-<rect x="617" y="105" width="17" height="107" rx="7" fill="#8fe8f8" fill-opacity=".55" stroke="#e4ffff" stroke-width="2"/>
+<path id="ls-hr-mirror" class="laser-mirror" d="M150 105V212" fill="none" stroke="#8fe8f8" stroke-width="12" stroke-linecap="round"/>
+<path id="ls-oc-mirror" class="laser-mirror" d="M626 105V212" fill="none" stroke="#8fe8f8" stroke-width="12" stroke-opacity=".7" stroke-linecap="round"/>
 <path class="beam" d="M159 159H617" stroke="#5cf8f4" stroke-width="18" opacity=".3" filter="url(#ls-glow)"/>
 <path class="beam" d="M159 159H617" stroke="url(#ls-beam)" stroke-width="5"/>
 <rect class="gain" x="340" y="119" width="100" height="80" rx="15" fill="url(#ls-gain)" fill-opacity=".65" stroke="#baffec" stroke-width="2"/>
 <g fill="#e6fff5"><circle cx="365" cy="143" r="3"/><circle cx="411" cy="164" r="4"/><circle cx="385" cy="183" r="3"/><circle cx="418" cy="138" r="2"/></g>
-<path class="beam" d="M634 159H735" stroke="#6dfcf7" stroke-width="15" opacity=".38" filter="url(#ls-glow)"/>
-<path class="beam" d="M634 159H735" stroke="#92ffff" stroke-width="5"/>
-<path d="M722 151L739 159 722 167" stroke="#bfffff" stroke-width="3" fill="none"/>
+<path class="beam laser-output" d="M634 159H735" stroke="#6dfcf7" stroke-width="15" opacity=".38" filter="url(#ls-glow)"/>
+<path class="beam laser-output" d="M634 159H735" stroke="#92ffff" stroke-width="5"/>
+<path id="ls-output-arrow" d="M722 151L739 159 722 167" stroke="#bfffff" stroke-width="3" fill="none"/>
 <g fill="#b5d9e8" font-size="13" font-family="sans-serif" text-anchor="middle">
 <text x="150" y="239">HR</text><text x="626" y="239">OC</text><text x="390" y="222">GAIN MEDIUM</text><text x="390" y="25" dx="76">PUMP</text><text x="698" y="141">OUTPUT</text>
 </g>
 </svg>
+<p class="resonator-status" data-welcome-lang="en" lang="en" aria-live="off"><span id="ls-cavity-en">Plane–plane resonator</span> · <span id="ls-color-en">Red</span> · Artistic spectrum cycle</p>
+<p class="resonator-status" data-welcome-lang="ar" lang="ar" dir="rtl" hidden><span id="ls-cavity-ar">مرنان مستوٍ–مستوٍ</span> · <span id="ls-color-ar">أحمر</span> · دورة ألوان فنية</p>
 <p class="scene-caption" data-welcome-lang="en" lang="en">Conceptual illustration · Not a live optical simulation</p>
 <p class="scene-caption" data-welcome-lang="ar" lang="ar" dir="rtl" hidden>رسم توضيحي لمبدأ عمل الليزر · ليس محاكاة بصرية تشغيلية</p>
 <div data-welcome-lang="en" lang="en" dir="ltr">
@@ -102,7 +107,7 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
 <label for="laserstone-role-ar">مجالك البحثي</label>
 <select id="laserstone-role-ar" class="welcome-role" data-role-select="ar"><option value="general">باحث علمي</option><option value="laser">فيزياء الليزر</option><option value="photonics">الفوتونيات</option><option value="solar">الخلايا الشمسية</option><option value="materials">علم المواد</option><option value="computational">الفيزياء الحاسوبية</option></select>
 <p data-role-message="ar" aria-live="polite">مرحبًا بك أيها الباحث، اكتشف عالمنا العلمي.</p>
-<p class="welcome-founder"><strong>تأسست وطُوّرت على يد د. عبدالرحمن أ. هجر</strong> · المؤسس والمدير العلمي</p>
+<p class="welcome-founder"><strong>تأسست وطُوّرت على يد د. عبدالرحمن أ. حجر</strong> · المؤسس والمدير العلمي</p>
 <p class="scene-caption">معاينة محلية · لا تعني التحقق العلمي المستقل.</p>
 </div>
 </div>
@@ -132,6 +137,35 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
       if (target) target.textContent = messages[lang][select.value] || messages[lang].general;
     });
   }
+  // Decorative visualization only: cavity geometry does not determine emission wavelength.
+  const cavityModes = [
+    {hr:'M150 105V212',oc:'M626 105V212',en:'Plane–plane resonator',ar:'مرنان مستوٍ–مستوٍ'},
+    {hr:'M139 105Q162 159 139 212',oc:'M637 105Q614 159 637 212',en:'Concave–concave resonator',ar:'مرنان مقعّر–مقعّر'},
+    {hr:'M139 105Q162 159 139 212',oc:'M626 105V212',en:'Concave–plane resonator',ar:'مرنان مقعّر–مستوٍ'}
+  ];
+  const spectrum = [
+    ['#ff5252','Red','أحمر'],['#ff9d3d','Orange','برتقالي'],['#ffe15b','Yellow','أصفر'],
+    ['#64ef9a','Green','أخضر'],['#56baff','Blue','أزرق'],['#6865ff','Indigo','نيلي'],['#bd6aff','Violet','بنفسجي']
+  ];
+  const hr = document.getElementById('ls-hr-mirror');
+  const oc = document.getElementById('ls-oc-mirror');
+  const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let frame = 0;
+  function renderResonator() {
+    const mode = cavityModes[frame % cavityModes.length];
+    const color = spectrum[frame % spectrum.length];
+    if (hr) hr.setAttribute('d', mode.hr);
+    if (oc) oc.setAttribute('d', mode.oc);
+    for (const node of document.querySelectorAll('.laser-output')) node.setAttribute('stroke', color[0]);
+    const arrow = document.getElementById('ls-output-arrow');
+    if (arrow) arrow.setAttribute('stroke', color[0]);
+    for (const [id,value] of [['ls-cavity-en',mode.en],['ls-cavity-ar',mode.ar],['ls-color-en',color[1]],['ls-color-ar',color[2]]]) {
+      const node = document.getElementById(id);
+      if (node) node.textContent = value;
+    }
+  }
+  renderResonator();
+  if (!reducedMotion) window.setInterval(() => {frame += 1; renderResonator();}, 3200);
   selector.addEventListener('change', updateWelcome);
   updateWelcome();
 });
