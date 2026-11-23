@@ -17,7 +17,7 @@ def run_check(name: str, args: list[str]) -> dict:
                                 timeout=180, check=False)
         return {"name": name, "status": "PASS" if result.returncode == 0 else "FAIL",
                 "exit_code": result.returncode,
-                "output_tail": (result.stdout + "\n" + result.stderr)[-5000:]}
+                "details": "Logs omitted to reduce accidental secret disclosure"}
     except (OSError, subprocess.TimeoutExpired) as exc:
         return {"name": name, "status": "ERROR", "error": type(exc).__name__}
 
