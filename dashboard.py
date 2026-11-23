@@ -123,7 +123,7 @@ def launch_dashboard(ranked_plants):
     for index, (title_text, value_text) in enumerate(control_cards):
         card = tk.Label(
             control_frame,
-            text=f"{title_text}\\n{value_text}",
+            text=f"{title_text}\n{value_text}",
             font=("Arial", 9, "bold"),
             relief="groove",
             width=24,
