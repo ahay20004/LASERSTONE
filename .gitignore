@@ -22,3 +22,7 @@ Desktop.ini
 # Backup / editor files
 *~
 *.bak
+
+# Workstation-only acceptance and agent inventory reports
+laserstone_windows_acceptance.json
+agent_council_local_inventory.json
