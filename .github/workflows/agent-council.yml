@@ -3,7 +3,10 @@ on:
   push:
     paths:
       - 'agent_council.py'
+      - 'agent_local_inventory.py'
+      - 'run_agent_inventory_windows.bat'
       - 'tests/test_agent_council.py'
+      - 'tests/test_agent_local_inventory.py'
       - '.github/workflows/agent-council.yml'
   pull_request:
     paths:
@@ -27,4 +30,4 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run council unit tests
-        run: python -m unittest discover -s tests -p test_agent_council.py -v
+        run: python -m unittest discover -s tests -p 'test_agent_*.py' -v
