@@ -118,22 +118,18 @@ def launch_dashboard(ranked_plants):
         ("REGISTRY", "CLEAN"),
     ]
 
-    for title_text, value_text in control_cards:
-
-        card = tk.Button(
+    # Status indicators are read-only. The interactive navigation is below.
+    # Use a compact grid so the gateway remains visible on laptop screens.
+    for index, (title_text, value_text) in enumerate(control_cards):
+        card = tk.Label(
             control_frame,
-            text=f"{title_text}\n{value_text}",
-            font=("Arial", 10, "bold"),
+            text=f"{title_text}\\n{value_text}",
+            font=("Arial", 9, "bold"),
             relief="groove",
-            width=28,
-            height=3
+            width=24,
+            height=2,
         )
-
-        card.pack(
-            side=tk.LEFT,
-            padx=6,
-            pady=8
-        )
+        card.grid(row=index // 4, column=index % 4, padx=4, pady=3)
 
     gateway_frame = tk.LabelFrame(
         window,
@@ -1104,22 +1100,6 @@ def show_prototype_planner():
             pady=6
     )
         
-    for title_text, value_text in control_cards:
-
-        card = tk.Label(
-            control_frame,
-            text=f"{title_text}\n{value_text}",
-            font=("Arial", 10, "bold"),
-            relief="groove",
-            width=28,
-            height=3
-        )
-
-        card.pack(
-            side=tk.LEFT,
-            padx=8,
-            pady=8
-        )
     recommendations = generate_recommendations(
         ranked_plants
     )
