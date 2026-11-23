@@ -38,23 +38,47 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
 </section>
 """
     html = html.replace("</main>", panel + "</main>")
-    # Welcome and founder attribution are local-only pending separate public release approval.
+    # Keep the original header, branding, sidebar and navigation as the shared shell.
+    # The welcome is page content, not a competing header or separate interface.
     welcome = """
-<section id="laserstone-welcome" aria-labelledby="laserstone-welcome-title"
- style="max-width:1100px;margin:24px auto;padding:28px;border-radius:18px;background:#102b47;color:#effaff;border:1px solid #1ba7b8;box-shadow:0 12px 32px #081b2b33">
-<p style="letter-spacing:.1em;color:#8ee7eb;font-size:.8rem">LASERSTONE™ SCIENTIFIC RESEARCH PLATFORM</p>
-<h1 id="laserstone-welcome-title" lang="ar" dir="rtl" style="color:#fff">مرحبًا بكم في LASERSTONE™</h1>
-<p lang="ar" dir="rtl">حيث تلتقي الفيزياء بالابتكار، وتتحد المعرفة والمحاكاة والبحث العلمي في بيئة واحدة، تُبنى فيها النتائج على الأدلة، وتُصان فيها الأمانة العلمية، ويبقى القرار للإنسان.</p>
-<p lang="ar" dir="rtl" style="color:#a9f1eb;font-weight:700">«العلم بالمشاورة، والحكم بالدليل، والتنفيذ بالموافقة، والأسرار في أمانة أصحابها».</p>
-<h2 style="color:#fff">Welcome to LASERSTONE™</h2>
+<section id="laserstone-welcome" class="section" aria-labelledby="laserstone-welcome-title"
+ style="background:#102b47;color:#effaff;border:1px solid #1ba7b8;border-radius:16px;padding:24px;margin:20px 0">
+<p style="color:#8ee7eb;font-size:.85rem">LASERSTONE™</p>
+<div data-welcome-lang="en" lang="en" dir="ltr">
+<h2 id="laserstone-welcome-title" style="color:#fff">Welcome to LASERSTONE™</h2>
 <p>Where physics meets innovation, and scientific knowledge, simulation, and research converge in one evidence-driven environment.</p>
-<p><strong>Founded and Developed by Dr. Abdelrahman A. Hagar</strong><br>Founder &amp; Scientific Director</p>
-<p style="font-size:.85rem;color:#b9c9d8">Local preview · Scientific services and independent validation are not implied.</p>
+<p>Knowledge through consultation, judgment through evidence, action through approval, and entrusted secrets kept secure.</p>
+<p><strong>Founded and Developed by Dr. Abdelrahman A. Hagar</strong> · Founder &amp; Scientific Director</p>
+<p style="font-size:.85rem;color:#b9c9d8">Local preview · Independent scientific validation is not implied.</p>
+</div>
+<div data-welcome-lang="ar" lang="ar" dir="rtl" hidden>
+<h2 style="color:#fff">مرحبًا بكم في LASERSTONE™</h2>
+<p>حيث تلتقي الفيزياء بالابتكار، وتتحد المعرفة والمحاكاة والبحث العلمي في بيئة واحدة، تُبنى فيها النتائج على الأدلة، وتُصان فيها الأمانة العلمية، ويبقى القرار للإنسان.</p>
+<p>«العلم بالمشاورة، والحكم بالدليل، والتنفيذ بالموافقة، والأسرار في أمانة أصحابها».</p>
+<p><strong>تأسست وطُوّرت على يد د. عبدالرحمن أ. هجر</strong> · المؤسس والمدير العلمي</p>
+<p style="font-size:.85rem;color:#b9c9d8">معاينة محلية · لا تعني التحقق العلمي المستقل.</p>
+</div>
 </section>
 """
-    if html.count("<body>") != 1:
-        raise ValueError("Unexpected body structure in original UI")
-    html = html.replace("<body>", "<body>\\n" + welcome, 1)
+    marker = '<div class="mission-content">'
+    if html.count(marker) != 1:
+        raise ValueError("Original shared page shell not found")
+    html = html.replace(marker, marker + "\\n" + welcome, 1)
+    # Synchronize with the existing language selector without modifying original assets.
+    lang_script = """document.addEventListener('DOMContentLoaded', () => {
+  const selector = document.getElementById('language-select');
+  const panels = document.querySelectorAll('[data-welcome-lang]');
+  if (!selector || panels.length !== 2) return;
+  function updateWelcome() {
+    const language = selector.value === 'ar' ? 'ar' : 'en';
+    for (const panel of panels) panel.hidden = panel.dataset.welcomeLang !== language;
+  }
+  selector.addEventListener('change', updateWelcome);
+  updateWelcome();
+});
+"""
+    (TARGET / "welcome-language.js").write_text(lang_script, encoding="utf-8")
+    html = html.replace("</head>", '<script src="./welcome-language.js" defer></script>\\n</head>', 1)
     # The original preview remains unchanged. This local output forbids outbound connections.
     html = html.replace("<head>", '<head>\n<meta http-equiv="Content-Security-Policy" content="connect-src \'none\'; form-action \'none\'; object-src \'none\'; base-uri \'self\'">', 1)
     result = TARGET / "index.html"
