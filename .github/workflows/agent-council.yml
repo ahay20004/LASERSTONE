@@ -10,6 +10,8 @@ on:
       - 'agent_local_inventory.py'
       - 'laserstone_windows_acceptance.py'
       - 'local_scientific_bridge.py'
+      - 'local_scientific_view.py'
+      - 'tests/test_local_scientific_view.py'
       - 'tests/test_local_scientific_bridge.py'
       - 'physics_consistency_engine.py'
       - 'run_laserstone_acceptance_windows.bat'
@@ -55,5 +57,7 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_agent_*.py' -v
       - name: Test local scientific bridge
         run: python -m unittest discover -s tests -p 'test_local_scientific_bridge.py' -v
+      - name: Test local scientific view
+        run: python -m unittest discover -s tests -p 'test_local_scientific_view.py' -v
       - name: Test Windows acceptance collector (mocked)
         run: python -m unittest discover -s tests -p 'test_windows_acceptance.py' -v
