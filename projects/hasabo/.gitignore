@@ -1,0 +1,11 @@
+private/
+input/
+raw/
+output/
+reports/
+manuscripts/
+*.docx
+*.pdf
+*.csv
+*.xlsx
+__pycache__/
