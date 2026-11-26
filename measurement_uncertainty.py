@@ -20,7 +20,10 @@ def propagate_independent(sensitivities, uncertainties, *, independent):
         u = _finite(uncertainties[key])
         if u < 0:
             raise ValueError("Standard uncertainty cannot be negative")
-        contributions[key] = _finite(s * u)
+        product = _finite(s * u)
+        if s != 0 and u != 0 and product == 0:
+            raise ValueError("Uncertainty contribution underflow")
+        contributions[key] = product
     combined = _finite(hypot(*contributions.values()))
     return {"standard_uncertainty": combined,
             "signed_contributions": contributions,
