@@ -5,6 +5,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'scientific_result_format.py'
+      - 'tests/test_scientific_result_format.py'
       - 'measurement_uncertainty.py'
       - 'tests/test_measurement_uncertainty.py'
       - 'scientific_charter_gate.py'
@@ -51,6 +53,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'scientific_result_format.py'
+      - 'tests/test_scientific_result_format.py'
       - 'measurement_uncertainty.py'
       - 'tests/test_measurement_uncertainty.py'
       - 'scientific_charter_gate.py'
@@ -93,6 +97,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Test scientific result formatting
+        run: python -m unittest discover -s tests -p 'test_scientific_result_format.py' -v
       - name: Test measurement uncertainty
         run: python -m unittest discover -s tests -p 'test_measurement_uncertainty.py' -v
       - name: Test charter documentation gate
