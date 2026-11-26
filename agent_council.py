@@ -68,6 +68,8 @@ def review(c: dict, r: dict) -> dict:
              "evidence": r.get("evidence", [])}
     if not isinstance(entry["evidence"], list):
         raise ValueError("evidence must be a list")
+    if entry["position"] == "approve" and not any(isinstance(x, str) and x.strip() for x in entry["evidence"]):
+        raise ValueError("Approval requires at least one nonempty evidence reference")
     c["reviews"].append(entry)
     expected = allowed
     actual = {x["reviewer"] for x in c["reviews"]}
@@ -78,9 +80,11 @@ def review(c: dict, r: dict) -> dict:
     return c
 
 def decide(c: dict, decision: str, rationale: str) -> dict:
+    if c["human_decision"] != "PENDING":
+        raise ValueError("Human decision already recorded; convene a new council for reconsideration")
     if c["review_status"] != "READY_FOR_HUMAN_DECISION":
         raise ValueError("All assigned reviews required before decision")
-    if decision not in ("approve", "revise", "reject") or not rationale.strip():
+    if decision not in ("approve", "revise", "reject") or not isinstance(rationale, str) or not rationale.strip():
         raise ValueError("Explicit human decision and rationale required")
     c["human_decision"] = decision.upper()
     c["human_rationale"] = rationale
