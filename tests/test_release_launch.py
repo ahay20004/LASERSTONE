@@ -53,3 +53,24 @@ class LaunchTests(unittest.TestCase):
                 child.stdout.close()
             with selection_lock(tmp):
                 pass
+
+    @unittest.skipUnless(__import__("os").name=="nt","Windows execution test")
+    def test_windows_launch_with_spaces(self):
+        from release_launch import launch_selected
+        with tempfile.TemporaryDirectory(prefix="LASERSTONE test ") as tmp:
+            repo=Path(tmp)/"source"
+            repo.mkdir()
+            root=Path(tmp)/"release versions"
+            def git(*args):
+                return subprocess.check_output(["git","-C",str(repo),*args],text=True).strip()
+            git("init")
+            git("config","user.email","test@example.invalid")
+            git("config","user.name","Test")
+            (repo/"run_laserstone_unified_windows.bat").write_text("@echo off\nexit /b 17\n")
+            git("add",".")
+            git("commit","-m","baseline")
+            sha=git("rev-parse","HEAD")
+            stage_release(repo,root,sha)
+            select_release(root,sha,approved=True)
+            self.assertEqual(launch_selected(root),17)
+            git("worktree","remove",str(root/sha))
