@@ -16,7 +16,7 @@ class CouncilTests(unittest.TestCase):
 
     def test_requires_all_specialists_and_guest(self):
         c = council(self.task())
-        review(c, {"reviewer": "physics", "position": "approve", "reason": "equations reviewed"})
+        review(c, {"reviewer": "physics", "position": "approve", "reason": "equations reviewed", "evidence": ["synthetic:E-01"]})
         review(c, {"reviewer": "numerical", "position": "revise", "reason": "convergence missing"})
         self.assertEqual(c["review_status"], "AWAITING_INDEPENDENT_REVIEWS")
         with self.assertRaises(ValueError):
@@ -28,12 +28,31 @@ class CouncilTests(unittest.TestCase):
 
     def test_duplicate_and_unassigned_rejected(self):
         c = council(self.task())
-        r = {"reviewer": "physics", "position": "approve", "reason": "verified"}
+        r = {"reviewer": "physics", "position": "approve", "reason": "verified", "evidence": ["synthetic:E-02"]}
         review(c, r)
         with self.assertRaises(ValueError):
             review(c, r)
         with self.assertRaises(ValueError):
             review(c, {"reviewer": "other", "position": "approve", "reason": "ok"})
+
+    def test_approval_requires_reference(self):
+        c = council(self.task())
+        for evidence in ([], [" "], [None]):
+            with self.assertRaises(ValueError):
+                review(c, {"reviewer": "physics", "position": "approve",
+                           "reason": "synthetic review", "evidence": evidence})
+        self.assertEqual(c["reviews"], [])
+
+    def test_decision_cannot_be_reissued(self):
+        c = council(self.task())
+        for who in ("physics", "numerical", "wien2k_guest"):
+            review(c, {"reviewer": who, "position": "approve",
+                       "reason": "synthetic review", "evidence": ["synthetic:E-01"]})
+        decide(c, "approve", "synthetic human decision")
+        with self.assertRaises(ValueError):
+            decide(c, "reject", "attempted overwrite")
+        self.assertEqual(c["human_decision"], "APPROVE")
+        self.assertFalse(c["execution_authorized"])
 
     def test_unknown_role_rejected(self):
         with self.assertRaises(ValueError):
