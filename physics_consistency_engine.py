@@ -1,4 +1,23 @@
+import math
+from numbers import Real
+
+REQUIRED_SCORES = ("gain_score", "laser_efficiency_score", "thermal_score",
+                   "q_factor_score", "material_score", "lri_score")
+
+
+def validate_scores(plant):
+    if not isinstance(plant, dict):
+        raise ValueError("Scores must be a mapping")
+    for key in REQUIRED_SCORES:
+        if key not in plant:
+            raise ValueError(f"Missing required score: {key}")
+        value = plant[key]
+        if isinstance(value, bool) or not isinstance(value, Real) or not 0 <= value <= 100 or not math.isfinite(value):
+            raise ValueError(f"Invalid score: {key}; expected finite number in [0, 100]")
+
+
 def evaluate_physics_consistency(plant):
+    validate_scores(plant)
 
     consistency_score = 100
 
@@ -42,6 +61,8 @@ def evaluate_physics_consistency(plant):
 
 
 def classify_consistency(score):
+    if isinstance(score, bool) or not isinstance(score, Real) or not 0 <= score <= 100 or not math.isfinite(score):
+        raise ValueError("Invalid consistency score")
 
     if score >= 90:
         return "Highly Consistent"
