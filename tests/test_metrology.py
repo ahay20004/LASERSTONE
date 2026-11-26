@@ -48,6 +48,9 @@ class MetrologyTests(unittest.TestCase):
             self.assertIn(edge["target"],nodes)
         for identifier, equation in equations.items():
             key = "equation:"+identifier
+            self.assertTrue(equation.source_url.startswith("https://"))
+            self.assertEqual(nodes[key]["source_url"],equation.source_url)
+            self.assertEqual(describe_equation(identifier)["source_url"],equation.source_url)
             self.assertEqual(nodes[key]["coefficient"],equation.coefficient)
             self.assertEqual(describe_equation(identifier)["coefficient"],equation.coefficient)
             self.assertEqual(nodes[key]["dimensional_assessment"],check_equation(identifier))
