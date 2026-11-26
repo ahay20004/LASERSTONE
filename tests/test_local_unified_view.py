@@ -71,5 +71,17 @@ class UnifiedViewTests(unittest.TestCase):
         self.assertIn("Calculated educational example; not an experimental measurement.",html)
         self.assertIn("مثال تعليمي محسوب؛ لا يمثل قياسًا تجريبيًا.",html)
 
+    def test_all_registered_equations_are_rendered(self):
+        from equation_registry import REGISTRY
+        from scientific_knowledge import knowledge_card
+        from html import escape
+        html=build().read_text(encoding="utf-8")
+        for identifier, equation in REGISTRY.items():
+            self.assertEqual(html.count(f'data-equation-id="{identifier}"'),2)
+            self.assertIn(escape(equation.expression),html)
+            self.assertIn(escape(equation.source_url,quote=True),html)
+            for language in ("ar","en"):
+                self.assertIn(escape(knowledge_card(identifier,language)["title"]),html)
+
 if __name__ == "__main__":
     unittest.main()
