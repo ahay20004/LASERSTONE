@@ -22,3 +22,19 @@ def resolve_release(root):
     if not launcher.is_file() or launcher.is_symlink():
         raise ValueError("Missing release launcher")
     return launcher
+
+def launch_selected(root):
+    """Run the selected Windows launcher without installing another shortcut."""
+    import os
+    import subprocess
+    if os.name != "nt":
+        raise OSError("Windows launcher requires Windows")
+    launcher=resolve_release(root)
+    return subprocess.call(["cmd.exe","/d","/c",str(launcher)],cwd=launcher.parent)
+
+if __name__=="__main__":
+    import argparse
+    parser=argparse.ArgumentParser()
+    parser.add_argument("root")
+    args=parser.parse_args()
+    raise SystemExit(launch_selected(args.root))
