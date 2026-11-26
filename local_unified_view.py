@@ -5,6 +5,7 @@ from pathlib import Path
 import shutil
 import webbrowser
 from local_scientific_bridge import evaluate_synthetic_case
+from scientific_workspace import build_workspace
 
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "local_unified_site"
@@ -37,6 +38,15 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
 <p>Scientific validation: NOT ESTABLISHED · Private data: NOT ACCESSED · Public deployment: NOT AUTHORIZED</p>
 </section>
 """
+    for language,title,note in (
+        ("ar","مساحة العمل العلمية","مثال تعليمي محسوب؛ لا يمثل قياسًا تجريبيًا."),
+        ("en","Scientific workspace","Calculated educational example; not an experimental measurement."),
+    ):
+        workspace = build_workspace("vacuum_frequency", {"vacuum_wavelength":{"value":532,"unit":"nm"}}, language=language, output_unit="THz")
+        result = workspace["shared_result"]
+        card = workspace["knowledge"]
+        hidden = " hidden" if language == "ar" else ""
+        panel += f'<section class="section" data-welcome-lang="{language}" lang="{language}"{hidden}><h2>{escape(title)}</h2><p>{escape(note)}</p><h3>{escape(card["title"])}</h3><p>{escape(card["concept"])}</p><p>532 nm · {escape(result["expression"])} · {escape(str(result["value_si"]))} Hz</p><p><a href="{escape(result["source_url"],quote=True)}" rel="noopener noreferrer">{escape(result["source_url"])}</a></p></section>'
     html = html.replace("</main>", panel + "</main>")
     # Keep the original header, branding, sidebar and navigation as the shared shell.
     # The welcome is page content, not a competing header or separate interface.
