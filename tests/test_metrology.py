@@ -35,3 +35,25 @@ class MetrologyTests(unittest.TestCase):
             convert("NaN","power","W","mW")
         with self.assertRaises(ValueError):
             convert(True,"power","W","mW")
+
+    def test_atlas_registry_consistency(self):
+        import json
+        from equation_registry import REGISTRY as equations, check_equation
+        from quantity_relationships import export_graph, describe_equation
+        graph = export_graph()
+        nodes = {node["id"]:node for node in graph["nodes"]}
+        self.assertEqual(len(nodes),len(graph["nodes"]))
+        for edge in graph["edges"]:
+            self.assertIn(edge["source"],nodes)
+            self.assertIn(edge["target"],nodes)
+        for identifier, equation in equations.items():
+            key = "equation:"+identifier
+            self.assertEqual(nodes[key]["coefficient"],equation.coefficient)
+            self.assertEqual(describe_equation(identifier)["coefficient"],equation.coefficient)
+            self.assertEqual(nodes[key]["dimensional_assessment"],check_equation(identifier))
+            self.assertIn({"source":key,"target":"quantity:"+equation.output,
+                           "relation":"output"},graph["edges"])
+            for kind,name,power in equation.factors:
+                self.assertIn({"source":kind+":"+name,"target":key,
+                               "relation":"input","power":power},graph["edges"])
+        json.dumps(graph)
