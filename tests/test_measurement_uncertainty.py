@@ -39,3 +39,16 @@ class UncertaintyTests(unittest.TestCase):
             propagate_correlated(s,s,matrix)
         with self.assertRaises(ValueError):
             propagate_correlated(s,s,{})
+
+    def test_numeric_limits(self):
+        from scientific_uncertainty_bridge import checked_float
+        for value in ("1e-400", "-1e-400", "1e400"):
+            with self.subTest(value=value):
+                with self.assertRaises(ValueError):
+                    checked_float(value)
+        self.assertEqual(checked_float("0"),0)
+        self.assertEqual(checked_float("1e-30"),1e-30)
+        for s,u in [(1e-200,1e-200),(1e200,1e200)]:
+            with self.assertRaises(ValueError):
+                propagate_independent({"a":s},{"a":u},independent=True)
+        self.assertEqual(propagate_independent({"a":1},{"a":0},independent=True)["standard_uncertainty"],0)
