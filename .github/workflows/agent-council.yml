@@ -5,6 +5,9 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'equation_sensitivity.py'
+      - 'scientific_uncertainty_bridge.py'
+      - 'tests/test_scientific_uncertainty_bridge.py'
       - 'unified_scientific_engine.py'
       - 'tests/test_unified_scientific_engine.py'
       - 'scientific_result_format.py'
@@ -55,6 +58,9 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'equation_sensitivity.py'
+      - 'scientific_uncertainty_bridge.py'
+      - 'tests/test_scientific_uncertainty_bridge.py'
       - 'unified_scientific_engine.py'
       - 'tests/test_unified_scientific_engine.py'
       - 'scientific_result_format.py'
@@ -101,6 +107,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Test integrated scientific uncertainty
+        run: python -m unittest discover -s tests -p 'test_scientific_uncertainty_bridge.py' -v
       - name: Test unified scientific engine
         run: python -m unittest discover -s tests -p 'test_unified_scientific_engine.py' -v
       - name: Test scientific result formatting
