@@ -12,22 +12,23 @@ class Equation:
     factors: tuple
     conditions: str
     coefficient: str = "1"
+    source_url: str = ""
 
 REGISTRY = MappingProxyType({
     "vacuum_frequency": Equation("nu = c/lambda_0", "frequency",
         (("constant", "speed_of_light", 1), ("quantity", "vacuum_wavelength", -1)),
-        "Positive vacuum wavelength; vacuum dispersion relation."),
+        "Positive vacuum wavelength; vacuum dispersion relation.", source_url="https://openstax.org/books/university-physics-volume-2/pages/16-summary"),
     "photon_energy": Equation("E = h nu", "photon_energy",
         (("constant", "planck_constant", 1), ("quantity", "frequency", 1)),
-        "Positive photon frequency."),
+        "Positive photon frequency.", source_url="https://openstax.org/books/university-physics-volume-3/pages/6-key-equations"),
     "photon_energy_wavelength": Equation("E = h c/lambda_0", "photon_energy",
         (("constant", "planck_constant", 1), ("constant", "speed_of_light", 1),
          ("quantity", "vacuum_wavelength", -1)),
-        "Positive vacuum wavelength."),
+        "Positive vacuum wavelength.", source_url="https://openstax.org/books/university-physics-volume-3/pages/6-key-equations"),
     "linear_cavity_fsr": Equation("FSR approximately c/(2 n_g L)", "free_spectral_range",
         (("constant", "speed_of_light", 1), ("quantity", "group_index", -1),
          ("quantity", "cavity_length", -1)),
-        "Homogeneous linear cavity; positive group index and length; negligible mirror group delay; local mode spacing.", coefficient="0.5"),
+        "Homogeneous linear cavity; positive group index and length; negligible mirror group delay; local mode spacing.", coefficient="0.5", source_url="https://www.rp-photonics.com/free_spectral_range.html"),
 })
 
 def check_equation(identifier):
