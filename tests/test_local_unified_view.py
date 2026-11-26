@@ -57,5 +57,19 @@ class UnifiedViewTests(unittest.TestCase):
         self.assertIn('connect-src \'none\'', result)
         self.assertEqual(original, (SOURCE / "index.html").read_text(encoding="utf-8"))
 
+    def test_registry_backed_workspace(self):
+        from scientific_workspace import build_workspace
+        from html import escape
+        html=build().read_text(encoding="utf-8")
+        for language in ("ar","en"):
+            workspace=build_workspace("vacuum_frequency",{"vacuum_wavelength":{"value":532,"unit":"nm"}},language=language,output_unit="THz")
+            result=workspace["shared_result"]
+            self.assertIn(escape(workspace["knowledge"]["title"]),html)
+            self.assertIn(escape(str(result["value_si"]))+" Hz",html)
+            self.assertIn(escape(result["source_url"],quote=True),html)
+            self.assertFalse(workspace["scientific_validation"])
+        self.assertIn("Calculated educational example; not an experimental measurement.",html)
+        self.assertIn("مثال تعليمي محسوب؛ لا يمثل قياسًا تجريبيًا.",html)
+
 if __name__ == "__main__":
     unittest.main()
