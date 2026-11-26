@@ -26,7 +26,7 @@ def describe_equation(identifier):
             "constants": tuple((name, power, get_record(name))
                                for kind, name, power in eq.factors if kind == "constant"),
             "conditions": eq.conditions,
-            "coefficient": eq.coefficient,
+            "coefficient": eq.coefficient, "source_url": eq.source_url,
             "dimensional_assessment": check_equation(identifier),
             "scientific_validation": False}
 
@@ -39,7 +39,7 @@ def export_graph():
         equation_id = "equation:" + identifier
         nodes[equation_id] = {"id": equation_id, "kind": "equation",
                               "label": eq.expression, "conditions": eq.conditions,
-                              "coefficient": eq.coefficient,
+                              "coefficient": eq.coefficient, "source_url": eq.source_url,
                               "dimensional_assessment": check_equation(identifier)}
         for kind, name, power in eq.factors:
             node_id = kind + ":" + name
