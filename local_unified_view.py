@@ -1,6 +1,7 @@
 """Build a LOCAL copy of the exact public-preview design with a synthetic engine panel."""
 from __future__ import annotations
 from html import escape
+from decimal import Decimal
 from pathlib import Path
 import shutil
 import webbrowser
@@ -46,7 +47,19 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
         result = workspace["shared_result"]
         card = workspace["knowledge"]
         hidden = " hidden" if language == "ar" else ""
-        panel += f'<section class="section" data-welcome-lang="{language}" lang="{language}"{hidden}><h2>{escape(title)}</h2><p>{escape(note)}</p><h3>{escape(card["title"])}</h3><p>{escape(card["concept"])}</p><p>532 nm · {escape(result["expression"])} · {escape(str(result["value_si"]))} Hz</p><p><a href="{escape(result["source_url"],quote=True)}" rel="noopener noreferrer">{escape(result["source_url"])}</a></p></section>'
+        displayed = result["result"]
+        value = format(Decimal(displayed["display_value"]), ".6f")
+        source = escape(result["source_url"],quote=True)
+        direction = "rtl" if language == "ar" else "ltr"
+        reference = "المصدر العلمي" if language == "ar" else "Scientific reference"
+        details = "القيمة الحسابية قبل تقريب العرض" if language == "ar" else "Calculated value before display rounding"
+        panel += f"""<section class="section" data-welcome-lang="{language}" lang="{language}" dir="{direction}"{hidden}
+ style="background:#102b47;color:#effaff;border:1px solid #267b9b;border-radius:16px;padding:24px;margin:24px auto;max-width:1100px">
+<h2>{escape(title)}</h2><p>{escape(note)}</p><h3>{escape(card["title"])}</h3><p>{escape(card["concept"])}</p>
+<p dir="ltr">532 nm · {escape(result["expression"])}</p>
+<p dir="ltr" style="font-size:2rem;color:#8ee7eb;font-weight:700">{escape(value)} {escape(displayed["unit"])}</p>
+<details><summary>{details}</summary><p dir="ltr">{escape(str(result["value_si"]))} Hz</p></details>
+<p><a style="color:#8ee7eb" href="{source}" rel="noopener noreferrer">{reference}</a></p></section>"""
     html = html.replace("</main>", panel + "</main>")
     # Keep the original header, branding, sidebar and navigation as the shared shell.
     # The welcome is page content, not a competing header or separate interface.
