@@ -14,6 +14,11 @@ if not errorlevel 1 (
  )
  set "PY=python"
 )
+if /i "%~1"=="--selected-release" (
+ if "%~2"=="" exit /b 4
+ %PY% release_launch.py "%~2"
+ exit /b
+)
 echo Checking local scientific resource readiness...
 %PY% resource_preflight.py
 if errorlevel 1 echo Resource diagnostics failed. Optional resource readiness is unknown.
