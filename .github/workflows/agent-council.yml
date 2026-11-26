@@ -5,6 +5,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'measurement_uncertainty.py'
+      - 'tests/test_measurement_uncertainty.py'
       - 'scientific_charter_gate.py'
       - 'tests/test_scientific_charter_gate.py'
       - 'equation_domain_gate.py'
@@ -49,6 +51,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'measurement_uncertainty.py'
+      - 'tests/test_measurement_uncertainty.py'
       - 'scientific_charter_gate.py'
       - 'tests/test_scientific_charter_gate.py'
       - 'equation_domain_gate.py'
@@ -89,6 +93,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Test measurement uncertainty
+        run: python -m unittest discover -s tests -p 'test_measurement_uncertainty.py' -v
       - name: Test charter documentation gate
         run: python -m unittest discover -s tests -p 'test_scientific_charter_gate.py' -v
       - name: Test equation input domain
