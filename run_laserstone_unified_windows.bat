@@ -23,6 +23,9 @@ if /i "%~1"=="--install-shortcut" (
  )
  echo Desktop shortcut created.
 )
+echo Checking local scientific resource readiness...
+%PY% resource_preflight.py
+if errorlevel 1 echo Resource diagnostics failed. Optional resource readiness is unknown.
 %PY% -m unittest discover -s tests -p "test_local_unified_view.py" -v
 if errorlevel 1 (
  echo Unified view tests failed.
