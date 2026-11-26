@@ -30,9 +30,24 @@ class UnifiedViewTests(unittest.TestCase):
         self.assertIn('id="ls-pump-arrow"', result)
         self.assertIn(".laser-output, .laser-pump", (build().parent / 'welcome-language.js').read_text(encoding='utf-8'))
         script = (build().parent / 'welcome-language.js').read_text(encoding='utf-8')
-        self.assertIn('Concave–concave resonator', script)
-        self.assertIn('Plane–plane resonator', script)
-        self.assertIn('Concave–plane resonator', script)
+        modes = [
+            ("Infinity", "Infinity", "Plane-parallel"),
+            ("0.5", "0.5", "Concentric"),
+            ("1", "1", "Confocal"),
+            ("Infinity", "1", "Hemispherical"),
+            ("Infinity", "2", "Hemiconfocal"),
+            ("1.5", "2", "General concave–concave"),
+            ("0.8", "-2", "Concave–convex"),
+        ]
+        block = script.split("const cavityModes = [", 1)[1].split("];", 1)[0]
+        self.assertEqual(block.count("{r1:"), 7)
+        for r1, r2, name in modes:
+            self.assertIn(f"r1:{r1},r2:{r2},en:'{name}'", block)
+        self.assertIn("(1-1/mode.r1)*(1-1/mode.r2)", script)
+        self.assertIn("mirrorPath(150, mode.r1, 1)", script)
+        self.assertIn("mirrorPath(626, mode.r2, -1)", script)
+        self.assertIn('id="ls-geometry-en"', result)
+        self.assertIn('id="ls-geometry-ar"', result)
         self.assertIn('prefers-reduced-motion: reduce', script)
         self.assertIn('Violet', script)
         self.assertIn('prefers-reduced-motion', result)
