@@ -5,6 +5,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'scientific_knowledge.py'
+      - 'tests/test_scientific_knowledge.py'
       - 'scientific_pathways.py'
       - 'tests/test_scientific_pathways.py'
       - 'equation_sensitivity.py'
@@ -60,6 +62,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'scientific_knowledge.py'
+      - 'tests/test_scientific_knowledge.py'
       - 'scientific_pathways.py'
       - 'tests/test_scientific_pathways.py'
       - 'equation_sensitivity.py'
@@ -111,6 +115,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Test bilingual scientific knowledge
+        run: python -m unittest discover -s tests -p 'test_scientific_knowledge.py' -v
       - name: Test shared scientific pathways
         run: python -m unittest discover -s tests -p 'test_scientific_pathways.py' -v
       - name: Test integrated scientific uncertainty
