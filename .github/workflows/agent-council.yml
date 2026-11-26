@@ -5,6 +5,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'scientific_workspace.py'
+      - 'tests/test_scientific_workspace.py'
       - 'scientific_knowledge.py'
       - 'tests/test_scientific_knowledge.py'
       - 'scientific_pathways.py'
@@ -62,6 +64,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'scientific_workspace.py'
+      - 'tests/test_scientific_workspace.py'
       - 'scientific_knowledge.py'
       - 'tests/test_scientific_knowledge.py'
       - 'scientific_pathways.py'
@@ -115,6 +119,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Test integrated scientific workspace
+        run: python -m unittest discover -s tests -p 'test_scientific_workspace.py' -v
       - name: Test bilingual scientific knowledge
         run: python -m unittest discover -s tests -p 'test_scientific_knowledge.py' -v
       - name: Test shared scientific pathways
