@@ -5,6 +5,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'scientific_pathways.py'
+      - 'tests/test_scientific_pathways.py'
       - 'equation_sensitivity.py'
       - 'scientific_uncertainty_bridge.py'
       - 'tests/test_scientific_uncertainty_bridge.py'
@@ -58,6 +60,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'scientific_pathways.py'
+      - 'tests/test_scientific_pathways.py'
       - 'equation_sensitivity.py'
       - 'scientific_uncertainty_bridge.py'
       - 'tests/test_scientific_uncertainty_bridge.py'
@@ -107,6 +111,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Test shared scientific pathways
+        run: python -m unittest discover -s tests -p 'test_scientific_pathways.py' -v
       - name: Test integrated scientific uncertainty
         run: python -m unittest discover -s tests -p 'test_scientific_uncertainty_bridge.py' -v
       - name: Test unified scientific engine
