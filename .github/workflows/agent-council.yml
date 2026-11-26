@@ -6,6 +6,8 @@ on:
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
       - 'tests/test_resource_lifecycle.py'
+      - 'release_checkpoint.py'
+      - 'tests/test_release_checkpoint.py'
       - 'resource_preflight.py'
       - 'tests/test_resource_preflight.py'
       - 'resource_recovery.py'
@@ -76,6 +78,8 @@ on:
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
       - 'tests/test_resource_lifecycle.py'
+      - 'release_checkpoint.py'
+      - 'tests/test_release_checkpoint.py'
       - 'resource_preflight.py'
       - 'tests/test_resource_preflight.py'
       - 'resource_recovery.py'
@@ -143,6 +147,8 @@ jobs:
           python-version: '3.12'
       - name: Test integrated resource lifecycle
         run: python -m unittest discover -s tests -p 'test_resource_lifecycle.py' -v
+      - name: Test release checkpoint
+        run: python -m unittest discover -s tests -p 'test_release_checkpoint.py' -v
       - name: Test resource preflight
         run: python -m unittest discover -s tests -p 'test_resource_preflight.py' -v
       - name: Test verified resource recovery
