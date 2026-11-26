@@ -1,17 +1,27 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-where py >nul 2>&1
-if %ERRORLEVEL% EQU 0 (
+title LASERSTONE - Local Launcher
+py -3.12 -c "import sys" >nul 2>&1
+if not errorlevel 1 (
  set "PY=py -3.12"
 ) else (
- where python >nul 2>&1
- if %ERRORLEVEL% NEQ 0 (
-  echo Python missing
+ python -c "import sys; assert sys.version_info >= (3, 12)" >nul 2>&1
+ if errorlevel 1 (
+  echo Python 3.12 or newer is required.
   pause
   exit /b 2
  )
  set "PY=python"
+)
+if /i "%~1"=="--install-shortcut" (
+ powershell.exe -NoProfile -Command "$ErrorActionPreference='Stop'; $w=New-Object -ComObject WScript.Shell; $p=Join-Path ([Environment]::GetFolderPath('DesktopDirectory')) 'LASERSTONE.lnk'; $s=$w.CreateShortcut($p); $s.TargetPath=(Join-Path (Get-Location).Path 'run_laserstone_unified_windows.bat'); $s.WorkingDirectory=(Get-Location).Path; $s.Description='LASERSTONE local launcher'; $s.Save()"
+ if errorlevel 1 (
+  echo Shortcut installation failed.
+  pause
+  exit /b 3
+ )
+ echo Desktop shortcut created.
 )
 %PY% -m unittest discover -s tests -p "test_local_unified_view.py" -v
 if errorlevel 1 (
@@ -25,6 +35,6 @@ if errorlevel 1 (
  pause
  exit /b 1
 )
-echo Original dark design + local synthetic engine panel opened.
+echo Local preview opened. No network update was performed.
 echo Browser inspection is still required before Windows acceptance.
-pause
+exit /b 0
