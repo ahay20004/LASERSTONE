@@ -1,0 +1,215 @@
+name: Agent Council governance checks
+on:
+  push:
+    paths:
+      - 'codata_catalog.py'
+      - 'tests/test_codata_catalog.py'
+      - 'reference_data/**'
+      - 'tests/test_resource_lifecycle.py'
+      - 'release_launch.py'
+      - 'tests/test_release_launch.py'
+      - 'release_selection.py'
+      - 'tests/test_release_selection.py'
+      - 'release_staging.py'
+      - 'tests/test_release_staging.py'
+      - 'release_checkpoint.py'
+      - 'tests/test_release_checkpoint.py'
+      - 'resource_preflight.py'
+      - 'tests/test_resource_preflight.py'
+      - 'resource_recovery.py'
+      - 'tests/test_resource_recovery.py'
+      - 'codata_local_import.py'
+      - 'tests/test_codata_local_import.py'
+      - 'resource_catalog.py'
+      - 'tests/test_resource_catalog.py'
+      - 'resource_integrity.py'
+      - 'tests/test_resource_integrity.py'
+      - 'scientific_workspace.py'
+      - 'tests/test_scientific_workspace.py'
+      - 'scientific_knowledge.py'
+      - 'tests/test_scientific_knowledge.py'
+      - 'scientific_pathways.py'
+      - 'tests/test_scientific_pathways.py'
+      - 'equation_sensitivity.py'
+      - 'scientific_uncertainty_bridge.py'
+      - 'tests/test_scientific_uncertainty_bridge.py'
+      - 'unified_scientific_engine.py'
+      - 'tests/test_unified_scientific_engine.py'
+      - 'scientific_result_format.py'
+      - 'tests/test_scientific_result_format.py'
+      - 'measurement_uncertainty.py'
+      - 'tests/test_measurement_uncertainty.py'
+      - 'scientific_charter_gate.py'
+      - 'tests/test_scientific_charter_gate.py'
+      - 'equation_domain_gate.py'
+      - 'tests/test_equation_domain_gate.py'
+      - 'equation_registry.py'
+      - 'quantity_relationships.py'
+      - 'projects/paper2/dimensional_validation.py'
+      - 'tests/test_equation_registry.py'
+      - 'physical_quantities.py'
+      - 'unit_conversion.py'
+      - 'tests/test_metrology.py'
+      - 'physical_constants.py'
+      - 'tests/test_physical_constants.py'
+      - 'agent_council.py'
+      - 'agent_consultation.py'
+      - 'agent_review_provenance.py'
+      - 'agent_confidentiality.py'
+      - 'agent_repair_gate.py'
+      - 'agent_local_inventory.py'
+      - 'laserstone_windows_acceptance.py'
+      - 'local_scientific_bridge.py'
+      - 'local_scientific_view.py'
+      - 'local_unified_view.py'
+      - 'local_unified_site/**'
+      - 'tests/test_local_unified_view.py'
+      - 'run_laserstone_unified_windows.bat'
+      - 'tests/test_local_scientific_view.py'
+      - 'tests/test_local_scientific_bridge.py'
+      - 'physics_consistency_engine.py'
+      - 'run_laserstone_acceptance_windows.bat'
+      - 'tests/test_windows_acceptance.py'
+      - 'run_agent_inventory_windows.bat'
+      - 'tests/test_agent_council.py'
+      - 'tests/test_agent_consultation.py'
+      - 'tests/test_agent_review_provenance.py'
+      - 'tests/test_agent_confidentiality.py'
+      - 'tests/test_agent_repair_gate.py'
+      - 'tests/test_agent_local_inventory.py'
+      - '.github/workflows/agent-council.yml'
+  pull_request:
+    paths:
+      - 'codata_catalog.py'
+      - 'tests/test_codata_catalog.py'
+      - 'reference_data/**'
+      - 'tests/test_resource_lifecycle.py'
+      - 'release_launch.py'
+      - 'tests/test_release_launch.py'
+      - 'release_selection.py'
+      - 'tests/test_release_selection.py'
+      - 'release_staging.py'
+      - 'tests/test_release_staging.py'
+      - 'release_checkpoint.py'
+      - 'tests/test_release_checkpoint.py'
+      - 'resource_preflight.py'
+      - 'tests/test_resource_preflight.py'
+      - 'resource_recovery.py'
+      - 'tests/test_resource_recovery.py'
+      - 'codata_local_import.py'
+      - 'tests/test_codata_local_import.py'
+      - 'resource_catalog.py'
+      - 'tests/test_resource_catalog.py'
+      - 'resource_integrity.py'
+      - 'tests/test_resource_integrity.py'
+      - 'scientific_workspace.py'
+      - 'tests/test_scientific_workspace.py'
+      - 'scientific_knowledge.py'
+      - 'tests/test_scientific_knowledge.py'
+      - 'scientific_pathways.py'
+      - 'tests/test_scientific_pathways.py'
+      - 'equation_sensitivity.py'
+      - 'scientific_uncertainty_bridge.py'
+      - 'tests/test_scientific_uncertainty_bridge.py'
+      - 'unified_scientific_engine.py'
+      - 'tests/test_unified_scientific_engine.py'
+      - 'scientific_result_format.py'
+      - 'tests/test_scientific_result_format.py'
+      - 'measurement_uncertainty.py'
+      - 'tests/test_measurement_uncertainty.py'
+      - 'scientific_charter_gate.py'
+      - 'tests/test_scientific_charter_gate.py'
+      - 'equation_domain_gate.py'
+      - 'tests/test_equation_domain_gate.py'
+      - 'equation_registry.py'
+      - 'quantity_relationships.py'
+      - 'projects/paper2/dimensional_validation.py'
+      - 'tests/test_equation_registry.py'
+      - 'physical_quantities.py'
+      - 'unit_conversion.py'
+      - 'tests/test_metrology.py'
+      - 'physical_constants.py'
+      - 'tests/test_physical_constants.py'
+      - 'agent_council.py'
+      - 'agent_consultation.py'
+      - 'agent_review_provenance.py'
+      - 'agent_confidentiality.py'
+      - 'agent_repair_gate.py'
+      - 'tests/test_agent_council.py'
+      - 'tests/test_agent_consultation.py'
+      - 'tests/test_agent_review_provenance.py'
+      - 'tests/test_agent_confidentiality.py'
+      - 'tests/test_agent_repair_gate.py'
+      - '.github/workflows/agent-council.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  council-unit-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test integrated resource lifecycle
+        run: python -m unittest discover -s tests -p 'test_resource_lifecycle.py' -v
+      - name: Test release launch
+        run: python -m unittest discover -s tests -p 'test_release_launch.py' -v
+      - name: Test release selection
+        run: python -m unittest discover -s tests -p 'test_release_selection.py' -v
+      - name: Test release staging
+        run: python -m unittest discover -s tests -p 'test_release_staging.py' -v
+      - name: Test release checkpoint
+        run: python -m unittest discover -s tests -p 'test_release_checkpoint.py' -v
+      - name: Test resource preflight
+        run: python -m unittest discover -s tests -p 'test_resource_preflight.py' -v
+      - name: Test verified resource recovery
+        run: python -m unittest discover -s tests -p 'test_resource_recovery.py' -v
+      - name: Test offline CODATA staging
+        run: python -m unittest discover -s tests -p 'test_codata_local_import.py' -v
+      - name: Test resource catalog retrieval
+        run: python -m unittest discover -s tests -p 'test_resource_catalog.py' -v
+      - name: Test offline resource integrity
+        run: python -m unittest discover -s tests -p 'test_resource_integrity.py' -v
+      - name: Test integrated scientific workspace
+        run: python -m unittest discover -s tests -p 'test_scientific_workspace.py' -v
+      - name: Test bilingual scientific knowledge
+        run: python -m unittest discover -s tests -p 'test_scientific_knowledge.py' -v
+      - name: Test shared scientific pathways
+        run: python -m unittest discover -s tests -p 'test_scientific_pathways.py' -v
+      - name: Test integrated scientific uncertainty
+        run: python -m unittest discover -s tests -p 'test_scientific_uncertainty_bridge.py' -v
+      - name: Test unified scientific engine
+        run: python -m unittest discover -s tests -p 'test_unified_scientific_engine.py' -v
+      - name: Test scientific result formatting
+        run: python -m unittest discover -s tests -p 'test_scientific_result_format.py' -v
+      - name: Test measurement uncertainty
+        run: python -m unittest discover -s tests -p 'test_measurement_uncertainty.py' -v
+      - name: Test charter documentation gate
+        run: python -m unittest discover -s tests -p 'test_scientific_charter_gate.py' -v
+      - name: Test equation input domain
+        run: python -m unittest discover -s tests -p 'test_equation_domain_gate.py' -v
+      - name: Test equation registry and relationships
+        run: python -m unittest discover -s tests -p 'test_equation_registry.py' -v
+      - name: Test scientific metrology
+        run: python -m unittest discover -s tests -p 'test_metrology.py' -v
+      - name: Test CODATA parser
+        run: python -m unittest discover -s tests -p 'test_codata_catalog.py' -v
+      - name: Test physical constants registry
+        run: python -m unittest discover -s tests -p 'test_physical_constants.py' -v
+      - name: Run council unit tests
+        run: python -m unittest discover -s tests -p 'test_agent_*.py' -v
+      - name: Test local scientific bridge
+        run: python -m unittest discover -s tests -p 'test_local_scientific_bridge.py' -v
+      - name: Test local scientific view
+        run: python -m unittest discover -s tests -p 'test_local_scientific_view.py' -v
+      - name: Test original unified local UI
+        run: python -m unittest discover -s tests -p 'test_local_unified_view.py' -v
+      - name: Test Windows acceptance collector (mocked)
+        run: python -m unittest discover -s tests -p 'test_windows_acceptance.py' -v

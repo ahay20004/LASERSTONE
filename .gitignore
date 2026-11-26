@@ -22,3 +22,13 @@ Desktop.ini
 # Backup / editor files
 *~
 *.bak
+
+# Workstation-only acceptance and agent inventory reports
+laserstone_windows_acceptance.json
+agent_council_local_inventory.json
+
+# Generated local-only scientific view
+laserstone_local_scientific_view.html
+
+# Local generated unified preview (never publish)
+laserstone_unified_local/
