@@ -5,6 +5,10 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'scientific_charter_gate.py'
+      - 'tests/test_scientific_charter_gate.py'
+      - 'equation_domain_gate.py'
+      - 'tests/test_equation_domain_gate.py'
       - 'equation_registry.py'
       - 'quantity_relationships.py'
       - 'projects/paper2/dimensional_validation.py'
@@ -45,6 +49,10 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'scientific_charter_gate.py'
+      - 'tests/test_scientific_charter_gate.py'
+      - 'equation_domain_gate.py'
+      - 'tests/test_equation_domain_gate.py'
       - 'equation_registry.py'
       - 'quantity_relationships.py'
       - 'projects/paper2/dimensional_validation.py'
@@ -81,6 +89,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Test charter documentation gate
+        run: python -m unittest discover -s tests -p 'test_scientific_charter_gate.py' -v
+      - name: Test equation input domain
+        run: python -m unittest discover -s tests -p 'test_equation_domain_gate.py' -v
       - name: Test equation registry and relationships
         run: python -m unittest discover -s tests -p 'test_equation_registry.py' -v
       - name: Test scientific metrology
