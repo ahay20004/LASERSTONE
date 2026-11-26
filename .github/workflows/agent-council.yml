@@ -5,6 +5,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'unified_scientific_engine.py'
+      - 'tests/test_unified_scientific_engine.py'
       - 'scientific_result_format.py'
       - 'tests/test_scientific_result_format.py'
       - 'measurement_uncertainty.py'
@@ -53,6 +55,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'unified_scientific_engine.py'
+      - 'tests/test_unified_scientific_engine.py'
       - 'scientific_result_format.py'
       - 'tests/test_scientific_result_format.py'
       - 'measurement_uncertainty.py'
@@ -97,6 +101,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Test unified scientific engine
+        run: python -m unittest discover -s tests -p 'test_unified_scientific_engine.py' -v
       - name: Test scientific result formatting
         run: python -m unittest discover -s tests -p 'test_scientific_result_format.py' -v
       - name: Test measurement uncertainty
