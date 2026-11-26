@@ -11,6 +11,7 @@ class Equation:
     output: str
     factors: tuple
     conditions: str
+    coefficient: str = "1"
 
 REGISTRY = MappingProxyType({
     "vacuum_frequency": Equation("nu = c/lambda_0", "frequency",
@@ -26,7 +27,7 @@ REGISTRY = MappingProxyType({
     "linear_cavity_fsr": Equation("FSR approximately c/(2 n_g L)", "free_spectral_range",
         (("constant", "speed_of_light", 1), ("quantity", "group_index", -1),
          ("quantity", "cavity_length", -1)),
-        "Homogeneous linear cavity; positive group index and length; negligible mirror group delay; local mode spacing."),
+        "Homogeneous linear cavity; positive group index and length; negligible mirror group delay; local mode spacing.", coefficient="0.5"),
 })
 
 def check_equation(identifier):
