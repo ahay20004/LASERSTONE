@@ -28,5 +28,5 @@ def knowledge_card(identifier, language):
     return {"language":language,"title":card["title"],"concept":card["concept"],
             "derivation":list(card["derivation"]),"application":card["application"],
             "equation":description,"coefficient":eq.coefficient,
-            "equation_source_status":"bibliographic_reference_pending",
+            "equation_source_status":"reference_linked" if eq.source_url else "bibliographic_reference_pending",
             "scientific_validation":False}
