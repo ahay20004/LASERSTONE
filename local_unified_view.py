@@ -91,8 +91,10 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
 <text x="150" y="239">HR</text><text x="626" y="239">OC</text><text x="390" y="222">GAIN MEDIUM</text><text x="390" y="25" dx="76">PUMP</text><text x="698" y="141">OUTPUT</text>
 </g>
 </svg>
-<p class="resonator-status" data-welcome-lang="en" lang="en" aria-live="off"><span id="ls-cavity-en">Plane–plane resonator</span> · <span id="ls-color-en">Red</span> · Artistic spectrum cycle</p>
-<p class="resonator-status" data-welcome-lang="ar" lang="ar" dir="rtl" hidden><span id="ls-cavity-ar">مرنان مستوٍ–مستوٍ</span> · <span id="ls-color-ar">أحمر</span> · دورة ألوان فنية</p>
+<p class="resonator-status" data-welcome-lang="en" lang="en" aria-live="off"><span id="ls-cavity-en">Plane-parallel</span> · <span id="ls-color-en">Red</span> · Artistic spectrum cycle</p>
+<p class="resonator-status" data-welcome-lang="ar" lang="ar" dir="rtl" hidden><span id="ls-cavity-ar">المستوي المتوازي</span> · <span id="ls-color-ar">أحمر</span> · دورة ألوان فنية</p>
+<p class="scene-caption" data-welcome-lang="en" lang="en" id="ls-geometry-en"></p>
+<p class="scene-caption" data-welcome-lang="ar" lang="ar" dir="rtl" id="ls-geometry-ar" hidden></p>
 <p class="scene-caption" data-welcome-lang="en" lang="en">Decorative synchronized pump/output colors · Not a live optical simulation</p>
 <p class="scene-caption" data-welcome-lang="ar" lang="ar" dir="rtl" hidden>تزامن لوني جمالي بين الضخ والخرج · ليس محاكاة بصرية تشغيلية</p>
 <div data-welcome-lang="en" lang="en" dir="ltr">
@@ -141,11 +143,22 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
     });
   }
   // Decorative visualization only: cavity geometry does not determine emission wavelength.
+  // L is the vertex separation; signed radii are expressed in units of L.
+  // Curvature is exaggerated for legibility, not a ray-traced optical model.
   const cavityModes = [
-    {hr:'M150 105V212',oc:'M626 105V212',en:'Plane–plane resonator',ar:'مرنان مستوٍ–مستوٍ'},
-    {hr:'M139 105Q162 159 139 212',oc:'M637 105Q614 159 637 212',en:'Concave–concave resonator',ar:'مرنان مقعّر–مقعّر'},
-    {hr:'M139 105Q162 159 139 212',oc:'M626 105V212',en:'Concave–plane resonator',ar:'مرنان مقعّر–مستوٍ'}
+    {r1:Infinity,r2:Infinity,en:'Plane-parallel',ar:'المستوي المتوازي'},
+    {r1:0.5,r2:0.5,en:'Concentric',ar:'متحد المركز'},
+    {r1:1,r2:1,en:'Confocal',ar:'متحد البؤرة'},
+    {r1:Infinity,r2:1,en:'Hemispherical',ar:'نصف الكروي'},
+    {r1:Infinity,r2:2,en:'Hemiconfocal',ar:'نصف متحد البؤرة'},
+    {r1:1.5,r2:2,en:'General concave–concave',ar:'المقعر–المقعر العام'},
+    {r1:0.8,r2:-2,en:'Concave–convex',ar:'المقعر–المحدب'}
   ];
+  function mirrorPath(x, radius, side) {
+    const sag = Number.isFinite(radius) ? side * 12 / radius : 0;
+    return 'M'+(x+sag)+' 105 Q'+(x-sag)+' 158.5 '+(x+sag)+' 212';
+  }
+  function radiusLabel(r) { return Number.isFinite(r) ? String(r) : '∞'; }
   const spectrum = [
     ['#ff5252','Red','أحمر'],['#ff9d3d','Orange','برتقالي'],['#ffe15b','Yellow','أصفر'],
     ['#64ef9a','Green','أخضر'],['#56baff','Blue','أزرق'],['#6865ff','Indigo','نيلي'],['#bd6aff','Violet','بنفسجي']
@@ -156,9 +169,16 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
   let frame = 0;
   function renderResonator() {
     const mode = cavityModes[frame % cavityModes.length];
-    const color = spectrum[frame % spectrum.length];
-    if (hr) hr.setAttribute('d', mode.hr);
-    if (oc) oc.setAttribute('d', mode.oc);
+    const color = spectrum[(frame + Math.floor(frame / cavityModes.length)) % spectrum.length];
+    const g = (1-1/mode.r1)*(1-1/mode.r2);
+    const boundary = Math.abs(g)<1e-9 || Math.abs(g-1)<1e-9;
+    const stable = g>0 && g<1;
+    const formula = 'R₁/L = '+radiusLabel(mode.r1)+' · R₂/L = '+radiusLabel(mode.r2)+' · g₁g₂ = '+Number(g.toFixed(3));
+    for (const [id, suffix] of [['ls-geometry-en',boundary?'Boundary case':stable?'Strict stability region':'Outside strict stability region'],['ls-geometry-ar',boundary?'حالة حدية':stable?'داخل نطاق الاستقرار الصارم':'خارج نطاق الاستقرار الصارم']]) {
+      const node = document.getElementById(id); if (node) node.textContent = formula+' · '+suffix;
+    }
+    if (hr) hr.setAttribute('d', mirrorPath(150, mode.r1, 1));
+    if (oc) oc.setAttribute('d', mirrorPath(626, mode.r2, -1));
     for (const node of document.querySelectorAll('.laser-output, .laser-pump')) node.setAttribute('stroke', color[0]);
     const arrow = document.getElementById('ls-output-arrow');
     if (arrow) arrow.setAttribute('stroke', color[0]);
