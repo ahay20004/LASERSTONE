@@ -14,15 +14,6 @@ if not errorlevel 1 (
  )
  set "PY=python"
 )
-if /i "%~1"=="--install-shortcut" (
- powershell.exe -NoProfile -Command "$ErrorActionPreference='Stop'; $w=New-Object -ComObject WScript.Shell; $p=Join-Path ([Environment]::GetFolderPath('DesktopDirectory')) 'LASERSTONE.lnk'; $s=$w.CreateShortcut($p); $s.TargetPath=(Join-Path (Get-Location).Path 'run_laserstone_unified_windows.bat'); $s.WorkingDirectory=(Get-Location).Path; $s.Description='LASERSTONE local launcher'; $s.Save()"
- if errorlevel 1 (
-  echo Shortcut installation failed.
-  pause
-  exit /b 3
- )
- echo Desktop shortcut created.
-)
 echo Checking local scientific resource readiness...
 %PY% resource_preflight.py
 if errorlevel 1 echo Resource diagnostics failed. Optional resource readiness is unknown.
@@ -37,6 +28,15 @@ if errorlevel 1 (
  echo Unified view failed to open.
  pause
  exit /b 1
+)
+if /i "%~1"=="--install-shortcut" (
+ powershell.exe -NoProfile -Command "$ErrorActionPreference='Stop'; $w=New-Object -ComObject WScript.Shell; $p=Join-Path ([Environment]::GetFolderPath('DesktopDirectory')) 'LASERSTONE.lnk'; $s=$w.CreateShortcut($p); $s.TargetPath=(Join-Path (Get-Location).Path 'run_laserstone_unified_windows.bat'); $s.WorkingDirectory=(Get-Location).Path; $s.Description='LASERSTONE local launcher'; $s.Save()"
+ if errorlevel 1 (
+  echo Shortcut installation failed.
+  pause
+  exit /b 3
+ )
+ echo Desktop shortcut created.
 )
 echo Local preview opened. No network update was performed.
 echo Browser inspection is still required before Windows acceptance.
