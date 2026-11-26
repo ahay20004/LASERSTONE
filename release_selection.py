@@ -6,7 +6,7 @@ import tempfile
 from pathlib import Path
 from release_checkpoint import inspect_checkpoint
 
-def select_release(root, commit, *, approved=False):
+def _select_release(root, commit, *, approved=False):
     if approved is not True:
         raise PermissionError("Explicit approval required")
     if not isinstance(commit,str) or not re.fullmatch(r"[0-9a-f]{40}",commit):
@@ -40,7 +40,7 @@ def select_release(root, commit, *, approved=False):
             temp.unlink()
     return record
 
-def rollback(root, *, approved=False):
+def _rollback(root, *, approved=False):
     if approved is not True:
         raise PermissionError("Explicit approval required")
     pointer=Path(root).resolve(strict=True)/"selection.json"
@@ -49,4 +49,29 @@ def rollback(root, *, approved=False):
     previous=json.loads(pointer.read_text(encoding="utf-8")).get("previous")
     if previous is None:
         raise ValueError("No previous release")
-    return select_release(root,previous,approved=True)
+    return _select_release(root,previous,approved=True)
+
+from contextlib import contextmanager
+
+@contextmanager
+def selection_lock(root):
+    root=Path(root).resolve(strict=True)
+    lock=root/"selection.lock"
+    fd=os.open(lock,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)
+    try:
+        os.close(fd)
+        yield
+    finally:
+        lock.unlink()
+
+def select_release(root, commit, *, approved=False):
+    if approved is not True:
+        raise PermissionError("Explicit approval required")
+    with selection_lock(root):
+        return _select_release(root,commit,approved=True)
+
+def rollback(root, *, approved=False):
+    if approved is not True:
+        raise PermissionError("Explicit approval required")
+    with selection_lock(root):
+        return _rollback(root,approved=True)
