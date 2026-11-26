@@ -57,12 +57,23 @@ from contextlib import contextmanager
 def selection_lock(root):
     root=Path(root).resolve(strict=True)
     lock=root/"selection.lock"
-    fd=os.open(lock,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)
-    try:
-        os.close(fd)
+    if lock.is_symlink():
+        raise ValueError("Symlink lock forbidden")
+    with open(lock,"a+b") as stream:
+        stream.seek(0)
+        if os.name=="nt":
+            import msvcrt
+            try:
+                msvcrt.locking(stream.fileno(),msvcrt.LK_NBLCK,1)
+            except OSError as exc:
+                raise FileExistsError("Selection busy") from exc
+        else:
+            import fcntl
+            try:
+                fcntl.flock(stream.fileno(),fcntl.LOCK_EX|fcntl.LOCK_NB)
+            except BlockingIOError as exc:
+                raise FileExistsError("Selection busy") from exc
         yield
-    finally:
-        lock.unlink()
 
 def select_release(root, commit, *, approved=False):
     if approved is not True:
