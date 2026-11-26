@@ -5,6 +5,7 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'tests/test_resource_lifecycle.py'
       - 'resource_preflight.py'
       - 'tests/test_resource_preflight.py'
       - 'resource_recovery.py'
@@ -74,6 +75,7 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'tests/test_resource_lifecycle.py'
       - 'resource_preflight.py'
       - 'tests/test_resource_preflight.py'
       - 'resource_recovery.py'
@@ -139,6 +141,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Test integrated resource lifecycle
+        run: python -m unittest discover -s tests -p 'test_resource_lifecycle.py' -v
       - name: Test resource preflight
         run: python -m unittest discover -s tests -p 'test_resource_preflight.py' -v
       - name: Test verified resource recovery
