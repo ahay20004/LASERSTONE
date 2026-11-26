@@ -1,5 +1,6 @@
 """First-order uncertainty integration for registered optical equations."""
 from decimal import Decimal
+from math import isfinite
 from equation_sensitivity import sensitivities
 from physical_quantities import get_quantity
 from physical_constants import get_record
@@ -7,6 +8,13 @@ from equation_registry import REGISTRY
 from unit_conversion import convert
 from measurement_uncertainty import propagate_independent, propagate_correlated
 from scientific_result_format import format_result
+
+def checked_float(value):
+    original = Decimal(str(value))
+    converted = float(original)
+    if not isfinite(converted) or (original != 0 and converted == 0):
+        raise ValueError("Value outside supported floating-point range")
+    return converted
 
 def evaluate_with_uncertainty(identifier, inputs, uncertainties, *,
                               independent=False, correlation=None, output_unit=None):
@@ -25,8 +33,8 @@ def evaluate_with_uncertainty(identifier, inputs, uncertainties, *,
         u = convert(item["value"], name, item["unit"], get_quantity(name).unit)
         if u < 0:
             raise ValueError("Negative uncertainty")
-        u_si[name] = float(u)
-    s = {name: float(value) for name, value in derivatives.items()}
+        u_si[name] = checked_float(u)
+    s = {name: checked_float(value) for name, value in derivatives.items()}
     if correlation is None:
         propagated = propagate_independent(s, u_si, independent=independent)
     else:
