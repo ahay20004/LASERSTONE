@@ -26,7 +26,9 @@ class LaunchTests(unittest.TestCase):
             with selection_lock(root):
                 with self.assertRaises(FileExistsError):
                     select_release(root,sha,approved=True)
-            self.assertFalse((root/"selection.lock").exists())
+            self.assertTrue((root/"selection.lock").exists())
+            with selection_lock(root):
+                pass
             select_release(root,sha,approved=True)
             self.assertEqual(resolve_release(root),root.resolve()/sha/name)
             (root/sha/name).write_text("modified")
