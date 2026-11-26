@@ -5,6 +5,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'resource_integrity.py'
+      - 'tests/test_resource_integrity.py'
       - 'scientific_workspace.py'
       - 'tests/test_scientific_workspace.py'
       - 'scientific_knowledge.py'
@@ -64,6 +66,8 @@ on:
       - 'codata_catalog.py'
       - 'tests/test_codata_catalog.py'
       - 'reference_data/**'
+      - 'resource_integrity.py'
+      - 'tests/test_resource_integrity.py'
       - 'scientific_workspace.py'
       - 'tests/test_scientific_workspace.py'
       - 'scientific_knowledge.py'
@@ -119,6 +123,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Test offline resource integrity
+        run: python -m unittest discover -s tests -p 'test_resource_integrity.py' -v
       - name: Test integrated scientific workspace
         run: python -m unittest discover -s tests -p 'test_scientific_workspace.py' -v
       - name: Test bilingual scientific knowledge
