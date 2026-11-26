@@ -44,7 +44,7 @@ def evaluate(identifier, inputs, output_unit=None):
         unit = quantity.unit if output_unit is None else output_unit
         displayed = convert(value, eq.output, quantity.unit, unit)
         return {"equation_id":identifier,"expression":eq.expression,
-                "coefficient":eq.coefficient,"conditions":eq.conditions,
+                "source_url":eq.source_url,"coefficient":eq.coefficient,"conditions":eq.conditions,
                 "inputs_si":{k:str(v) for k,v in si.items()},
                 "constants":constants,"value_si":str(value),"unit_si":quantity.unit,
                 "result":format_result(displayed,None,unit),
