@@ -43,23 +43,30 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
         ("ar","مساحة العمل العلمية","مثال تعليمي محسوب؛ لا يمثل قياسًا تجريبيًا."),
         ("en","Scientific workspace","Calculated educational example; not an experimental measurement."),
     ):
-        workspace = build_workspace("vacuum_frequency", {"vacuum_wavelength":{"value":532,"unit":"nm"}}, language=language, output_unit="THz")
-        result = workspace["shared_result"]
-        card = workspace["knowledge"]
-        hidden = " hidden" if language == "ar" else ""
-        displayed = result["result"]
-        value = format(Decimal(displayed["display_value"]), ".6f")
-        source = escape(result["source_url"],quote=True)
-        direction = "rtl" if language == "ar" else "ltr"
-        reference = "المصدر العلمي" if language == "ar" else "Scientific reference"
-        details = "القيمة الحسابية قبل تقريب العرض" if language == "ar" else "Calculated value before display rounding"
-        panel += f"""<section class="section" data-welcome-lang="{language}" lang="{language}" dir="{direction}"{hidden}
- style="background:#102b47;color:#effaff;border:1px solid #267b9b;border-radius:16px;padding:24px;margin:24px auto;max-width:1100px">
-<h2>{escape(title)}</h2><p>{escape(note)}</p><h3>{escape(card["title"])}</h3><p>{escape(card["concept"])}</p>
-<p dir="ltr">532 nm · {escape(result["expression"])}</p>
-<p dir="ltr" style="font-size:2rem;color:#8ee7eb;font-weight:700">{escape(value)} {escape(displayed["unit"])}</p>
-<details><summary>{details}</summary><p dir="ltr">{escape(str(result["value_si"]))} Hz</p></details>
-<p><a style="color:#8ee7eb" href="{source}" rel="noopener noreferrer">{reference}</a></p></section>"""
+        cases = (
+            ("vacuum_frequency", {"vacuum_wavelength":{"value":532,"unit":"nm"}}, "THz", "532 nm"),
+            ("photon_energy", {"frequency":{"value":500,"unit":"THz"}}, "eV", "500 THz"),
+            ("photon_energy_wavelength", {"vacuum_wavelength":{"value":532,"unit":"nm"}}, "eV", "532 nm"),
+            ("linear_cavity_fsr", {"group_index":{"value":1.5,"unit":"1"},"cavity_length":{"value":10,"unit":"cm"}}, "GHz", "n_g = 1.5; L = 10 cm"),
+        )
+        for identifier, inputs, unit, input_label in cases:
+            workspace = build_workspace(identifier, inputs, language=language, output_unit=unit)
+            result = workspace["shared_result"]
+            card = workspace["knowledge"]
+            hidden = " hidden" if language == "ar" else ""
+            displayed = result["result"]
+            value = format(Decimal(displayed["display_value"]), ".6f")
+            source = escape(result["source_url"],quote=True)
+            direction = "rtl" if language == "ar" else "ltr"
+            reference = "المصدر العلمي" if language == "ar" else "Scientific reference"
+            details = "القيمة الحسابية قبل تقريب العرض" if language == "ar" else "Calculated value before display rounding"
+            panel += f"""<section class="section" data-equation-id="{identifier}" data-welcome-lang="{language}" lang="{language}" dir="{direction}"{hidden}
+     style="background:#102b47;color:#effaff;border:1px solid #267b9b;border-radius:16px;padding:24px;margin:24px auto;max-width:1100px">
+    <h2>{escape(title)}</h2><p>{escape(note)}</p><h3>{escape(card["title"])}</h3><p>{escape(card["concept"])}</p>
+    <p dir="ltr">{escape(input_label)} · {escape(result["expression"])}</p>
+    <p dir="ltr" style="font-size:2rem;color:#8ee7eb;font-weight:700">{escape(value)} {escape(displayed["unit"])}</p>
+    <details><summary>{details}</summary><p dir="ltr">{escape(str(result["value_si"]))} {escape(result["unit_si"])}</p></details>
+    <p><a style="color:#8ee7eb" href="{source}" rel="noopener noreferrer">{reference}</a></p></section>"""
     html = html.replace("</main>", panel + "</main>")
     # Keep the original header, branding, sidebar and navigation as the shared shell.
     # The welcome is page content, not a competing header or separate interface.
