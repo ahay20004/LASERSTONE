@@ -1,0 +1,42 @@
+import math
+import unittest
+from laser_physics_engine import audit_threshold_uncertainty, calculate_laser_physics
+from qfactor_engine import audit_q_uncertainty
+
+class AccuracyTests(unittest.TestCase):
+    def setUp(self):
+        self.p = dict(lambda_em=632.8, refractive_index=1, cavity_length_m=.2,
+                      mirror_r1=.999, mirror_r2=.95, internal_loss_m_inv=.1)
+        self.u = dict(cavity_length_m=.001, mirror_r1=.0001, mirror_r2=.005,
+                      internal_loss_m_inv=.01)
+
+    def test_threshold_sensitivity(self):
+        r = audit_threshold_uncertainty(self.p,self.u,True)
+        self.assertEqual(r["status"],"DERIVED")
+        for k,s in r["sensitivities"].items():
+            h=1e-6
+            p=dict(self.p); p[k]+=h
+            m=dict(self.p); m[k]-=h
+            fd=(calculate_laser_physics(p)["threshold_gain_m_inv"]-
+                calculate_laser_physics(m)["threshold_gain_m_inv"])/(2*h)
+            self.assertTrue(math.isclose(s,fd,rel_tol=1e-7))
+
+    def test_threshold_independence(self):
+        self.assertEqual(audit_threshold_uncertainty(self.p,self.u)["status"],"UNVERIFIED")
+
+    def test_threshold_invalid(self):
+        self.assertEqual(audit_threshold_uncertainty(self.p,dict(self.u,mirror_r1=-1),True)["status"],"INVALID")
+
+    def test_q_reference(self):
+        r=audit_q_uncertainty(5e14,5e9,5e12,5e7,0)
+        self.assertEqual(r["status"],"DERIVED")
+        self.assertTrue(math.isclose(r["standard_uncertainty"],math.sqrt(2)*1000))
+
+    def test_q_correlated(self):
+        self.assertAlmostEqual(audit_q_uncertainty(5e14,5e9,5e12,5e7,1)["standard_uncertainty"],0)
+
+    def test_q_missing(self):
+        self.assertEqual(audit_q_uncertainty(5e14,5e9,5e12,5e7)["status"],"UNVERIFIED")
+
+    def test_q_invalid(self):
+        self.assertEqual(audit_q_uncertainty(5e14,5e9,5e12,5e7,2)["status"],"INVALID")
