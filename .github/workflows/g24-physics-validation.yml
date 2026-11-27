@@ -9,6 +9,7 @@ on:
       - scientific_trace_engine.py
       - scientific_confidence_engine.py
       - constants.py
+      - final_decision_engine.py
       - test_g24_*.py
       - projects/paper2/evidence_uncertainty_audit.py
       - projects/paper2/tests/test_evidence_uncertainty_audit.py
@@ -31,6 +32,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m unittest -v test_g24_laser_physics test_g24_physical_evidence test_g24_fluorescence_evidence test_g24_qfactor test_g24_scientific_trace test_g24_scientific_confidence
+      - run: python -m unittest -v test_g24_laser_physics test_g24_physical_evidence test_g24_fluorescence_evidence test_g24_qfactor test_g24_scientific_trace test_g24_scientific_confidence test_g24_final_decision
 
       - run: python -m unittest discover -s projects/paper2/tests -p test_evidence_uncertainty_audit.py -v
