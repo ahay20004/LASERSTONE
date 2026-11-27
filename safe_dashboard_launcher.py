@@ -42,7 +42,7 @@ def prepare_dashboard_plants(plants):
     except Exception as error:
         print("DASHBOARD PREPARATION IMPORT ERROR:")
         print(error)
-        return plants
+        return []
 
     analyzed_plants = []
 
@@ -51,7 +51,7 @@ def prepare_dashboard_plants(plants):
         try:
             analyzed_plant = analyze_plant(plant)
 
-            if analyzed_plant.get("valid", True):
+            if analyzed_plant.get("valid", True) and analyzed_plant.get("evidence_decision", {}).get("decision") == "HOLD":
                 analyzed_plants.append(analyzed_plant)
 
         except Exception as error:
@@ -60,7 +60,7 @@ def prepare_dashboard_plants(plants):
             print(error)
 
     if not analyzed_plants:
-        return plants
+        return []
 
     try:
         return rank_plants(analyzed_plants)
@@ -85,6 +85,9 @@ def open_dashboard_after_approval():
 
     try:
         dashboard_plants = prepare_dashboard_plants(plants)
+        if not dashboard_plants:
+            print('HOLD: no evidence-audited plants available.')
+            return
         launch_dashboard(dashboard_plants)
 
     except Exception:
@@ -104,6 +107,9 @@ def open_city_after_approval():
 
         city_plants = prepare_dashboard_plants(plants)
 
+        if not city_plants:
+            print('HOLD: no evidence-audited plants available.')
+            return
         launch_dashboard(city_plants)
 
     except Exception:
