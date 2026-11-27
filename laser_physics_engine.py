@@ -69,3 +69,27 @@ def calculate_laser_physics(plant):
         "basis_status": "Physics-Based Laser Design",
         "model_scope": "Linear homogeneous cavity; gain fills cavity; no experimental validation",
     }
+
+
+
+def audit_threshold_uncertainty(plant, uncertainties, independent=None):
+    """First-order standard uncertainty of threshold gain for independent inputs."""
+    keys = ("internal_loss_m_inv", "mirror_r1", "mirror_r2", "cavity_length_m")
+    if any(plant.get(k) is None or uncertainties.get(k) is None for k in keys):
+        return {"status": "UNVERIFIED"}
+    if independent is not True:
+        return {"status": "UNVERIFIED", "reason": "INDEPENDENCE_NOT_ESTABLISHED"}
+    try:
+        base = calculate_laser_physics(plant)
+        L, r1, r2 = (float(plant[k]) for k in ("cavity_length_m", "mirror_r1", "mirror_r2"))
+        s = dict(zip(keys, (1.0, -0.5/L/r1, -0.5/L/r2,
+                            (math.log(r1)+math.log(r2))*0.5/L/L)))
+        u = {k: _number(uncertainties[k], k) for k in keys}
+        combined = math.hypot(*(s[k]*u[k] for k in keys))
+        if not all(map(math.isfinite, (*s.values(), combined, base["threshold_gain_m_inv"]))):
+            raise ValueError("Nonfinite result")
+    except (ValueError, TypeError, OverflowError, ZeroDivisionError):
+        return {"status": "INVALID"}
+    return {"status": "DERIVED", "threshold_gain_m_inv": base["threshold_gain_m_inv"],
+            "standard_uncertainty_m_inv": combined, "sensitivities": s,
+            "method": "first_order_independent_inputs", "experimental_validation": False}
