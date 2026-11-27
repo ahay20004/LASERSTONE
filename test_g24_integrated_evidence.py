@@ -29,7 +29,7 @@ class IntegratedEvidenceTests(unittest.TestCase):
     def test_integrated(self):
         values = dict(lambda_em=632.8, refractive_index=1, cavity_length_m=.2,
                       mirror_r1=.999, mirror_r2=.95, internal_loss_m_inv=.1,
-                      gain_m_inv=.3, quantum_yield=.6, lifetime_s=4e-9, linewidth_hz=5e9)
+                      gain_m_inv=.3, quantum_yield=.6, lifetime_s=4e-9, resonance_frequency_hz=5e14, linewidth_hz=5e9)
         r = generate_integrated_evidence_decision({k:record(k,v) for k,v in values.items()}, True)
         self.assertEqual(r["confidence"]["model_consistency"], "CONSISTENT")
         self.assertEqual(r["fluorescence"]["status"], "DERIVED")
@@ -66,9 +66,22 @@ class IntegratedEvidenceTests(unittest.TestCase):
     def test_threshold_q_uncertainty(self):
         values = dict(lambda_em=632.8, refractive_index=1, cavity_length_m=.2,
                       mirror_r1=.999, mirror_r2=.95, internal_loss_m_inv=.1,
-                      gain_m_inv=.3, linewidth_hz=5e9)
+                      gain_m_inv=.3, resonance_frequency_hz=5e14, linewidth_hz=5e9)
         r = generate_integrated_evidence_decision({k:record(k,v) for k,v in values.items()},
             True, threshold_independent=True, q_correlation=0)
         self.assertEqual(r["threshold_uncertainty"]["status"], "DERIVED")
         self.assertEqual(r["q_uncertainty"]["status"], "DERIVED")
         self.assertEqual(r["decision"], "HOLD")
+
+    def test_fluorescence_not_resonance(self):
+        r = generate_integrated_evidence_decision({
+            "lambda_em":record("lambda_em",632.8),
+            "linewidth_hz":record("linewidth_hz",5e9)})
+        self.assertEqual(r["physical_q"]["status"],"UNVERIFIED")
+
+    def test_energy_decay_q(self):
+        r = generate_integrated_evidence_decision({
+            "resonance_frequency_hz":record("resonance_frequency_hz",5e14),
+            "energy_lifetime_s":record("energy_lifetime_s",1e-10)})
+        self.assertEqual(r["physical_q"]["status"],"DERIVED")
+        self.assertAlmostEqual(r["physical_q"]["q"],314159.2653589793)
