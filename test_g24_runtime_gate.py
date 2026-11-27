@@ -23,4 +23,9 @@ class RuntimeGateTests(unittest.TestCase):
             main.analyze_plant=lambda p:p
             self.assertEqual(prepare_dashboard_plants(raw),[])
             main.analyze_plant=lambda p:dict(p,evidence_decision={"decision":"HOLD"})
+            self.assertEqual(prepare_dashboard_plants(raw),[])
+            main.analyze_plant=lambda p:dict(p,valid=True,evidence_decision={"decision":"HOLD"})
             self.assertEqual(len(prepare_dashboard_plants(raw)),1)
+            rank.rank_plants=lambda p: (_ for _ in ()).throw(RuntimeError("synthetic ranking failure"))
+            self.assertEqual(prepare_dashboard_plants(raw),[])
+
