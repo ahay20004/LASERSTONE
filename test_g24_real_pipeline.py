@@ -51,6 +51,11 @@ class RealPipelineTest(unittest.TestCase):
             self.assertEqual(conflict.read_text(encoding="utf-8"), "preserve")
             report = Path(save_single_report(ranked[0], Path(directory) / "reports"))
             self.assertIn("HOLD", report.read_text(encoding="utf-8"))
+            report.write_text("previous evidence", encoding="utf-8")
+            next_report = Path(save_single_report(ranked[0], Path(directory) / "reports"))
+            self.assertNotEqual(report, next_report)
+            self.assertEqual(report.read_text(encoding="utf-8"), "previous evidence")
+            self.assertIn("HOLD", next_report.read_text(encoding="utf-8"))
 
 if __name__ == "__main__":
     unittest.main()
