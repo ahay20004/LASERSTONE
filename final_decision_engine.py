@@ -63,7 +63,12 @@ def generate_integrated_evidence_decision(records, claims_above_threshold=None, 
               if audits[k]["status"] == "RECORDED"}
     cavity_keys = ("lambda_em", "refractive_index", "group_index", "cavity_length_m",
                    "mirror_r1", "mirror_r2", "internal_loss_m_inv", "gain_m_inv")
-    plant = {k: values[k] for k in cavity_keys if k in values}
+    def compatible(keys):
+        return len({records[k]["conditions_id"] for k in keys if k in values}) <= 1
+    cavity_ok = compatible(cavity_keys)
+    fluorescence_ok = compatible(("quantum_yield", "lifetime_s"))
+    q_ok = compatible(("lambda_em", "linewidth_hz", "energy_lifetime_s"))
+    plant = {k: values[k] for k in cavity_keys if k in values and cavity_ok}
     plant["claims_above_threshold"] = claims_above_threshold
     result = generate_evidence_decision(plant)
     fluorescence = audit_fluorescence_decay(values.get("quantum_yield"), values.get("lifetime_s"))
@@ -75,6 +80,13 @@ def generate_integrated_evidence_decision(records, claims_above_threshold=None, 
         records["quantum_yield"]["standard_uncertainty"] if "quantum_yield" in values else None,
         records["lifetime_s"]["standard_uncertainty"] if "lifetime_s" in values else None,
         fluorescence_correlation)
+    if not fluorescence_ok:
+        fluorescence = uncertainty = {"status": "UNVERIFIED", "reason": "CONDITIONS_MISMATCH"}
+    if not q_ok:
+        q = {"status": "UNVERIFIED", "reason": "CONDITIONS_MISMATCH"}
+    result["conditions_compatible"] = {"cavity": cavity_ok, "fluorescence": fluorescence_ok, "q": q_ok}
+    if not all(result["conditions_compatible"].values()):
+        result["next_action"] = "RECONCILE_CONDITIONS"
     result["fluorescence_uncertainty"] = uncertainty
     result.update(parameter_audits=audits, fluorescence=fluorescence, physical_q=q,
                   uncertainty_propagated=False, source_authentication="NOT_VERIFIED")
