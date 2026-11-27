@@ -54,3 +54,33 @@ def classify_consistency(score):
 
     else:
         return "Physically Inconsistent"
+
+
+def audit_physical_evidence(plant):
+    """Audit explicit SI cavity evidence, not heuristic scores or experimental proof."""
+    from laser_physics_engine import calculate_laser_physics
+
+    required = ("lambda_em", "refractive_index", "cavity_length_m",
+                "mirror_r1", "mirror_r2", "internal_loss_m_inv", "gain_m_inv")
+    missing = [key for key in required if plant.get(key) is None]
+    try:
+        result = calculate_laser_physics(plant)
+        if plant.get("lambda_em") is not None and float(plant["lambda_em"]) <= 0:
+            raise ValueError("Explicit wavelength must be positive")
+    except (ValueError, TypeError, OverflowError, ZeroDivisionError) as exc:
+        return {"status": "INVALID", "missing": missing, "reason": str(exc),
+                "experimental_validation": False}
+    if missing:
+        return {"status": "UNVERIFIED", "missing": missing,
+                "experimental_validation": False}
+    threshold = result["threshold_status"]
+    claim = plant.get("claims_above_threshold")
+    if claim is not None and not isinstance(claim, bool):
+        return {"status": "INVALID", "missing": [], "reason": "Claim must be boolean",
+                "experimental_validation": False}
+    status = "UNVERIFIED" if claim is None else (
+        "CONSISTENT" if claim == (threshold == "ABOVE_THRESHOLD") else "INCONSISTENT")
+    return {"status": status, "missing": [], "threshold_status": threshold,
+            "gain_margin_m_inv": result["gain_margin_m_inv"],
+            "scope": "Agreement with homogeneous cavity threshold model only",
+            "experimental_validation": False}
