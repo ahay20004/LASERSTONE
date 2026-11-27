@@ -51,7 +51,7 @@ def generate_evidence_decision(plant):
 
 
 
-def generate_integrated_evidence_decision(records, claims_above_threshold=None, fluorescence_correlation=None, threshold_independent=None, q_correlation=None):
+def generate_integrated_evidence_decision(records, claims_above_threshold=None, fluorescence_correlation=None, threshold_independent=None, q_correlation=None, threshold_correlation=None, gain_correlation=None):
     """Canonical parameter records feed existing engines; no implicit unit conversion."""
     from data_validator import audit_parameter_record
     from physics_evidence_engine import audit_fluorescence_decay, audit_fluorescence_uncertainty
@@ -88,7 +88,7 @@ def generate_integrated_evidence_decision(records, claims_above_threshold=None, 
         result["next_action"] = "RECONCILE_CONDITIONS"
     threshold_u = audit_threshold_uncertainty(
         plant, {k: records[k]["standard_uncertainty"] for k in plant if k in values},
-        threshold_independent)
+        threshold_independent, correlation=threshold_correlation)
     q_u = {"status": "UNVERIFIED"}
     if q_ok and q["status"] == "DERIVED" and q.get("basis") == "power_fwhm":
         u_frequency = records["resonance_frequency_hz"]["standard_uncertainty"]
@@ -96,7 +96,7 @@ def generate_integrated_evidence_decision(records, claims_above_threshold=None, 
                                   records["linewidth_hz"]["standard_uncertainty"], q_correlation)
     margin_u = audit_gain_margin_uncertainty(
         plant, {k: records[k]["standard_uncertainty"] for k in plant if k in values},
-        threshold_independent)
+        threshold_independent, correlation=gain_correlation)
     result["gain_margin_uncertainty"] = margin_u
     result["threshold_uncertainty"] = threshold_u
     result["q_uncertainty"] = q_u
