@@ -1,0 +1,27 @@
+name: G24 physics regression
+on:
+  pull_request:
+    paths:
+      - laser_physics_engine.py
+      - physics_consistency_engine.py
+      - test_g24_*.py
+      - .github/workflows/g24-physics-validation.yml
+  push:
+    branches: [g24/laser-physics-validation]
+permissions:
+  contents: read
+jobs:
+  regression:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest -v test_g24_laser_physics test_g24_physical_evidence
