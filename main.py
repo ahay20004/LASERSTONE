@@ -50,7 +50,7 @@ from qfactor_engine import evaluate_q_factor, classify_q_factor
 from cavity_optimizer import optimize_laser_cavity
 from beam_quality_engine import evaluate_beam_quality, classify_beam_quality
 from efficiency_engine import evaluate_laser_efficiency, classify_laser_efficiency
-from display import display_plant_result,display_plant_result,display_global_ranking
+from display import display_plant_result, display_global_ranking
 from interpretation_engine import generate_scientific_interpretation
 from physics_model import (calculate_normalized_lsi, evaluate_gain_condition, estimate_laser_threshold)
 from report_generator import save_all_reports
@@ -81,7 +81,6 @@ from system_health_engine import (generate_system_health_report, generate_system
 from system_memory_engine import (generate_system_memory)
 from strategic_advisor_engine import (generate_strategic_advice)
 from platform_evolution_engine import (evaluate_platform_evolution)
-from platform_evolution_engine import (evaluate_platform_evolution )
 from final_snapshot_engine import (generate_final_snapshot)
 from scientific_visualization_preparer import (prepare_visualization_data)
 from chart_recommendation_engine import (recommend_scientific_charts)
@@ -109,10 +108,7 @@ from code_quality_guard import run_code_quality_guard
 
 
 
-# Run startup diagnostic
-if not run_startup_diagnostic():
-    print("Startup diagnostic failed. Exiting.")
-    exit(1)
+# Startup diagnostics run in main(), not during library import.
 
 def analyze_plant(plant):
     plant["name"] = resolve_plant_name(plant["name"])
@@ -158,9 +154,6 @@ def analyze_plant(plant):
     plant["stokes_shift"] = spectral_result["stokes_shift"]
     plant["spectral_quality_score"] = standardize_quality_value(
     plant["spectral_quality"])
-    plant["spectral_quality_class"] = classify_numeric_score(
-    plant["spectral_quality_score"])
-
     plant["spectral_quality_class"] = classify_numeric_score(
     plant["spectral_quality_score"])
 
