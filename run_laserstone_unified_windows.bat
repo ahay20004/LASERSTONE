@@ -42,7 +42,9 @@ if errorlevel 1 (
  pause
  exit /b 1
 )
-%PY% local_unified_view.py
+%PY% -m unittest discover -s tests -p "test_council_workspace.py" -v
+if errorlevel 1 exit /b 1
+%PY% council_dialog.py
 if errorlevel 1 (
  echo Unified view failed to open.
  pause
@@ -57,6 +59,6 @@ if /i "%~1"=="--install-shortcut" (
  )
  echo Desktop shortcut created.
 )
-echo Local preview opened. No network update was performed.
+echo Local workspace closed. No network update was performed.
 echo Browser inspection is still required before Windows acceptance.
 exit /b 0
