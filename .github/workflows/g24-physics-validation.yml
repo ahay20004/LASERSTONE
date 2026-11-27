@@ -4,6 +4,7 @@ on:
     paths:
       - laser_physics_engine.py
       - physics_consistency_engine.py
+      - physics_evidence_engine.py
       - test_g24_*.py
       - .github/workflows/g24-physics-validation.yml
   push:
@@ -24,4 +25,4 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m unittest -v test_g24_laser_physics test_g24_physical_evidence
+      - run: python -m unittest -v test_g24_laser_physics test_g24_physical_evidence test_g24_fluorescence_evidence
