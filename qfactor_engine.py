@@ -60,3 +60,35 @@ def classify_q_factor(score):
 
     else:
         return "Low-Q Resonance"
+
+
+def calculate_physical_q(frequency_hz, linewidth_hz=None, energy_lifetime_s=None):
+    """Isolated passive resonance; linewidth is power FWHM, lifetime is energy decay.
+    Supply exactly one loss observable. Q is dimensionless.
+    """
+    import math
+    if linewidth_hz is not None and energy_lifetime_s is not None:
+        return {"status": "INVALID", "reason": "Supply one loss observable"}
+    if frequency_hz is None or (linewidth_hz is None and energy_lifetime_s is None):
+        return {"status": "UNVERIFIED", "q": None}
+    try:
+        def positive(value):
+            if isinstance(value, bool):
+                raise ValueError("Boolean is not a physical quantity")
+            x = float(value)
+            if not math.isfinite(x) or x <= 0:
+                raise ValueError("Expected finite positive SI quantity")
+            return x
+        nu = positive(frequency_hz)
+        if linewidth_hz is not None:
+            q = nu / positive(linewidth_hz)
+            basis = "power_fwhm"
+        else:
+            q = 2 * math.pi * (nu * positive(energy_lifetime_s))
+            basis = "energy_decay_lifetime"
+        if not math.isfinite(q) or q <= 0:
+            raise ValueError("Q outside numerical range")
+    except (ValueError, TypeError, OverflowError) as exc:
+        return {"status": "INVALID", "reason": str(exc), "q": None}
+    return {"status": "DERIVED", "q": q, "basis": basis,
+            "model": "isolated_passive_resonance", "experimental_validation": False}
