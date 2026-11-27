@@ -241,7 +241,13 @@ def analyze_plant(plant):
     plant["physics_consistency_score"]  )  ) 
     plant["legacy_screening_recommendation"] = generate_final_decision(plant)
     plant["evidence_decision"] = generate_integrated_evidence_decision(
-        plant.get("physical_parameter_records") or {})
+        plant.get("physical_parameter_records") or {},
+        claims_above_threshold=plant.get("claims_above_threshold"),
+        fluorescence_correlation=plant.get("fluorescence_correlation"),
+        threshold_independent=plant.get("threshold_independent"),
+        q_correlation=plant.get("q_correlation"),
+        threshold_correlation=plant.get("threshold_correlation"),
+        gain_correlation=plant.get("gain_correlation"))
     plant["final_decision"] = "HOLD — " + plant["evidence_decision"]["next_action"]
     plant["scientific_recommendations"] = (generate_scientific_recommendations(plant))
     plant["experimental_success_score"] = (predict_experimental_success(plant) )
