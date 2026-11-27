@@ -59,6 +59,8 @@ jobs:
       - run: python -m unittest discover -s tests -p test_equation_registry.py -v
       - run: python -m unittest discover -s tests -p test_equation_domain_gate.py -v
 
+      - run: python -m unittest discover -s projects/hasabo -p test_physics_checks.py -v
+
       - name: Windows launcher check
         if: runner.os == 'Windows'
         shell: cmd
