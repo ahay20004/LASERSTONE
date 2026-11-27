@@ -50,3 +50,5 @@ jobs:
 
       - run: python -m py_compile resource_catalog.py resource_integrity.py resource_preflight.py release_checkpoint.py release_launch.py
       - run: python resource_preflight.py
+
+      - run: python -m unittest discover -s tests -p test_council_workspace.py -v
