@@ -24,5 +24,16 @@ class RealPipelineTest(unittest.TestCase):
                 self.assertTrue(result["final_decision"].startswith("HOLD"))
                 self.assertIn("governor_decision", result)
 
+    def test_real_launcher_preparation(self):
+        from safe_dashboard_launcher import prepare_dashboard_plants
+        from plants_data import plants
+        original = copy.deepcopy(plants)
+        ranked = prepare_dashboard_plants(plants)
+        self.assertEqual(plants, original)
+        self.assertEqual(len(ranked), len(plants))
+        for result in ranked:
+            self.assertTrue(result["valid"])
+            self.assertEqual(result["evidence_decision"]["decision"], "HOLD")
+
 if __name__ == "__main__":
     unittest.main()
