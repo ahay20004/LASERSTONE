@@ -5,7 +5,7 @@ from decimal import Decimal
 from pathlib import Path
 import shutil
 import webbrowser
-from local_scientific_bridge import evaluate_synthetic_case
+from local_scientific_bridge import evaluate_synthetic_case, evaluate_registered_records
 from scientific_workspace import build_workspace
 
 ROOT = Path(__file__).resolve().parent
@@ -67,6 +67,13 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
     <p dir="ltr" style="font-size:2rem;color:#8ee7eb;font-weight:700">{escape(value)} {escape(displayed["unit"])}</p>
     <details><summary>{details}</summary><p dir="ltr">{escape(str(result["value_si"]))} {escape(result["unit_si"])}</p></details>
     <p><a style="color:#8ee7eb" href="{source}" rel="noopener noreferrer">{reference}</a></p></section>"""
+    actual = evaluate_registered_records()
+    panel += f"""<section class="section" id="registered-pipeline-summary">
+<h2>Registered records / السجلات المسجلة</h2>
+<p>Analyzed / تم تحليلها: {actual["analyzed_count"]} / {actual["registered_count"]}</p>
+<p>Complete / اكتمال التحليل: {actual["complete"]}</p>
+<p>HOLD — Screening only / فحص أولي فقط؛ لا اعتماد تجريبي أو إذن بالنشر</p>
+</section>"""
     html = html.replace("</main>", panel + "</main>")
     # Keep the original header, branding, sidebar and navigation as the shared shell.
     # The welcome is page content, not a competing header or separate interface.
