@@ -1,6 +1,6 @@
 import math
 import unittest
-from laser_physics_engine import audit_threshold_uncertainty, calculate_laser_physics
+from laser_physics_engine import audit_threshold_uncertainty, calculate_laser_physics, audit_gain_margin_uncertainty
 from qfactor_engine import audit_q_uncertainty
 
 class AccuracyTests(unittest.TestCase):
@@ -40,3 +40,16 @@ class AccuracyTests(unittest.TestCase):
 
     def test_q_invalid(self):
         self.assertEqual(audit_q_uncertainty(5e14,5e9,5e12,5e7,2)["status"],"INVALID")
+
+    def test_gain_margin(self):
+        p=dict(self.p,gain_m_inv=.3)
+        r=audit_gain_margin_uncertainty(p,dict(self.u,gain_m_inv=.01),True)
+        self.assertEqual(r["status"],"DERIVED")
+        self.assertEqual(r["one_standard_uncertainty_sign"],"POSITIVE")
+        self.assertTrue(math.isclose(r["standard_uncertainty_m_inv"],
+            math.hypot(audit_threshold_uncertainty(self.p,self.u,True)["standard_uncertainty_m_inv"],.01)))
+
+    def test_unresolved_margin(self):
+        p=dict(self.p,gain_m_inv=calculate_laser_physics(self.p)["threshold_gain_m_inv"])
+        r=audit_gain_margin_uncertainty(p,dict(self.u,gain_m_inv=.01),True)
+        self.assertEqual(r["one_standard_uncertainty_sign"],"UNRESOLVED")
