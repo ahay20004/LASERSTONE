@@ -35,5 +35,22 @@ class RealPipelineTest(unittest.TestCase):
             self.assertTrue(result["valid"])
             self.assertEqual(result["evidence_decision"]["decision"], "HOLD")
 
+    def test_report_output_and_conflict(self):
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from report_generator import save_single_report, ensure_reports_folder
+        from safe_dashboard_launcher import prepare_dashboard_plants
+        from plants_data import plants
+        ranked = prepare_dashboard_plants(plants)
+        self.assertTrue(ranked)
+        with TemporaryDirectory() as directory:
+            conflict = Path(directory) / "conflict"
+            conflict.write_text("preserve", encoding="utf-8")
+            with self.assertRaises(OSError):
+                ensure_reports_folder(conflict)
+            self.assertEqual(conflict.read_text(encoding="utf-8"), "preserve")
+            report = Path(save_single_report(ranked[0], Path(directory) / "reports"))
+            self.assertIn("HOLD", report.read_text(encoding="utf-8"))
+
 if __name__ == "__main__":
     unittest.main()
