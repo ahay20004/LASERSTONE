@@ -1,16 +1,18 @@
-# G24 session handoff — 2026-11-27
+# G24 final session checkpoint — 2026-11-27
 
-Draft PR #38. Tested head 3e032819fdc6bf5ff7dc69842f83ce12de5a9ff7; base 27a57fe4f5afbe8f9a44dda9e35971b25c8c457a.
-Actions run https://github.com/ahay20004/LASERSTONE/actions/runs/45941802760: 77 tests each on Ubuntu and Windows, 154 successful executions; main.py and safe_dashboard_launcher.py compiled.
+Supersedes the earlier checkpoint. Draft PR #38; branch g24/laser-physics-validation.
+Tested head: 99b51be1b8fab1b88ee26d2ba223573a686481be (56 commits since base 27a57fe4f5afbe8f9a44dda9e35971b25c8c457a).
+Verified run https://github.com/ahay20004/LASERSTONE/actions/runs/45942370334: 75 root tests plus 8 Paper II tests on each of Windows and Ubuntu; 166 successful executions. Five presentation/runtime modules compiled. Launcher tests use mocked dependencies and intentionally exercise an import failure; no physical GUI execution.
 
-Delivered: physical cavity threshold, fluorescence decay, passive Q, parameter metadata, evidence trace, confidence separation, research decision, first-order uncertainty and declared-condition checks. Original main analysis invokes evidence decision; legacy recommendation retained separately.
+## Delivered
+Physical threshold, fluorescence decay, explicit resonance frequency for Q, parameter metadata, evidence trace, confidence separation, decision hold, first-order uncertainty, independent-input gain margin, declared-condition checks. Governor blocks prototype authorization, report distinguishes screening from physical Q, original launcher rejects raw fallback, selected dashboard readiness labels corrected.
 
-Next session, in order:
-1. Require explicit resonance frequency for integrated Q instead of fluorescence peak. Test linewidth and energy-decay routes, numerical extremes and invalid partial records.
-2. Extend uncertainty to gain margin and correlated threshold inputs; check linearization validity and authenticate conditions.
-3. Audit import resolution, governor, dashboard, reports and launcher for legacy bypasses. Run end-to-end tests. Reconcile existing unified launcher branch without duplicates.
-4. Verify latest main CI; review PRs #1, #2, #3, #4, #7 and #38 separately.
-5. Execute unified launcher on physical Windows; record SHA, logs and UI evidence.
-6. Authenticate research sources; preserve Paper II and LS-HASABO-01 evidence and novelty gates.
+## Freeze and acceptance
+Regression checkpoint PASS. Full original plan NOT complete. HOLD merge, deployment, prototype and publication authorization. No release performed. This documentation-only commit is not the tested code SHA.
 
-Checkpoint only. GO corrective development; HOLD merge, deployment, prototype and publication authorization. No full operational or experimental acceptance. No release performed.
+## Next session: conservative completion, no scope expansion
+1. Audit real import resolution, dashboard_city, reports and remaining legacy claims; exercise actual main.analyze_plant and end-to-end launcher. Check malformed records and numerical extremes.
+2. Complete correlated threshold/gain uncertainty and linearization assessment; authenticate sources and conditions. Preserve Paper II and LS-HASABO-01 gates.
+3. Verify latest main CI; reconcile existing unified launcher without duplication; review open PRs #1, #2, #3, #4, #7 and #38 separately.
+4. Run existing launcher on physical Windows with owner participation; record exact SHA, logs and UI evidence.
+5. Review acceptance against original plan before owner-approved merge. No synthetic test substitutes for experimental or physical operational validation.
