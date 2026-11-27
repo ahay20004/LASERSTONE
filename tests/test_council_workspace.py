@@ -44,3 +44,20 @@ class WorkspaceTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 empty.restore(p)
             self.assertIsNone(empty.snapshot())
+
+    def test_integrated_safeguards(self):
+        w = CouncilWorkspace()
+        w.convene({"id":"T1","summary":"Physics","specialties":["physics"]})
+        before = w.snapshot()
+        with self.assertRaises(PermissionError):
+            w.prepare_consultation("external", classification="PUBLIC", approved_fields=["objective"])
+        self.assertEqual(w.audit_review_receipt({"task_id":"T1","reviewer":"physics","position":"approve","reason":"checked","evidence":["test"],"run_id":"claimed"})["status"], "UNVERIFIED")
+        repair = {"task_id":"T1","change_ref":"abc","tests":[{"name":"test","result":"PASS","evidence_ref":"claimed"}],"human_approval":True,"trusted_runner_verified":True}
+        result = w.audit_repair(repair)
+        self.assertEqual(result["status"], "EVIDENCE_UNVERIFIED")
+        self.assertFalse(result["execution_authorized"])
+        with self.assertRaises(ValueError):
+            w.audit_repair(dict(repair, task_id="T2"))
+        with self.assertRaises(ValueError):
+            w.audit_review_receipt({"task_id":"T2"})
+        self.assertEqual(w.snapshot(), before)
