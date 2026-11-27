@@ -12,5 +12,17 @@ class RealPipelineTest(unittest.TestCase):
         self.assertTrue(result["final_decision"].startswith("HOLD"))
         self.assertIn("governor_decision", result)
 
+    def test_all_registered_plant_records(self):
+        from main import analyze_plant
+        from plants_data import plants
+        self.assertTrue(plants)
+        for record in plants:
+            with self.subTest(plant=record.get("name")):
+                result = analyze_plant(copy.deepcopy(record))
+                self.assertTrue(result["valid"])
+                self.assertEqual(result["evidence_decision"]["decision"], "HOLD")
+                self.assertTrue(result["final_decision"].startswith("HOLD"))
+                self.assertIn("governor_decision", result)
+
 if __name__ == "__main__":
     unittest.main()
