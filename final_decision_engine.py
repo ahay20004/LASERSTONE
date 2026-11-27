@@ -26,3 +26,25 @@ def generate_final_decision(plant):
 
     else:
         return "Not Recommended for Laser Development at This Stage"
+
+
+def generate_evidence_decision(plant):
+    """Research triage only; no prototype or publication authorization."""
+    from scientific_confidence_engine import assess_evidence_confidence
+
+    confidence = assess_evidence_confidence(plant)
+    status = confidence["model_consistency"]
+    next_action = {
+        "INVALID": "CORRECT_INPUTS",
+        "INCONSISTENT": "RECONCILE_MODEL_AND_CLAIM",
+        "UNVERIFIED": "COMPLETE_MODEL_EVIDENCE",
+        "CONSISTENT": "VERIFY_INDEPENDENT_EVIDENCE",
+    }.get(status, "REVIEW_REQUIRED")
+    return {
+        "decision": "HOLD",
+        "next_action": next_action,
+        "confidence": confidence,
+        "claims_authorized": [],
+        "prototype_authorized": False,
+        "publication_authorized": False,
+    }
