@@ -93,3 +93,26 @@ def audit_threshold_uncertainty(plant, uncertainties, independent=None):
     return {"status": "DERIVED", "threshold_gain_m_inv": base["threshold_gain_m_inv"],
             "standard_uncertainty_m_inv": combined, "sensitivities": s,
             "method": "first_order_independent_inputs", "experimental_validation": False}
+
+
+def audit_gain_margin_uncertainty(plant, uncertainties, independent=None):
+    """First-order gain margin uncertainty, conditional on independent inputs."""
+    base = audit_threshold_uncertainty(plant, uncertainties, independent)
+    if base["status"] != "DERIVED":
+        return base
+    if plant.get("gain_m_inv") is None or uncertainties.get("gain_m_inv") is None:
+        return {"status":"UNVERIFIED"}
+    try:
+        gain = _number(plant["gain_m_inv"], "gain", -math.inf)
+        u = math.hypot(base["standard_uncertainty_m_inv"],
+                       _number(uncertainties["gain_m_inv"], "gain uncertainty"))
+        margin = gain - base["threshold_gain_m_inv"]
+        if not math.isfinite(u) or not math.isfinite(margin):
+            raise ValueError("Nonfinite result")
+    except (ValueError, TypeError, OverflowError):
+        return {"status":"INVALID"}
+    return {"status":"DERIVED", "margin_m_inv":margin,
+            "standard_uncertainty_m_inv":u,
+            "one_standard_uncertainty_sign": "POSITIVE" if margin > u else
+            "NEGATIVE" if margin < -u else "UNRESOLVED",
+            "experimental_validation":False}
