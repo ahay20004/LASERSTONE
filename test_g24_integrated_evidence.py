@@ -45,3 +45,20 @@ class IntegratedEvidenceTests(unittest.TestCase):
         r = generate_integrated_evidence_decision({})
         self.assertEqual(r["physical_q"]["status"], "UNVERIFIED")
         self.assertEqual(r["decision"], "HOLD")
+
+    def test_conditions_mismatch(self):
+        records = {"quantum_yield":record("quantum_yield",.6),
+                   "lifetime_s":record("lifetime_s",4e-9)}
+        records["lifetime_s"]["conditions_id"] = "different"
+        r = generate_integrated_evidence_decision(records, fluorescence_correlation=0)
+        self.assertEqual(r["next_action"], "RECONCILE_CONDITIONS")
+        self.assertEqual(r["fluorescence"]["status"], "UNVERIFIED")
+        self.assertEqual(r["fluorescence_uncertainty"]["status"], "UNVERIFIED")
+
+    def test_integrated_uncertainty(self):
+        records = {"quantum_yield":record("quantum_yield",.6),
+                   "lifetime_s":record("lifetime_s",4e-9)}
+        records["lifetime_s"]["standard_uncertainty"] = .2e-9
+        r = generate_integrated_evidence_decision(records, fluorescence_correlation=0)
+        self.assertEqual(r["fluorescence_uncertainty"]["status"], "DERIVED")
+        self.assertEqual(r["decision"], "HOLD")
