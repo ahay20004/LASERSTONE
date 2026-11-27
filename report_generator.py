@@ -115,14 +115,16 @@ GAIN & RESONANCE
 ----------------------------------------
 
 Gain Medium           : {plant['gain_class']}
-Q-Factor              : {plant['q_factor_class']}
+Q screening class     : {plant['q_factor_class']}
+Physical Q            : {plant.get('evidence_decision', {}).get('physical_q', {}).get('q', 'UNVERIFIED')}
+Evidence decision     : HOLD — independent validation required
 
 ----------------------------------------
 BEAM & EFFICIENCY
 ----------------------------------------
 
-Beam Quality          : {plant['beam_quality_class']}
-Laser Efficiency      : {plant['laser_efficiency_class']}
+Beam quality screening: {plant['beam_quality_class']}
+Efficiency screening  : {plant['laser_efficiency_class']}
 
 ----------------------------------------
 SOLVENT ENVIRONMENT
