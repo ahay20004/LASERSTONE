@@ -1,6 +1,7 @@
 import os
 import sys
 import traceback
+from copy import deepcopy
 
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 CORE_DIR = os.path.join(ROOT_DIR, "core")
@@ -42,25 +43,25 @@ def prepare_dashboard_plants(plants):
     except Exception as error:
         print("DASHBOARD PREPARATION IMPORT ERROR:")
         print(error)
-        return plants
+        return []
 
     analyzed_plants = []
 
     for plant in plants:
 
         try:
-            analyzed_plant = analyze_plant(plant)
+            analyzed_plant = analyze_plant(deepcopy(plant))
 
-            if analyzed_plant.get("valid", True):
+            if analyzed_plant.get("valid") is True and analyzed_plant.get("evidence_decision", {}).get("decision") == "HOLD":
                 analyzed_plants.append(analyzed_plant)
 
         except Exception as error:
             print("PLANT ANALYSIS ERROR:")
-            print(plant.get("name", "Unknown"))
+            print(plant.get("name", "Unknown") if isinstance(plant, dict) else "Invalid record")
             print(error)
 
     if not analyzed_plants:
-        return plants
+        return []
 
     try:
         return rank_plants(analyzed_plants)
@@ -68,7 +69,7 @@ def prepare_dashboard_plants(plants):
     except Exception as error:
         print("RANKING ERROR:")
         print(error)
-        return analyzed_plants
+        return []
 def open_dashboard_after_approval():
 
     plants = load_plants()
@@ -85,6 +86,9 @@ def open_dashboard_after_approval():
 
     try:
         dashboard_plants = prepare_dashboard_plants(plants)
+        if not dashboard_plants:
+            print('HOLD: no evidence-audited plants available.')
+            return
         launch_dashboard(dashboard_plants)
 
     except Exception:
@@ -104,6 +108,9 @@ def open_city_after_approval():
 
         city_plants = prepare_dashboard_plants(plants)
 
+        if not city_plants:
+            print('HOLD: no evidence-audited plants available.')
+            return
         launch_dashboard(city_plants)
 
     except Exception:

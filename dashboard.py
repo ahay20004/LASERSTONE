@@ -892,7 +892,7 @@ def launch_dashboard(ranked_plants):
 
             "Recommended Action:\n"
             "Proceed to advanced characterization\n"
-            "and prototype planning.\n\n"
+            "and independent evidence review.\n\n"
 
             f"Final Decision: {decision}\n"
         )
@@ -932,14 +932,14 @@ def show_strategic_roadmap():
     )
 
     if score >= 85:
-        current_stage = "PROTOTYPE READY"
-        next_step = "Prototype Construction"
+        current_stage = "HOLD — EVIDENCE REVIEW"
+        next_step = "Independent Evidence Review"
         future_step = "Laser Cavity Optimization"
 
     elif score >= 70:
         current_stage = "ADVANCED VALIDATION"
         next_step = "Spectroscopic Verification"
-        future_step = "Prototype Preparation"
+        future_step = "Evidence Preparation"
 
     else:
         current_stage = "RESEARCH STAGE"
@@ -1472,7 +1472,7 @@ def classify_readiness(lri_score):
     if lri_score >= 85:
 
         return (
-            "READY FOR PROTOTYPE",
+            "HOLD — HIGH SCREENING SCORE",
             "HIGH"
         )
 
@@ -1644,7 +1644,7 @@ def add_laser_readiness_section(parent, selected_plant):
 
     add_info_line(
         parent,
-        f"Prototype Confidence : {confidence}"
+        f"Screening Confidence : {confidence}"
     )
 
 
@@ -1719,7 +1719,7 @@ def add_prototype_roadmap_section(parent):
         "✓ Laser Architecture Designed",
         "✓ Digital Twin Generated",
         "✓ Readiness Evaluated",
-        "→ Next Step: Prototype Construction and Experimental Validation"
+        "→ Next Step: Independent Evidence Review and Experimental Validation"
     ]
 
     for step in roadmap:
@@ -2020,14 +2020,14 @@ def generate_scientific_reasoning(plant):
            trace.append(f"Combined LRI Score = {lri_score}"   )
 
         if lri_score >= 85:
-            trace.append("→ FINAL DECISION: READY FOR PROTOTYPE"      )
+            trace.append("→ SCREENING ONLY: HOLD — HIGH SCREENING SCORE"      )
 
         elif lri_score >= 60:
 
             trace.append(
-            "→ FINAL DECISION: RESEARCH STAGE"    )
+            "→ SCREENING ONLY: RESEARCH STAGE"    )
         else:
 
-            trace.append( "→ FINAL DECISION: NEEDS OPTIMIZATION"        )
+            trace.append( "→ SCREENING ONLY: NEEDS OPTIMIZATION"        )
 
         return trace

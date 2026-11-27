@@ -1,4 +1,9 @@
 def laserstone_governor_decision(plant):
+    # Screening scores cannot authorize deployment or prototypes.
+    return "HOLD — independent scientific evidence and owner review required"
+
+
+def legacy_governor_screening(plant):
 
     intelligence = plant[
         "intelligence_summary"

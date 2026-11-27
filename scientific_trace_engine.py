@@ -284,3 +284,20 @@ def get_trace_summary(plant):
         "confidence":
         confidence
     }
+
+
+def generate_evidence_trace(plant):
+    """Trace model evidence separately from legacy screening recommendations."""
+    from physics_consistency_engine import audit_physical_evidence
+
+    audit = audit_physical_evidence(plant)
+    return {
+        "physical_audit": audit,
+        "legacy_screening_score": calculate_trace_lri(plant),
+        "screening_only": True,
+        "prototype_decision": "HOLD",
+        "experimental_validation": False,
+        "source_authentication": "NOT_VERIFIED",
+        "claims_authorized": [],
+        "reason": "Model agreement and screening scores do not establish prototype readiness",
+    }

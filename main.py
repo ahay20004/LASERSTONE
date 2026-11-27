@@ -50,7 +50,7 @@ from qfactor_engine import evaluate_q_factor, classify_q_factor
 from cavity_optimizer import optimize_laser_cavity
 from beam_quality_engine import evaluate_beam_quality, classify_beam_quality
 from efficiency_engine import evaluate_laser_efficiency, classify_laser_efficiency
-from display import display_plant_result,display_plant_result,display_global_ranking
+from display import display_plant_result, display_global_ranking
 from interpretation_engine import generate_scientific_interpretation
 from physics_model import (calculate_normalized_lsi, evaluate_gain_condition, estimate_laser_threshold)
 from report_generator import save_all_reports
@@ -58,7 +58,7 @@ from material_score_engine import calculate_material_score, classify_material_sc
 from lri_engine import calculate_lri, classify_lri
 from laser_architecture_engine import (recommend_laser_architecture)
 from physics_consistency_engine import (evaluate_physics_consistency, classify_consistency )
-from final_decision_engine import generate_final_decision
+from final_decision_engine import generate_final_decision, generate_integrated_evidence_decision
 from scientific_recommendation_engine import (generate_scientific_recommendations)
 from experimental_prediction_engine import (predict_experimental_success, classify_experimental_probability)
 from research_novelty_engine import ( evaluate_research_novelty, classify_research_novelty )
@@ -81,7 +81,6 @@ from system_health_engine import (generate_system_health_report, generate_system
 from system_memory_engine import (generate_system_memory)
 from strategic_advisor_engine import (generate_strategic_advice)
 from platform_evolution_engine import (evaluate_platform_evolution)
-from platform_evolution_engine import (evaluate_platform_evolution )
 from final_snapshot_engine import (generate_final_snapshot)
 from scientific_visualization_preparer import (prepare_visualization_data)
 from chart_recommendation_engine import (recommend_scientific_charts)
@@ -109,10 +108,7 @@ from code_quality_guard import run_code_quality_guard
 
 
 
-# Run startup diagnostic
-if not run_startup_diagnostic():
-    print("Startup diagnostic failed. Exiting.")
-    exit(1)
+# Startup diagnostics run in main(), not during library import.
 
 def analyze_plant(plant):
     plant["name"] = resolve_plant_name(plant["name"])
@@ -158,9 +154,6 @@ def analyze_plant(plant):
     plant["stokes_shift"] = spectral_result["stokes_shift"]
     plant["spectral_quality_score"] = standardize_quality_value(
     plant["spectral_quality"])
-    plant["spectral_quality_class"] = classify_numeric_score(
-    plant["spectral_quality_score"])
-
     plant["spectral_quality_class"] = classify_numeric_score(
     plant["spectral_quality_score"])
 
@@ -246,7 +239,16 @@ def analyze_plant(plant):
     plant["physics_consistency_score"] = (evaluate_physics_consistency(plant) )
     plant["physics_consistency_class"] = (classify_consistency(
     plant["physics_consistency_score"]  )  ) 
-    plant["final_decision"] = generate_final_decision(plant)
+    plant["legacy_screening_recommendation"] = generate_final_decision(plant)
+    plant["evidence_decision"] = generate_integrated_evidence_decision(
+        plant.get("physical_parameter_records") or {},
+        claims_above_threshold=plant.get("claims_above_threshold"),
+        fluorescence_correlation=plant.get("fluorescence_correlation"),
+        threshold_independent=plant.get("threshold_independent"),
+        q_correlation=plant.get("q_correlation"),
+        threshold_correlation=plant.get("threshold_correlation"),
+        gain_correlation=plant.get("gain_correlation"))
+    plant["final_decision"] = "HOLD — " + plant["evidence_decision"]["next_action"]
     plant["scientific_recommendations"] = (generate_scientific_recommendations(plant))
     plant["experimental_success_score"] = (predict_experimental_success(plant) )
     plant["experimental_success_class"] = (classify_experimental_probability(
