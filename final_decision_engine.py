@@ -67,13 +67,12 @@ def generate_integrated_evidence_decision(records, claims_above_threshold=None, 
         return len({records[k]["conditions_id"] for k in keys if k in values}) <= 1
     cavity_ok = compatible(cavity_keys)
     fluorescence_ok = compatible(("quantum_yield", "lifetime_s"))
-    q_ok = compatible(("lambda_em", "linewidth_hz", "energy_lifetime_s"))
+    q_ok = compatible(("resonance_frequency_hz", "linewidth_hz", "energy_lifetime_s"))
     plant = {k: values[k] for k in cavity_keys if k in values and cavity_ok}
     plant["claims_above_threshold"] = claims_above_threshold
     result = generate_evidence_decision(plant)
     fluorescence = audit_fluorescence_decay(values.get("quantum_yield"), values.get("lifetime_s"))
-    wavelength = values.get("lambda_em")
-    frequency = C / (wavelength * 1e-9) if wavelength and wavelength * 1e-9 else None
+    frequency = values.get("resonance_frequency_hz")
     q = calculate_physical_q(frequency, values.get("linewidth_hz"), values.get("energy_lifetime_s"))
     uncertainty = audit_fluorescence_uncertainty(
         values.get("quantum_yield"), values.get("lifetime_s"),
@@ -92,7 +91,7 @@ def generate_integrated_evidence_decision(records, claims_above_threshold=None, 
         threshold_independent)
     q_u = {"status": "UNVERIFIED"}
     if q_ok and q["status"] == "DERIVED" and q.get("basis") == "power_fwhm":
-        u_frequency = frequency * (records["lambda_em"]["standard_uncertainty"] / wavelength)
+        u_frequency = records["resonance_frequency_hz"]["standard_uncertainty"]
         q_u = audit_q_uncertainty(frequency, values["linewidth_hz"], u_frequency,
                                   records["linewidth_hz"]["standard_uncertainty"], q_correlation)
     result["threshold_uncertainty"] = threshold_u
