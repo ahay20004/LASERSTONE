@@ -53,3 +53,26 @@ class AccuracyTests(unittest.TestCase):
         p=dict(self.p,gain_m_inv=calculate_laser_physics(self.p)["threshold_gain_m_inv"])
         r=audit_gain_margin_uncertainty(p,dict(self.u,gain_m_inv=.01),True)
         self.assertEqual(r["one_standard_uncertainty_sign"],"UNRESOLVED")
+
+    def test_correlated_threshold(self):
+        c={k:{j:float(k==j) for j in self.u} for k in self.u}
+        c["mirror_r1"]["mirror_r2"]=c["mirror_r2"]["mirror_r1"]=.7
+        r=audit_threshold_uncertainty(self.p,self.u,correlation=c)
+        self.assertEqual(r["status"],"DERIVED")
+        v={k:r["sensitivities"][k]*self.u[k] for k in self.u}
+        expected=math.sqrt(sum(v[k]*c[k][j]*v[j] for k in v for j in v))
+        self.assertAlmostEqual(r["standard_uncertainty_m_inv"],expected)
+        c["mirror_r1"]["mirror_r2"]=2
+        self.assertEqual(audit_threshold_uncertainty(self.p,self.u,correlation=c)["status"],"INVALID")
+
+    def test_correlated_gain(self):
+        p=dict(self.p,gain_m_inv=.3)
+        u=dict(self.u,gain_m_inv=.01)
+        c={k:{j:float(k==j) for j in u} for k in u}
+        c["gain_m_inv"]["internal_loss_m_inv"]=c["internal_loss_m_inv"]["gain_m_inv"]=1
+        r=audit_gain_margin_uncertainty(p,u,correlation=c)
+        self.assertEqual(r["status"],"DERIVED")
+        t=audit_threshold_uncertainty(p,self.u,True)
+        expected=math.sqrt(sum((t["sensitivities"][k]*self.u[k])**2 for k in self.u if k!="internal_loss_m_inv"))
+        self.assertAlmostEqual(r["standard_uncertainty_m_inv"],expected)
+        self.assertEqual(audit_gain_margin_uncertainty(p,u,True,correlation=c)["status"],"INVALID")
