@@ -1,44 +1,62 @@
-"""Local council interaction; no network, execution or automatic approvals."""
+"""Local human-operated council workspace; no network or execution."""
 import json
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 from council_workspace import CouncilWorkspace
+from agent_council import ROLES
 
 def open_council():
     workspace = CouncilWorkspace()
     root = tk.Tk()
-    root.title("LASERSTONE — Advisory Council / مجلس الوكلاء")
-    root.geometry("760x620")
-    tk.Label(root, text="Manual review only / مراجعة بشرية فقط").pack()
-    tk.Label(root, text="Enter JSON task, review, or decision / أدخل بيانات المهمة أو المراجعة").pack()
-    entry = tk.Text(root, height=10)
-    entry.pack(fill="x", padx=12)
-    entry.insert("1.0", '{"id":"T1","summary":"Physics review","specialties":["physics"]}')
-    output = tk.Text(root, state="disabled")
-    def action(kind):
+    root.title("LASERSTONE | مجلس الوكلاء")
+    root.geometry("850x720")
+    root.minsize(640, 520)
+    header = tk.Frame(root, bg="#102b47", padx=20, pady=18)
+    header.pack(fill="x")
+    tk.Label(header, text="LASERSTONE™", font=("Segoe UI",22,"bold"), bg="#102b47", fg="#9de5ee").pack(anchor="w")
+    tk.Label(header, text="Scientific Advisory Council | مجلس المراجعة العلمية", bg="#102b47", fg="white").pack(anchor="w")
+    tabs = ttk.Notebook(root)
+    tabs.pack(fill="x", padx=16, pady=12)
+    task, rev, dec = [ttk.Frame(tabs,padding=12) for _ in range(3)]
+    for frame, name in zip((task,rev,dec),("Task | المهمة","Review | المراجعة","Decision | القرار")):
+        tabs.add(frame,text=name)
+    def field(frame,label):
+        ttk.Label(frame,text=label).pack(anchor="w")
+        v=tk.StringVar()
+        ttk.Entry(frame,textvariable=v).pack(fill="x",pady=(0,6))
+        return v
+    ident=field(task,"Task ID | معرف المهمة")
+    summary=field(task,"Summary | وصف المهمة")
+    roles={role:tk.BooleanVar() for role in ROLES}
+    for role,var in roles.items():
+        ttk.Checkbutton(task,text=role,variable=var).pack(anchor="w")
+    reviewer=field(rev,"Assigned reviewer | المراجع المكلف")
+    position=tk.StringVar(value="revise")
+    ttk.Combobox(rev,textvariable=position,values=("approve","revise","reject"),state="readonly").pack(fill="x")
+    reason=field(rev,"Rationale | المبررات")
+    evidence=field(rev,"Evidence references, separated by semicolons | الأدلة")
+    decision=tk.StringVar(value="revise")
+    ttk.Combobox(dec,textvariable=decision,values=("approve","revise","reject"),state="readonly").pack(fill="x")
+    rationale=field(dec,"Human rationale | مبررات القرار البشري")
+    output=tk.Text(root,state="disabled",wrap="word",height=10)
+    status=tk.StringVar(value="Awaiting task | في انتظار المهمة")
+    def perform(fn):
         try:
-            data = json.loads(entry.get("1.0", "end"))
-            if not isinstance(data, dict):
-                raise ValueError("JSON object required")
-            if kind == "task":
-                result = workspace.convene(data)
-            elif kind == "review":
-                result = workspace.submit_review(data)
-            else:
-                result = workspace.human_decision(data["decision"], data["rationale"])
+            result=fn()
             output.config(state="normal")
-            output.delete("1.0", "end")
-            output.insert("1.0", json.dumps(result, ensure_ascii=False, indent=2))
+            output.delete("1.0","end")
+            output.insert("1.0",json.dumps(result,ensure_ascii=False,indent=2))
             output.config(state="disabled")
-        except (ValueError, KeyError, TypeError) as exc:
-            messagebox.showerror("Council / المجلس", str(exc), parent=root)
-    buttons = tk.Frame(root)
-    buttons.pack()
-    for kind, label in (("task","Convene / مهمة"),("review","Review / مراجعة"),("decision","Decision / قرار")):
-        tk.Button(buttons, text=label, command=lambda k=kind: action(k)).pack(side="left")
-    output.pack(fill="both", expand=True, padx=12, pady=12)
-    tk.Label(root, text="Session only; no execution authorization / لا إذن بالتنفيذ").pack()
+            status.set(result.get("review_status","Recorded")+" | Execution: NONE")
+        except (ValueError,KeyError,TypeError) as exc:
+            messagebox.showerror("Council | المجلس",str(exc),parent=root)
+    ttk.Button(task,text="Convene | تسجيل المهمة",command=lambda:perform(lambda:workspace.convene({"id":ident.get(),"summary":summary.get(),"specialties":[r for r,v in roles.items() if v.get()]}))).pack(anchor="e")
+    ttk.Button(rev,text="Submit review | تسجيل المراجعة",command=lambda:perform(lambda:workspace.submit_review({"reviewer":reviewer.get(),"position":position.get(),"reason":reason.get(),"evidence":[s.strip() for s in evidence.get().split(";") if s.strip()]}))).pack(anchor="e")
+    ttk.Button(dec,text="Record decision | تسجيل القرار",command=lambda:perform(lambda:workspace.human_decision(decision.get(),rationale.get()))).pack(anchor="e")
+    ttk.Label(root,textvariable=status).pack(anchor="w",padx=16)
+    output.pack(fill="both",expand=True,padx=16,pady=8)
+    ttk.Label(root,text="Session only • No verified AI agents • No execution authorization").pack(pady=8)
     root.mainloop()
 
-if __name__ == "__main__":
+if __name__=="__main__":
     open_council()
