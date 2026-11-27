@@ -181,7 +181,7 @@ def launch_dashboard(ranked_plants):
         report += (
             f"\nAverage Material Score: {average_score:.2f}\n\n"
             "Platform Recommendation:\n"
-            "Focus on the highest-ranked materials for prototype and optimization studies.\n"
+            "Focus on the highest-ranked materials for independent characterization and optimization studies.\n"
         )
         open_text_window(window, "LASERSTONE MATERIAL ANALYSIS", report)
 
@@ -372,7 +372,7 @@ def launch_dashboard(ranked_plants):
             "Scientific Assessment:\n"
             "This candidate demonstrates the strongest overall scientific performance according to the integrated LASERSTONE evaluation.\n\n"
             "Recommended Action:\n"
-            "Proceed to advanced characterization and prototype planning.\n\n"
+            "Proceed to advanced characterization and independent evidence review.\n\n"
             f"Final Decision: {decision}\n"
         )
         open_text_window(window, "LASERSTONE EXPERT HOUSE", report, "760x560")
@@ -382,13 +382,13 @@ def launch_dashboard(ranked_plants):
         score = safe_score(top_value("material_score", 0))
 
         if score >= 85:
-            current_stage = "PROTOTYPE READY"
-            next_step = "Prototype Construction"
+            current_stage = "HOLD — EVIDENCE REVIEW"
+            next_step = "Independent Evidence Review"
             future_step = "Laser Cavity Optimization"
         elif score >= 70:
             current_stage = "ADVANCED VALIDATION"
             next_step = "Spectroscopic Verification"
-            future_step = "Prototype Preparation"
+            future_step = "Evidence Preparation"
         else:
             current_stage = "RESEARCH STAGE"
             next_step = "Additional Characterization"
@@ -413,7 +413,7 @@ def launch_dashboard(ranked_plants):
             "LASERSTONE PROTOTYPE PLANNER\n\n"
             f"Selected Material: {top_value('name')}\n"
             f"Material Score: {score:.2f}\n\n"
-            "PROTOTYPE DEVELOPMENT PLAN\n\n"
+            "CONDITIONAL PROTOTYPE DEVELOPMENT PLAN — NOT AUTHORIZED\n\n"
             "STEP 1:\nMaterial purification and preparation.\n\n"
             "STEP 2:\nOptical absorption characterization.\n\n"
             "STEP 3:\nEmission spectrum verification.\n\n"
