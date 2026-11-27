@@ -1,4 +1,5 @@
 import unittest
+import math
 from laser_physics_engine import calculate_laser_physics
 
 
@@ -15,7 +16,8 @@ class LaserPhysicsG24Tests(unittest.TestCase):
 
     def test_group_index(self):
         r = calculate_laser_physics({"cavity_length_m": .2, "group_index": 1.5})
-        self.assertAlmostEqual(r["free_spectral_range_hz"], 499654096.6666667)
+        self.assertTrue(math.isclose(r["free_spectral_range_hz"], 499654096.6666667,
+                                     rel_tol=1e-12, abs_tol=0.0))
 
     def test_threshold(self):
         p = dict(cavity_length_m=.2, mirror_r1=.999, mirror_r2=.95,
