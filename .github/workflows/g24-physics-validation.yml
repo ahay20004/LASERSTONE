@@ -54,3 +54,8 @@ jobs:
       - run: python -m unittest discover -s tests -p test_council_workspace.py -v
 
       - run: python -m py_compile council_dialog.py council_workspace.py
+
+      - name: Windows launcher check
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: run_laserstone_unified_windows.bat --check
