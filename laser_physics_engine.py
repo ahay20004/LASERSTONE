@@ -31,6 +31,13 @@ def calculate_laser_physics(plant):
     threshold = margin = None
     status = "UNVERIFIED"
     keys = ("mirror_r1", "mirror_r2", "internal_loss_m_inv")
+    for k in keys[:2]:
+        if plant.get(k) is not None and _number(plant[k], k, strict=True) > 1:
+            raise ValueError("mirror reflectivity must not exceed one")
+    if plant.get(keys[2]) is not None:
+        _number(plant[keys[2]], keys[2])
+    if plant.get("gain_m_inv") is not None:
+        _number(plant["gain_m_inv"], "gain_m_inv", -math.inf)
     if all(plant.get(k) is not None for k in keys):
         r1, r2 = (_number(plant[k], k, strict=True) for k in keys[:2])
         if max(r1, r2) > 1:
