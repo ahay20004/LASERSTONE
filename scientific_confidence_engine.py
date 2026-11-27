@@ -87,3 +87,21 @@ def classify_confidence(score):
         return (
             "Preliminary Scientific Confidence"
         )
+
+
+def assess_evidence_confidence(plant):
+    """Report evidence maturity without inventing a calibrated probability."""
+    from scientific_trace_engine import generate_evidence_trace
+
+    trace = generate_evidence_trace(plant)
+    status = trace["physical_audit"]["status"]
+    return {
+        "model_consistency": status,
+        "scientific_confidence": "NOT_ESTABLISHED",
+        "confidence_probability": None,
+        "source_authentication": trace["source_authentication"],
+        "experimental_validation": trace["experimental_validation"],
+        "prototype_decision": trace["prototype_decision"],
+        "claims_authorized": trace["claims_authorized"],
+        "trace": trace,
+    }
