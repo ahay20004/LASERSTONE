@@ -14,7 +14,15 @@ if not errorlevel 1 (
  )
  set "PY=python"
 )
+if /i "%~1"=="--check" (
+ %PY% -m py_compile council_dialog.py council_workspace.py
+ if errorlevel 1 exit /b 1
+ %PY% -m unittest discover -s tests -p "test_council_workspace.py" -v
+ exit /b
+)
 if /i "%~1"=="--council" (
+ %PY% -m unittest discover -s tests -p "test_council_workspace.py" -v
+ if errorlevel 1 exit /b 1
  %PY% council_dialog.py
  exit /b
 )
