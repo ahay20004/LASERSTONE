@@ -4,6 +4,10 @@ from pathlib import Path
 from copy import deepcopy
 from agent_council import council, review, decide
 
+from agent_confidentiality import export_context
+from agent_review_provenance import assess_submission
+from agent_repair_gate import assess_repair
+
 class CouncilWorkspace:
     def __init__(self):
         self._record = None
@@ -28,6 +32,25 @@ class CouncilWorkspace:
             raise ValueError("Convene a council first")
         self._record = decide(self.snapshot(), decision, rationale)
         return self.snapshot()
+
+    def prepare_consultation(self, recipient, *, classification, approved_fields):
+        if self._record is None:
+            raise ValueError("Convene a council first")
+        context = {"task_id": self._record["task_id"], "objective": self._record["summary"]}
+        return export_context(context, recipient, classification=classification,
+                              approved_fields=approved_fields, guest=True, guest_approved=False)
+
+    def audit_review_receipt(self, entry):
+        if self._record is None or entry.get("task_id") != self._record["task_id"]:
+            raise ValueError("Review does not belong to current task")
+        return assess_submission(entry, trusted_runs={})
+
+    def audit_repair(self, record):
+        if self._record is None or record.get("task_id") != self._record["task_id"]:
+            raise ValueError("Repair does not belong to current task")
+        safe = deepcopy(record)
+        safe["trusted_runner_verified"] = False
+        return assess_repair(safe)
 
     def export(self, path):
         if self._record is None:
