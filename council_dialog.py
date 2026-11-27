@@ -6,6 +6,8 @@ from council_workspace import CouncilWorkspace
 from agent_council import ROLES
 
 def open_council():
+    from local_unified_view import build
+    import webbrowser
     workspace = CouncilWorkspace()
     root = tk.Tk()
     root.title("LASERSTONE | مجلس الوكلاء")
@@ -15,6 +17,13 @@ def open_council():
     header.pack(fill="x")
     tk.Label(header, text="LASERSTONE™", font=("Segoe UI",22,"bold"), bg="#102b47", fg="#9de5ee").pack(anchor="w")
     tk.Label(header, text="Scientific Advisory Council | مجلس المراجعة العلمية", bg="#102b47", fg="white").pack(anchor="w")
+    def open_scientific_view():
+        try:
+            if not webbrowser.open(build().as_uri()):
+                raise OSError("Browser could not be opened")
+        except (OSError, ValueError) as exc:
+            messagebox.showerror("LASERSTONE", str(exc), parent=root)
+    ttk.Button(root, text="Scientific platform | المنصة العلمية", command=open_scientific_view).pack(anchor="e", padx=16, pady=6)
     tabs = ttk.Notebook(root)
     tabs.pack(fill="x", padx=16, pady=12)
     task, rev, dec = [ttk.Frame(tabs,padding=12) for _ in range(3)]
