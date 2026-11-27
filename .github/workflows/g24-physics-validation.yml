@@ -55,6 +55,10 @@ jobs:
 
       - run: python -m py_compile council_dialog.py council_workspace.py
 
+      - run: python -m unittest discover -s tests -p test_measurement_uncertainty.py -v
+      - run: python -m unittest discover -s tests -p test_equation_registry.py -v
+      - run: python -m unittest discover -s tests -p test_equation_domain_gate.py -v
+
       - name: Windows launcher check
         if: runner.os == 'Windows'
         shell: cmd
