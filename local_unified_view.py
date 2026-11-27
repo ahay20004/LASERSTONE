@@ -74,6 +74,16 @@ Classification: <strong>{escape(report["output"]["classification"])}</strong></p
 <p>Complete / اكتمال التحليل: {actual["complete"]}</p>
 <p>HOLD — Screening only / فحص أولي فقط؛ لا اعتماد تجريبي أو إذن بالنشر</p>
 </section>"""
+    from agent_council import discover, ROLES
+    council_status = discover(ROOT)
+    roles = "".join(f"<li>{escape(role)} — {escape(ROLES[role][0])}</li>" for role in council_status["declared_advisory_roles"])
+    panel += f"""<section class="section" id="advisory-council">
+<h2>Advisory council / مجلس الوكلاء الاستشاري</h2>
+<ul>{roles}</ul>
+<p>Offline advisory roles / اختصاصات استشارية محلية</p>
+<p>Active agents: NOT VERIFIED / لم يُتحقق من وكلاء نشطين</p>
+<p>Execution authorization: NONE / لا إذن بالتنفيذ</p>
+</section>"""
     html = html.replace("</main>", panel + "</main>")
     # Keep the original header, branding, sidebar and navigation as the shared shell.
     # The welcome is page content, not a competing header or separate interface.
