@@ -14,6 +14,10 @@ if not errorlevel 1 (
  )
  set "PY=python"
 )
+if /i "%~1"=="--council" (
+ %PY% council_dialog.py
+ exit /b
+)
 if /i "%~1"=="--selected-release" (
  if "%~2"=="" exit /b 4
  %PY% release_launch.py "%~2"
