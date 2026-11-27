@@ -57,5 +57,29 @@ class RealPipelineTest(unittest.TestCase):
             self.assertEqual(report.read_text(encoding="utf-8"), "previous evidence")
             self.assertIn("HOLD", next_report.read_text(encoding="utf-8"))
 
+
+    def test_explicit_correlations_reach_real_pipeline(self):
+        from main import analyze_plant
+        from plants_data import plants
+        from data_validator import PHYSICAL_PARAMETER_RULES
+        plant = copy.deepcopy(plants[0])
+        values = dict(lambda_em=632.8, refractive_index=1, cavity_length_m=.2,
+                      mirror_r1=.999, mirror_r2=.95, internal_loss_m_inv=.1, gain_m_inv=.3)
+        plant["physical_parameter_records"] = {
+            k: dict(value=v, unit=PHYSICAL_PARAMETER_RULES[k][0],
+                    standard_uncertainty=.01, source_id="synthetic",
+                    conditions_id="synthetic", basis="assumed") for k,v in values.items()}
+        keys=("internal_loss_m_inv","mirror_r1","mirror_r2","cavity_length_m")
+        all_keys=keys+("gain_m_inv",)
+        matrix={k:{j:float(k==j) for j in all_keys} for k in all_keys}
+        matrix["gain_m_inv"]["internal_loss_m_inv"]=matrix["internal_loss_m_inv"]["gain_m_inv"]=1
+        plant["threshold_correlation"]={k:{j:matrix[k][j] for j in keys} for k in keys}
+        plant["gain_correlation"]=matrix
+        result=analyze_plant(plant)["evidence_decision"]
+        self.assertEqual(result["threshold_uncertainty"]["status"],"DERIVED")
+        self.assertEqual(result["gain_margin_uncertainty"]["status"],"DERIVED")
+        self.assertEqual(result["decision"],"HOLD")
+        self.assertFalse(result["prototype_authorized"])
+
 if __name__ == "__main__":
     unittest.main()
