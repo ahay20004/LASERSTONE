@@ -58,7 +58,7 @@ from material_score_engine import calculate_material_score, classify_material_sc
 from lri_engine import calculate_lri, classify_lri
 from laser_architecture_engine import (recommend_laser_architecture)
 from physics_consistency_engine import (evaluate_physics_consistency, classify_consistency )
-from final_decision_engine import generate_final_decision
+from final_decision_engine import generate_final_decision, generate_integrated_evidence_decision
 from scientific_recommendation_engine import (generate_scientific_recommendations)
 from experimental_prediction_engine import (predict_experimental_success, classify_experimental_probability)
 from research_novelty_engine import ( evaluate_research_novelty, classify_research_novelty )
@@ -246,7 +246,10 @@ def analyze_plant(plant):
     plant["physics_consistency_score"] = (evaluate_physics_consistency(plant) )
     plant["physics_consistency_class"] = (classify_consistency(
     plant["physics_consistency_score"]  )  ) 
-    plant["final_decision"] = generate_final_decision(plant)
+    plant["legacy_screening_recommendation"] = generate_final_decision(plant)
+    plant["evidence_decision"] = generate_integrated_evidence_decision(
+        plant.get("physical_parameter_records") or {})
+    plant["final_decision"] = "HOLD — " + plant["evidence_decision"]["next_action"]
     plant["scientific_recommendations"] = (generate_scientific_recommendations(plant))
     plant["experimental_success_score"] = (predict_experimental_success(plant) )
     plant["experimental_success_class"] = (classify_experimental_probability(
