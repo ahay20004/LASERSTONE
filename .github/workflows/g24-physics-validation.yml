@@ -10,6 +10,8 @@ on:
       - scientific_confidence_engine.py
       - constants.py
       - final_decision_engine.py
+      - main.py
+      - safe_dashboard_launcher.py
       - data_validator.py
       - test_g24_*.py
       - projects/paper2/evidence_uncertainty_audit.py
@@ -36,3 +38,5 @@ jobs:
       - run: python -m unittest -v test_g24_laser_physics test_g24_physical_evidence test_g24_fluorescence_evidence test_g24_qfactor test_g24_scientific_trace test_g24_scientific_confidence test_g24_final_decision test_g24_integrated_evidence test_g24_fluorescence_uncertainty test_g24_threshold_q_uncertainty
 
       - run: python -m unittest discover -s projects/paper2/tests -p test_evidence_uncertainty_audit.py -v
+
+      - run: python -m py_compile main.py safe_dashboard_launcher.py
