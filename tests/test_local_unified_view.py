@@ -57,6 +57,22 @@ class UnifiedViewTests(unittest.TestCase):
         self.assertIn('connect-src \'none\'', result)
         self.assertEqual(original, (SOURCE / "index.html").read_text(encoding="utf-8"))
 
+    def test_registered_pipeline_and_council(self):
+        from local_scientific_bridge import evaluate_registered_records
+        from agent_council import ROLES
+        summary = evaluate_registered_records()
+        self.assertGreater(summary["registered_count"], 0)
+        self.assertTrue(summary["complete"])
+        self.assertEqual(summary["status"], "HOLD")
+        html = build().read_text(encoding="utf-8")
+        self.assertIn('id="registered-pipeline-summary"', html)
+        self.assertIn(f'{summary["analyzed_count"]} / {summary["registered_count"]}', html)
+        self.assertIn('id="advisory-council"', html)
+        for role in ROLES:
+            self.assertIn(role, html)
+        self.assertIn("Active agents: NOT VERIFIED", html)
+        self.assertIn("Execution authorization: NONE", html)
+
     def test_registry_backed_workspace(self):
         from scientific_workspace import build_workspace
         from html import escape
