@@ -52,3 +52,5 @@ jobs:
       - run: python resource_preflight.py
 
       - run: python -m unittest discover -s tests -p test_council_workspace.py -v
+
+      - run: python -m py_compile council_dialog.py council_workspace.py
