@@ -62,3 +62,13 @@ class IntegratedEvidenceTests(unittest.TestCase):
         r = generate_integrated_evidence_decision(records, fluorescence_correlation=0)
         self.assertEqual(r["fluorescence_uncertainty"]["status"], "DERIVED")
         self.assertEqual(r["decision"], "HOLD")
+
+    def test_threshold_q_uncertainty(self):
+        values = dict(lambda_em=632.8, refractive_index=1, cavity_length_m=.2,
+                      mirror_r1=.999, mirror_r2=.95, internal_loss_m_inv=.1,
+                      gain_m_inv=.3, linewidth_hz=5e9)
+        r = generate_integrated_evidence_decision({k:record(k,v) for k,v in values.items()},
+            True, threshold_independent=True, q_correlation=0)
+        self.assertEqual(r["threshold_uncertainty"]["status"], "DERIVED")
+        self.assertEqual(r["q_uncertainty"]["status"], "DERIVED")
+        self.assertEqual(r["decision"], "HOLD")
