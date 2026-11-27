@@ -70,14 +70,14 @@ def audit_physical_evidence(plant):
     except (ValueError, TypeError, OverflowError, ZeroDivisionError) as exc:
         return {"status": "INVALID", "missing": missing, "reason": str(exc),
                 "experimental_validation": False}
+    claim = plant.get("claims_above_threshold")
+    if claim is not None and not isinstance(claim, bool):
+        return {"status": "INVALID", "missing": missing, "reason": "Claim must be boolean",
+                "experimental_validation": False}
     if missing:
         return {"status": "UNVERIFIED", "missing": missing,
                 "experimental_validation": False}
     threshold = result["threshold_status"]
-    claim = plant.get("claims_above_threshold")
-    if claim is not None and not isinstance(claim, bool):
-        return {"status": "INVALID", "missing": [], "reason": "Claim must be boolean",
-                "experimental_validation": False}
     status = "UNVERIFIED" if claim is None else (
         "CONSISTENT" if claim == (threshold == "ABOVE_THRESHOLD") else "INCONSISTENT")
     return {"status": status, "missing": [], "threshold_status": threshold,
