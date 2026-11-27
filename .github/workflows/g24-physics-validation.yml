@@ -44,3 +44,6 @@ jobs:
       - run: python -m unittest -v test_g24_real_pipeline
 
       - run: python -m unittest discover -s tests -p test_agent_council.py -v
+
+      - run: python -m unittest discover -s tests -p test_unified_scientific_engine.py -v
+      - run: python -m unittest discover -s tests -p test_local_unified_view.py -v
