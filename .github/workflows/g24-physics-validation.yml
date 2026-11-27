@@ -47,3 +47,6 @@ jobs:
 
       - run: python -m unittest discover -s tests -p test_unified_scientific_engine.py -v
       - run: python -m unittest discover -s tests -p test_local_unified_view.py -v
+
+      - run: python -m py_compile resource_catalog.py resource_integrity.py resource_preflight.py release_checkpoint.py release_launch.py
+      - run: python resource_preflight.py
