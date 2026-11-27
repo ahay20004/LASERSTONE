@@ -51,10 +51,10 @@ def generate_evidence_decision(plant):
 
 
 
-def generate_integrated_evidence_decision(records, claims_above_threshold=None):
+def generate_integrated_evidence_decision(records, claims_above_threshold=None, fluorescence_correlation=None):
     """Canonical parameter records feed existing engines; no implicit unit conversion."""
     from data_validator import audit_parameter_record
-    from physics_evidence_engine import audit_fluorescence_decay
+    from physics_evidence_engine import audit_fluorescence_decay, audit_fluorescence_uncertainty
     from qfactor_engine import calculate_physical_q
     from laser_physics_engine import C
 
@@ -70,9 +70,15 @@ def generate_integrated_evidence_decision(records, claims_above_threshold=None):
     wavelength = values.get("lambda_em")
     frequency = C / (wavelength * 1e-9) if wavelength and wavelength * 1e-9 else None
     q = calculate_physical_q(frequency, values.get("linewidth_hz"), values.get("energy_lifetime_s"))
+    uncertainty = audit_fluorescence_uncertainty(
+        values.get("quantum_yield"), values.get("lifetime_s"),
+        records["quantum_yield"]["standard_uncertainty"] if "quantum_yield" in values else None,
+        records["lifetime_s"]["standard_uncertainty"] if "lifetime_s" in values else None,
+        fluorescence_correlation)
+    result["fluorescence_uncertainty"] = uncertainty
     result.update(parameter_audits=audits, fluorescence=fluorescence, physical_q=q,
                   uncertainty_propagated=False, source_authentication="NOT_VERIFIED")
     if any(a["status"] == "INVALID" for a in audits.values()) or any(
-            a["status"] == "INVALID" for a in (fluorescence, q)):
+            a["status"] == "INVALID" for a in (fluorescence, q, uncertainty)):
         result["next_action"] = "CORRECT_INPUTS"
     return result
