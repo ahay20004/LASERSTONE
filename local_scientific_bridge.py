@@ -22,5 +22,20 @@ def evaluate_synthetic_case() -> dict:
         "public_deployment_authorized": False,
     }
 
+def evaluate_registered_records() -> dict:
+    """Read-only local screening summary; no experimental or release authorization."""
+    from safe_dashboard_launcher import load_plants, prepare_dashboard_plants
+    records = load_plants()
+    ranked = prepare_dashboard_plants(records)
+    return {
+        "input_kind": "REGISTERED_LOCAL_RECORDS",
+        "registered_count": len(records),
+        "analyzed_count": len(ranked),
+        "status": "HOLD",
+        "complete": bool(records) and len(records) == len(ranked),
+        "independent_scientific_validation": False,
+        "public_deployment_authorized": False,
+    }
+
 if __name__ == "__main__":
     print(json.dumps(evaluate_synthetic_case(), ensure_ascii=False, indent=2))
