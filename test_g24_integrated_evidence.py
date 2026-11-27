@@ -85,3 +85,22 @@ class IntegratedEvidenceTests(unittest.TestCase):
             "energy_lifetime_s":record("energy_lifetime_s",1e-10)})
         self.assertEqual(r["physical_q"]["status"],"DERIVED")
         self.assertAlmostEqual(r["physical_q"]["q"],314159.2653589793)
+
+    def test_integrated_correlated_margin(self):
+        values=dict(lambda_em=632.8,refractive_index=1,cavity_length_m=.2,
+                    mirror_r1=.999,mirror_r2=.95,internal_loss_m_inv=.1,gain_m_inv=.3)
+        records={k:record(k,v) for k,v in values.items()}
+        keys=("internal_loss_m_inv","mirror_r1","mirror_r2","cavity_length_m")
+        all_keys=keys+("gain_m_inv",)
+        c={k:{j:float(k==j) for j in all_keys} for k in all_keys}
+        c["gain_m_inv"]["internal_loss_m_inv"]=c["internal_loss_m_inv"]["gain_m_inv"]=1
+        sub={k:{j:c[k][j] for j in keys} for k in keys}
+        r=generate_integrated_evidence_decision(records,threshold_correlation=sub,gain_correlation=c)
+        self.assertEqual(r["threshold_uncertainty"]["status"],"DERIVED")
+        self.assertEqual(r["gain_margin_uncertainty"]["status"],"DERIVED")
+        self.assertEqual(r["decision"],"HOLD")
+        self.assertFalse(r["prototype_authorized"])
+        self.assertEqual(r["source_authentication"],"NOT_VERIFIED")
+        c["gain_m_inv"]["internal_loss_m_inv"]=2
+        r=generate_integrated_evidence_decision(records,threshold_correlation=sub,gain_correlation=c)
+        self.assertEqual(r["next_action"],"CORRECT_INPUTS")
