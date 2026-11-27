@@ -1,6 +1,7 @@
 import os
 import sys
 import traceback
+from copy import deepcopy
 
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 CORE_DIR = os.path.join(ROOT_DIR, "core")
@@ -49,14 +50,14 @@ def prepare_dashboard_plants(plants):
     for plant in plants:
 
         try:
-            analyzed_plant = analyze_plant(plant)
+            analyzed_plant = analyze_plant(deepcopy(plant))
 
-            if analyzed_plant.get("valid", True) and analyzed_plant.get("evidence_decision", {}).get("decision") == "HOLD":
+            if analyzed_plant.get("valid") is True and analyzed_plant.get("evidence_decision", {}).get("decision") == "HOLD":
                 analyzed_plants.append(analyzed_plant)
 
         except Exception as error:
             print("PLANT ANALYSIS ERROR:")
-            print(plant.get("name", "Unknown"))
+            print(plant.get("name", "Unknown") if isinstance(plant, dict) else "Invalid record")
             print(error)
 
     if not analyzed_plants:
@@ -68,7 +69,7 @@ def prepare_dashboard_plants(plants):
     except Exception as error:
         print("RANKING ERROR:")
         print(error)
-        return analyzed_plants
+        return []
 def open_dashboard_after_approval():
 
     plants = load_plants()
