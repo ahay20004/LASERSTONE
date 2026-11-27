@@ -37,6 +37,11 @@ class LaserPhysicsG24Tests(unittest.TestCase):
             with self.subTest(p=p), self.assertRaises(ValueError):
                 calculate_laser_physics(p)
 
+    def test_partial_invalid_evidence(self):
+        for p in ({"mirror_r1": 2}, {"mirror_r2": 0}, {"internal_loss_m_inv": -1}, {"gain_m_inv": float("inf")}):
+            with self.subTest(p=p), self.assertRaises(ValueError):
+                calculate_laser_physics(p)
+
     def test_mode_scaling(self):
         p = {"lambda_em": 500, "longitudinal_mode": 10}
         r = calculate_laser_physics(p)
