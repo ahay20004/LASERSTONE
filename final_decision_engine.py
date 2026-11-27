@@ -56,7 +56,7 @@ def generate_integrated_evidence_decision(records, claims_above_threshold=None, 
     from data_validator import audit_parameter_record
     from physics_evidence_engine import audit_fluorescence_decay, audit_fluorescence_uncertainty
     from qfactor_engine import calculate_physical_q, audit_q_uncertainty
-    from laser_physics_engine import C, audit_threshold_uncertainty
+    from laser_physics_engine import audit_threshold_uncertainty, audit_gain_margin_uncertainty
 
     audits = {k: audit_parameter_record(k, v) for k, v in records.items()}
     values = {k: v["value"] for k, v in records.items()
@@ -94,12 +94,16 @@ def generate_integrated_evidence_decision(records, claims_above_threshold=None, 
         u_frequency = records["resonance_frequency_hz"]["standard_uncertainty"]
         q_u = audit_q_uncertainty(frequency, values["linewidth_hz"], u_frequency,
                                   records["linewidth_hz"]["standard_uncertainty"], q_correlation)
+    margin_u = audit_gain_margin_uncertainty(
+        plant, {k: records[k]["standard_uncertainty"] for k in plant if k in values},
+        threshold_independent)
+    result["gain_margin_uncertainty"] = margin_u
     result["threshold_uncertainty"] = threshold_u
     result["q_uncertainty"] = q_u
     result["fluorescence_uncertainty"] = uncertainty
     result.update(parameter_audits=audits, fluorescence=fluorescence, physical_q=q,
                   uncertainty_propagated=False, source_authentication="NOT_VERIFIED")
     if any(a["status"] == "INVALID" for a in audits.values()) or any(
-            a["status"] == "INVALID" for a in (fluorescence, q, uncertainty, threshold_u, q_u)):
+            a["status"] == "INVALID" for a in (fluorescence, q, uncertainty, threshold_u, q_u, margin_u)):
         result["next_action"] = "CORRECT_INPUTS"
     return result
