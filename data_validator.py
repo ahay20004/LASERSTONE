@@ -51,6 +51,7 @@ PHYSICAL_PARAMETER_RULES = {
     "gain_m_inv": ("m^-1", None, None, False),
     "quantum_yield": ("1", 0, 1, False),
     "lifetime_s": ("s", 0, None, True),
+    "resonance_frequency_hz": ("Hz", 0, None, True),
     "linewidth_hz": ("Hz", 0, None, True),
     "energy_lifetime_s": ("s", 0, None, True),
 }
