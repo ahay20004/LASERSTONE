@@ -1,7 +1,7 @@
 """Local human-operated council workspace; no network or execution."""
 import json
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 from council_workspace import CouncilWorkspace
 from agent_council import ROLES
 
@@ -48,14 +48,30 @@ def open_council():
             output.insert("1.0",json.dumps(result,ensure_ascii=False,indent=2))
             output.config(state="disabled")
             status.set(result.get("review_status","Recorded")+" | Execution: NONE")
-        except (ValueError,KeyError,TypeError) as exc:
+        except (ValueError,KeyError,TypeError,OSError) as exc:
             messagebox.showerror("Council | المجلس",str(exc),parent=root)
     ttk.Button(task,text="Convene | تسجيل المهمة",command=lambda:perform(lambda:workspace.convene({"id":ident.get(),"summary":summary.get(),"specialties":[r for r,v in roles.items() if v.get()]}))).pack(anchor="e")
     ttk.Button(rev,text="Submit review | تسجيل المراجعة",command=lambda:perform(lambda:workspace.submit_review({"reviewer":reviewer.get(),"position":position.get(),"reason":reason.get(),"evidence":[s.strip() for s in evidence.get().split(";") if s.strip()]}))).pack(anchor="e")
     ttk.Button(dec,text="Record decision | تسجيل القرار",command=lambda:perform(lambda:workspace.human_decision(decision.get(),rationale.get()))).pack(anchor="e")
+    files=ttk.Frame(root)
+    files.pack(fill="x",padx=16)
+    def save_session():
+        path=filedialog.asksaveasfilename(parent=root,defaultextension=".json",filetypes=[("Council JSON","*.json")])
+        if path:
+            try:
+                workspace.export(path)
+                status.set("Session saved | تم الحفظ")
+            except (OSError,ValueError,TypeError) as exc:
+                messagebox.showerror("Council | المجلس",str(exc),parent=root)
+    def restore_session():
+        path=filedialog.askopenfilename(parent=root,filetypes=[("Council JSON","*.json")])
+        if path:
+            perform(lambda:workspace.restore(path))
+    ttk.Button(files,text="Save session | حفظ الجلسة",command=save_session).pack(side="left")
+    ttk.Button(files,text="Restore session | استعادة الجلسة",command=restore_session).pack(side="left",padx=8)
     ttk.Label(root,textvariable=status).pack(anchor="w",padx=16)
     output.pack(fill="both",expand=True,padx=16,pady=8)
-    ttk.Label(root,text="Session only • No verified AI agents • No execution authorization").pack(pady=8)
+    ttk.Label(root,text="Local files are not authenticated • No verified AI agents • No execution authorization").pack(pady=8)
     root.mainloop()
 
 if __name__=="__main__":
