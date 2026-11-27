@@ -98,10 +98,17 @@ def save_single_report(plant, reports_dir="reports"):
         f"{safe_name}_report.txt"
     )
 
-    with open(report_path, "w", encoding="utf-8") as file:
-        file.write(report)
-
-    return report_path
+    # Exclusive creation preserves previous reports and avoids name collisions.
+    index = 0
+    while True:
+        suffix = "" if index == 0 else f"_{index}"
+        report_path = os.path.join(reports_dir, f"{safe_name}_report{suffix}.txt")
+        try:
+            with open(report_path, "x", encoding="utf-8") as file:
+                file.write(report)
+            return report_path
+        except FileExistsError:
+            index += 1
 
 
 def save_all_reports(plants, reports_dir="reports"):
