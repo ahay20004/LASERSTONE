@@ -72,40 +72,61 @@ def calculate_laser_physics(plant):
 
 
 
-def audit_threshold_uncertainty(plant, uncertainties, independent=None):
+def audit_threshold_uncertainty(plant, uncertainties, independent=None, correlation=None):
     """First-order standard uncertainty of threshold gain for independent inputs."""
     keys = ("internal_loss_m_inv", "mirror_r1", "mirror_r2", "cavity_length_m")
     if any(plant.get(k) is None or uncertainties.get(k) is None for k in keys):
         return {"status": "UNVERIFIED"}
-    if independent is not True:
+    if correlation is None and independent is not True:
         return {"status": "UNVERIFIED", "reason": "INDEPENDENCE_NOT_ESTABLISHED"}
+    if correlation is not None and independent is True:
+        return {"status": "INVALID", "reason": "CONFLICTING_DEPENDENCE_DECLARATIONS"}
     try:
         base = calculate_laser_physics(plant)
         L, r1, r2 = (float(plant[k]) for k in ("cavity_length_m", "mirror_r1", "mirror_r2"))
         s = dict(zip(keys, (1.0, -0.5/L/r1, -0.5/L/r2,
                             (math.log(r1)+math.log(r2))*0.5/L/L)))
         u = {k: _number(uncertainties[k], k) for k in keys}
-        combined = math.hypot(*(s[k]*u[k] for k in keys))
+        from measurement_uncertainty import propagate_correlated, propagate_independent
+        propagated = (propagate_correlated(s, u, correlation) if correlation is not None
+                      else propagate_independent(s, u, independent=True))
+        combined = propagated["standard_uncertainty"]
         if not all(map(math.isfinite, (*s.values(), combined, base["threshold_gain_m_inv"]))):
             raise ValueError("Nonfinite result")
     except (ValueError, TypeError, OverflowError, ZeroDivisionError):
         return {"status": "INVALID"}
     return {"status": "DERIVED", "threshold_gain_m_inv": base["threshold_gain_m_inv"],
             "standard_uncertainty_m_inv": combined, "sensitivities": s,
-            "method": "first_order_independent_inputs", "experimental_validation": False}
+            "method": "first_order_correlated_inputs" if correlation is not None else "first_order_independent_inputs", "experimental_validation": False}
 
 
-def audit_gain_margin_uncertainty(plant, uncertainties, independent=None):
+def audit_gain_margin_uncertainty(plant, uncertainties, independent=None, correlation=None):
     """First-order gain margin uncertainty, conditional on independent inputs."""
-    base = audit_threshold_uncertainty(plant, uncertainties, independent)
+    keys = ('internal_loss_m_inv', 'mirror_r1', 'mirror_r2', 'cavity_length_m')
+    if correlation is not None:
+        if independent is True:
+            return {'status':'INVALID'}
+        try:
+            sub = {k:{j:correlation[k][j] for j in keys} for k in keys}
+        except (KeyError, TypeError):
+            return {'status':'INVALID'}
+    else:
+        sub = None
+    base = audit_threshold_uncertainty(plant, uncertainties, independent, sub)
     if base["status"] != "DERIVED":
         return base
     if plant.get("gain_m_inv") is None or uncertainties.get("gain_m_inv") is None:
         return {"status":"UNVERIFIED"}
     try:
         gain = _number(plant["gain_m_inv"], "gain", -math.inf)
-        u = math.hypot(base["standard_uncertainty_m_inv"],
-                       _number(uncertainties["gain_m_inv"], "gain uncertainty"))
+        if correlation is None:
+            u = math.hypot(base["standard_uncertainty_m_inv"],
+                           _number(uncertainties["gain_m_inv"], "gain uncertainty"))
+        else:
+            from measurement_uncertainty import propagate_correlated
+            sensitivities = {k:-v for k,v in base["sensitivities"].items()}
+            sensitivities["gain_m_inv"] = 1.0
+            u = propagate_correlated(sensitivities, {k:uncertainties[k] for k in sensitivities}, correlation)["standard_uncertainty"]
         margin = gain - base["threshold_gain_m_inv"]
         if not math.isfinite(u) or not math.isfinite(margin):
             raise ValueError("Nonfinite result")
